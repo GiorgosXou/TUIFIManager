@@ -7,6 +7,7 @@ A cross-platform terminal-based file manager *(and component)*, meant to be used
 ```terminal
 sudo pip3 install TUIFIManager
 ```
+or just `pip3 install TUIFIManager` if it works for you.
 
 ## Usage
 
