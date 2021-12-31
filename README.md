@@ -24,8 +24,8 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 | Shortcut | Action |
 |----|:----|
 |SHIFT + TAB| Moves selected file to the previous directory
-|`KEY_BACKSPACE`| Opens\Goes to the previous directory
-|CTRL + S| Goes into "Select Mode" for termux |
+|CTRL + S| Goes in & out of "Select Mode" for termux |
+|`KEY_BACKSPACE`| Opens\Goes to the previous directory|
 |CTRL + V| Pastes the Copied or Cuted files|
 |DEL| Deletes the selected files
 |CTRL + C| Copies the selected files|
