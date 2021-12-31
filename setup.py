@@ -6,16 +6,16 @@ if sys.version_info.major < 3:
     sys.exit('Python < 3 is unsupported (for now).')
     
 
-def readfile(filename):
-    with open(filename, 'r+') as f:
-        return f.read()
+#def readfile(filename):
+#    with open(filename, 'r+') as f:
+#        return f.read()
 
 
 setup(
     name="TUIFIManager",
     version="1.0.0",
-    description="TUIFIManager, a terminal based file manager, meant to be used with a Uni-Curses project or as is",
-    long_description=readfile('README.md'),
+    description="A terminal based file manager and component, meant to be used with a Uni-Curses project or as is. This project is mainly an attempt to get more attention to the Uni-Curses project.",
+    #long_description=readfile('README.md'),
     author="George Chousos",
     author_email="gxousos@gmail.com",
     url="https://github.com/GiorgosXou/TUIFIManager",
@@ -27,3 +27,7 @@ setup(
         ]
     },
 )
+
+# pip3 install .
+# python setup.py sdist
+# twine upload dist/*

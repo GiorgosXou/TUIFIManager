@@ -12,5 +12,7 @@ Run `tuify`  in your terminal  to use it or import it in one of your [Uni-Curses
 from TUIFIManager import  *
 ```
 for more details look into the `__main__.py`
+
+<img src="/peek.gif">
 ##
 [stackedit.io](https://stackedit.io/app) have been used for the editing of this MD file
