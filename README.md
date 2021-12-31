@@ -32,6 +32,7 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 |CTRL + X| Cuts the selected files|
 |ARROW KEYS| Navigates files|
 |`KEY_ENTER`| Opens files|
+|ESCAPE| Exit|
 
 * Supports most of the common mouse events so far
 * It is somewhat fully customizable
