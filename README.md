@@ -14,6 +14,6 @@ from TUIFIManager import  *
 for more details look into the `__main__.py`
 
 <img src="/Peek.gif">
-## 
+https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 
 [stackedit.io](https://stackedit.io/app) have been used for the editing of this MD file
