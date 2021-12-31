@@ -11,7 +11,7 @@ or just `pip3 install TUIFIManager` if it works for you.
 
 ## Usage
 
-Run `tuify` in your terminal to use it or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
+Run `tuifi` in your terminal to use it or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
 ```
 from TUIFIManager import *
 ```
