@@ -13,6 +13,6 @@ from TUIFIManager import  *
 ```
 for more details look into the `__main__.py`
 
-<img src="/peek.gif">
+<img src="/Peek.gif">
 ##
 [stackedit.io](https://stackedit.io/app) have been used for the editing of this MD file
