@@ -1,10 +1,13 @@
-from      unicurses import *
+#TODO: I NEED TO ADD GETTERS AND SETTERS FOR Y AND X BECAUSE THEY NEED unicurses.touchwin(self.parent.win)
+
 from           glob import glob
 from           time import time
 from             os import  sep
-from       .TUIFile import *
-from  .TUIFIProfile import * 
+from       .TUIMenu import    * 
+from       .TUIFile import    *
+from  .TUIFIProfile import    * 
 import   subprocess
+import    unicurses  
 import       shutil
 import       signal
 import          sys
@@ -17,11 +20,24 @@ PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
-HOME_DIR  = os.getenv('UserProfile') if OPERATING_SYSTEM == 'Windows' else os.getenv('HOME')
+HOME_DIR  = os.getenv('UserProfile') if unicurses.OPERATING_SYSTEM == 'Windows' else os.getenv('HOME')
 IS_TERMUX = True if 'com.termux' in HOME_DIR else False
 
 UP   = -1
 DOWN =  1
+
+
+
+def stty_a(key=None):  # whatever [...] 
+    if shutil.which('stty'):
+        if key:
+            for sig in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';'):
+                if sig.endswith(key):
+                    return sig.split('=')[0].strip()
+                    break
+        else:
+            return [s.strip() for s in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';')[4:-3]] # risky? i've no idea.. thats why i've not done the same when "if key:"
+    return None
 
 
 
@@ -36,26 +52,27 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     directory  (str   , optional): Initital directory. Defaults to HOME_DIR which is $HOME or $UserProfile
     suffixes   (list  , optional): "Path expansion rules (file patterns to be found). Defaults to ['*'].
     sort_by    ([type], optional): [Not implemented yet]. Defaults to None.
-    draw_files (bool  , optional): "draws" files the moment of initialization (must prefresh to show). Defaults to True.
+    draw_files (bool  , optional): "draws" files the moment of initialization (must unicurses.prefresh to show). Defaults to True.
     termux_touch_only (bool, optional)  : if true: full touch, no mouse support else: full mouse half touch support. Defaults to True.
     """  
     
     class struct_TUIFIparent:
         def __init__(self,win):
             self.win = win
-            self.lines, self.columns = getmaxyx(self.win)
+            self.lines, self.columns = unicurses.getmaxyx(self.win)
     
-    files            = []   
-    pad              = None  # for now only pads
-    directory        = sep 
-    __count_selected = 0
+    files              = []
+    pad                = None  # for now only pads
+    directory          = sep
+    __count_selected   = 0
+    double_click_DELAY = 0.4 
     
-    def __init__(self, parent, pad, y=0, x=0, anchor_top=False, anchor_left=False, anchor_bottom=False, anchor_right=False, directory=HOME_DIR, suffixes=['*'], sort_by=None, draw_files=True, termux_touch_only=True):
+    def __init__(self, pad, y=0, x=0, anchor_top=False, anchor_left=False, anchor_bottom=False, anchor_right=False, directory=HOME_DIR, suffixes=['*'], sort_by=None, parent=None, draw_files=True, termux_touch_only=True):
         self.suffixes          = suffixes
         self.draw_files        = draw_files
         self.pad               = pad
-        self.visibleW          = getmaxx(pad)
-        self.visibleH          = getmaxy(pad)
+        self.visibleW          = unicurses.getmaxx(pad)
+        self.visibleH          = unicurses.getmaxy(pad)
         self.Y                 = y
         self.maxY              = None
         self.minY              = None
@@ -65,7 +82,11 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         self.visibleY          = 0  # Y at the visible range of pad
         self.prepl             = 0 ## i thk this need delete
         self.termux_touch_only = termux_touch_only
-        self.parent            = self.struct_TUIFIparent(parent) 
+        self.menu              = TUIMenu()
+        if parent:
+            self.parent        = self.struct_TUIFIparent(parent)  
+        else:
+            self.parent        = self.struct_TUIFIparent(unicurses.stdscr)  
         
         #if parent:
         #    self.parent        = self.struct_TUIFIparent(parent) 
@@ -80,9 +101,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             if draw_files:
                 self.draw()
                 
-        if OPERATING_SYSTEM == 'Windows':
-            pass #signal.signal(signal.CTRL_C_EVENT,override_exit_event) #windows Only
-        else:
+        if stty_a('^C') or unicurses.OPERATING_SYSTEM == 'Windows': # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
             signal.signal(signal.SIGINT,self.copy)
     
     
@@ -96,11 +115,11 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     
     
     def draw(self):
-        werase(self.pad)
+        unicurses.werase(self.pad)
         #self.refresh()
         if self.maxpLines < self.visibleH:
             self.maxpLines = self.visibleH 
-        wresize(self.pad, self.maxpLines, self.visibleW)
+        unicurses.wresize(self.pad, self.maxpLines, self.visibleW)
         for f in self.files:
             f.draw(self.pad)
     
@@ -170,7 +189,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         Returns:
             list: self.files
         """
-        werase(self.pad)
+        unicurses.werase(self.pad)
             
         max_h, pCOLS, count, y, x = 0, self.visibleW, 0, PADDING_TOP, PADDING_LEFT 
         for f in self.files:
@@ -195,14 +214,14 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     self.maxpLines = y + self.Y 
                 if self.maxpLines < self.visibleH:
                     self.maxpLines = self.visibleH 
-                wresize(self.pad, self.maxpLines, self.visibleW) 
+                unicurses.wresize(self.pad, self.maxpLines, self.visibleW) 
                 
             f.draw(self.pad,redraw_icon=True)
             
-        #wresize(self.pad, self.maxpLines, self.visibleW) # because it works doesn't also mean that i should do it like that  
+        #unicurses.wresize(self.pad, self.maxpLines, self.visibleW) # because it works doesn't also mean that i should do it like that  
 
-        #if self.visibleY >= getmaxy(self.pad) - self.visibleH + self.Y:
-            #self.visibleY = getmaxy(self.pad) - self.visibleH
+        #if self.visibleY >= unicurses.getmaxy(self.pad) - self.visibleH + self.Y:
+            #self.visibleY = unicurses.getmaxy(self.pad) - self.visibleH
         #if self.visibleH + self.visibleY > y:
         #    self.visibleY -= self.visibleH + self.visibleY - y  # NOT SURE AT ALL BUT IT WORKS LOL, actually NOP ):(            
         #self.draw() 
@@ -235,7 +254,9 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 subprocess.call(['tuifi', self.directory])  # sys.executable, __file__
             #subprocess.call(['micro', directory])   
             return None
+
         self.__clicked_file          = None
+        self.__pre_clicked_file      = None
         self.__index_of_clicked_file = None
         self.__count_selected        = 0
         self.visibleY                = 0
@@ -250,8 +271,9 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         self.visibleY = pminrow_vY if not pminrow_vY == None else self.visibleY
         self.Y        = sminrow    if not sminrow    == None else self.Y
         self.X        = smincol    if not smincol    == None else self.X
-        wrefresh(self.parent.win)
-        prefresh(self.pad,self.visibleY, pmincol, self.Y, self.X, self.visibleH -1, self.visibleW -1)
+        unicurses.wrefresh(self.parent.win) # Do i need this? YES
+        unicurses.prefresh(self.pad,self.visibleY, pmincol, self.Y, self.X, self.visibleH -1, self.visibleW -1)
+        self.menu.refresh()
     
     
     def get_tuifile_by_name(self, name):
@@ -303,7 +325,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     def scroll_pad(self, y):
         if self.visibleY == 0 and y < 0:
             return
-        if self.visibleY >= getmaxy(self.pad) - self.visibleH  and y > 0:
+        if self.visibleY >= unicurses.getmaxy(self.pad) - self.visibleH  and y > 0:
             return
         self.visibleY += y
     
@@ -318,27 +340,34 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     __temp_dir_of_copied_files = ''
         
     events = { # Disable or replace Events if you want (with 0x11111111? and None for CTRL(x)? i think) 
-        'BUTTON1_DOUBLE_CLICKED': BUTTON1_DOUBLE_CLICKED       ,  # Temp because https://github.com/wmcbrine/PDCurses/issues/130 
-        'KEY_MOUSE'             : KEY_MOUSE                    ,
-        'BUTTON4_PRESSED'       : BUTTON4_PRESSED              ,
-        'BUTTON5_PRESSED'       : BUTTON5_PRESSED              ,
-        'BUTTON1_PRESSED'       : BUTTON1_PRESSED              ,
-        'BUTTON1_RELEASED'      : BUTTON1_RELEASED             ,
-        'BUTTON1_CLICKED'       : BUTTON1_CLICKED              ,
-        'BUTTON_CTRL'           : BUTTON_CTRL                  ,
-        'KEY_UP'                : KEY_UP                       ,
-        'KEY_DOWN'              : KEY_DOWN                     ,
-        'KEY_LEFT'              : KEY_LEFT                     ,
-        'KEY_RIGHT'             : KEY_RIGHT                    ,
-        'KEY_BACKSPACE'         : (KEY_BACKSPACE, 8, 127, 263) ,
-        'KEY_ENTER'             : (KEY_ENTER,10)               ,
-        'KEY_BTAB'              : KEY_BTAB                     ,
-        'KEY_DC'                : KEY_DC                       ,
-        'CTRL_S'                : CTRL('S')                    ,
-        'CTRL_R'                : CTRL('R')                    ,
-        'CTRL_X'                : CTRL('X')                    ,  
-        'CTRL_C'                : CTRL('C')                    ,  
-        'CTRL_V'                : CTRL('V')                      
+        'BUTTON1_DOUBLE_CLICKED': unicurses.BUTTON1_DOUBLE_CLICKED       ,  # Temp because https://github.com/wmcbrine/PDCurses/issues/130 
+        'KEY_MOUSE'             : unicurses.KEY_MOUSE                    ,
+        'BUTTON4_PRESSED'       : unicurses.BUTTON4_PRESSED              ,
+        'BUTTON5_PRESSED'       : unicurses.BUTTON5_PRESSED              ,
+        'BUTTON1_PRESSED'       : unicurses.BUTTON1_PRESSED              ,
+        'BUTTON1_RELEASED'      : unicurses.BUTTON1_RELEASED             ,
+        'BUTTON1_CLICKED'       : unicurses.BUTTON1_CLICKED              ,
+        'BUTTON3_PRESSED'       : unicurses.BUTTON3_PRESSED              ,
+        'BUTTON3_RELEASED'      : unicurses.BUTTON3_RELEASED             ,
+        'BUTTON_CTRL'           : unicurses.BUTTON_CTRL                  ,
+        'KEY_UP'                : unicurses.KEY_UP                       ,
+        'KEY_DOWN'              : unicurses.KEY_DOWN                     ,
+        'KEY_LEFT'              : unicurses.KEY_LEFT                     ,
+        'KEY_RIGHT'             : unicurses.KEY_RIGHT                    ,
+        'KEY_BACKSPACE'         : (unicurses.KEY_BACKSPACE, 8, 127, 263) ,
+        'KEY_ENTER'             : (unicurses.KEY_ENTER,10)               ,
+        'KEY_BTAB'              : unicurses.KEY_BTAB                     ,
+        'KEY_DC'                : unicurses.KEY_DC                       ,
+        'KEY_HOME'              : unicurses.KEY_HOME                     ,
+        'KEY_END'               : unicurses.KEY_END                      ,
+        'CTRL_DOWN'             : 'kDN5'                                 ,
+        'CTRL_UP'               : 'kUP5'                                 ,
+        'CTRL_LEFT'             : 'kLFT5'                                ,
+        'ALT_DOWN'              : 'kDN3'                                 ,
+        'CTRL_R'                : unicurses.CTRL('R')                    ,
+        'CTRL_X'                : unicurses.CTRL('X')                    ,  
+        'CTRL_C'                : unicurses.CTRL('C')                    ,  
+        'CTRL_V'                : unicurses.CTRL('V')                      
     }  
     def __delete_file(self,file):
         if isinstance(file, TUIFile):
@@ -369,7 +398,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         """
         Cut-copies the selected files
         """
-        self.__is_cut = True
+        self.__is_cut = True  # TODO: DON'T FORGET TO CHANGE TERMUX CUT WHEN NEW VERSION[...]
         self.__copy()
         
          
@@ -396,29 +425,102 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     if f.is_selected:
                         self.__temp__copied_files.append(f) 
                         
+                        
+    def paste(self):
+        """
+        Pastes the already selected and copied/cutted files.
+        """
+        if not len(self.__temp__copied_files) == 0 and os.path.exists(self.__temp_dir_of_copied_files):  # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
+            if not self.__temp_dir_of_copied_files == self.directory:
+                for f in self.__temp__copied_files:
+                    f_path_name = self.__temp_dir_of_copied_files + sep + f.name
+                    if os.path.isfile(f_path_name):   # Does 'file' exist?
+                        shutil.copyfile(f_path_name,self.directory + sep + f.name, follow_symlinks=False)
+                        if self.__is_cut:
+                            os.remove(f_path_name) 
+                    elif not f_path_name == self.directory and os.path.isdir(f_path_name):  # Does 'directory' exist?                
+                        shutil.copytree(f_path_name,self.directory + sep + f.name, symlinks=True)
+                        if self.__is_cut:
+                            shutil.rmtree(f_path_name)                             
+            else:
+                pass # just duplicate the files 
+            self.reload()
+                        
     
+    def delete(self):
+        """
+        Deletes the selected file(s).
+        """
+        if self.__clicked_file and not self.__clicked_file.name == '..':
+            if self.__count_selected == 1:
+                self.__delete_file(self.__clicked_file)
+                temp_i = self.__index_of_clicked_file - 1
+                self.reload()
+                self.__index_of_clicked_file = temp_i
+                self.__clicked_file = self.files[temp_i]
+                self.__pre_clicked_file = None # hmm.. sus?
+                self.select(self.__clicked_file)
+            else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
+                temp_i = self.__index_of_clicked_file - self.__count_selected 
+                for f in self.files:
+                    if f.is_selected:
+                        self.__delete_file(f)
+                        if self.__count_selected == 0:
+                            self.reload()
+                            self.__index_of_clicked_file = temp_i
+                            self.__clicked_file = self.files[temp_i]
+                            self.__pre_clicked_file = None # hmm.. sus
+                            self.select(self.__clicked_file)
+                            break
+                        
+                        
+    def __perform_menu_selected_action(self, action):
+        if   action == 'Open'  : 
+            self.open(self.__clicked_file)
+        elif action == 'Cut'   : 
+            self.cut()
+        elif action == 'Delete': 
+            self.delete()
+        elif action == 'Copy'  : 
+            self.copy()
+        elif action == 'Paste' : 
+            self.paste()
+            
+                            
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD
+        action = self.menu.handle_keyboard_events(event)  # if performed the event   
+        if action: # action-εστί που λεμε και στη βυζαντινη
+            self.__perform_menu_selected_action(action)         
+            return
+        
         if event == self.events.get('KEY_MOUSE'): 
-            id, x, y, z, bstate = getmouse() 
+            id, x, y, z, bstate = unicurses.getmouse() 
+            action = self.menu.handle_mouse_events(id, x, y, z, bstate)
+            if action:
+                self.__perform_menu_selected_action(action)
+                return
+            
             if bstate & self.events.get('BUTTON4_PRESSED'):
                 self.scroll_pad(UP) 
             elif bstate & self.events.get('BUTTON5_PRESSED'):
                 self.scroll_pad(DOWN)  
             elif (not IS_TERMUX) or (IS_TERMUX and not self.termux_touch_only): # because there are some times that long like presses might be translated to BUTTON1_PRESSED instead of CLICK
-                pass
-                if (bstate & self.events.get('BUTTON1_RELEASED')) or (OPERATING_SYSTEM == 'Windows' and bstate & self.events.get('BUTTON1_DOUBLE_CLICKED')): # OPERATING_SYSTEM == 'Windows' because issues with ncurses 
+                if (bstate & self.events.get('BUTTON1_RELEASED')) or (bstate & self.events.get('BUTTON3_RELEASED')) or (unicurses.OPERATING_SYSTEM == 'Windows' and bstate & self.events.get('BUTTON1_DOUBLE_CLICKED')): # unicurses.OPERATING_SYSTEM == 'Windows' because issues with ncurses 
                     self.__index_of_clicked_file, self.__clicked_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
                     self.__delay1 = time() - self.__delay1
                     sumed_time = time() - self.__start_time - self.__delay1 # yeah whatever
-                        
-                    if self.__mouse_btn1_pressed_file == self.__clicked_file and not bstate & self.events.get('BUTTON_CTRL'):
-                        self.deselect()
+  
+                    
+                    if (self.__mouse_btn1_pressed_file == self.__clicked_file and not bstate & self.events.get('BUTTON_CTRL')) :
+                        if not ((bstate & self.events.get('BUTTON3_RELEASED')) and self.__count_selected > 1 and  self.__clicked_file.is_selected): 
+                            self.menu.delete()
+                            self.deselect()
+                        if (bstate & self.events.get('BUTTON3_RELEASED')):
+                            self.menu.create(y,x)
                         if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..':
                             self.select(self.__mouse_btn1_pressed_file )
-                        if (sumed_time < 0.4 or bstate & self.events.get('BUTTON1_DOUBLE_CLICKED')) and self.__clicked_file: #and count == 2  :
-                            if self.open(self.__clicked_file):
-                                self.__index_of_clicked_file = None
-                                self.__pre_clicked_file      = None
+                        if (((sumed_time < self.double_click_DELAY) and (bstate & self.events.get('BUTTON1_RELEASED'))) or bstate & self.events.get('BUTTON1_DOUBLE_CLICKED')) and self.__clicked_file: #and count == 2  :
+                            self.open(self.__clicked_file)
                     elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file: #and not self.__clicked_file.is_selected:
                         if os.path.isdir(self.directory + sep + self.__clicked_file.name): 
                             for f in self.files:
@@ -428,16 +530,17 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                             self.reload()
 
                     self.__start_time = time()       
-                elif bstate & self.events.get('BUTTON1_PRESSED'):
+                elif (bstate & self.events.get('BUTTON1_PRESSED')) or (bstate & self.events.get('BUTTON3_PRESSED')):
                     self.__delay1 = time()
                     self.__mouse_btn1_pressed_file = self.get_tuifile_by_coordinates(y, x)
                     
-                    if not bstate & self.events.get('BUTTON_CTRL') and self.__pre_clicked_file and self.__pre_clicked_file.is_selected and  self.__count_selected == 1:#and summ > 0.4:
+                    if not bstate & self.events.get('BUTTON_CTRL') and self.__pre_clicked_file and self.__pre_clicked_file.is_selected and  self.__count_selected == 1:#and summ > self.double_click_DELAY:
                         self.deselect(self.__pre_clicked_file)
+                        self.menu.delete()
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' :
-                        if not self.__mouse_btn1_pressed_file.is_selected : 
+                        if not self.__mouse_btn1_pressed_file.is_selected and not (bstate & self.events.get('BUTTON3_PRESSED')): 
                             self.select(self.__mouse_btn1_pressed_file)                   
-                        elif bstate & self.events.get('BUTTON_CTRL') :#and summ > 0.4:
+                        elif bstate & self.events.get('BUTTON_CTRL') :#and summ > self.double_click_DELAY:
                             self.deselect(self.__mouse_btn1_pressed_file)
                             
                     self.__pre_clicked_file = self.__mouse_btn1_pressed_file 
@@ -456,8 +559,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     elif clicked_file:
                         self.open(clicked_file)
            
-        elif event == KEY_RESIZE: # maybe i will add a calculate_size() function for this code part that will call a function from the TUIWindowManager 
-            new_lines, new_columns = getmaxyx(self.parent.win)
+        elif event == unicurses.KEY_RESIZE: # maybe i will add a calculate_size() function for this code part that will call a function from the TUIWindowManager 
+            new_lines, new_columns = unicurses.getmaxyx(self.parent.win)
             if self.anchor.get('bottom'):
                 if self.anchor.get('top'):
                     self.visibleH += (new_lines - self.parent.lines)
@@ -473,26 +576,23 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     self.X += deltaX
                     self.visibleW += deltaX
                
-            #if fileManager.visibleY > getmaxy(fileManager.pad) - fileManager.visibleH + fileManager.Y:
-                #fileManager.visibleY = getmaxy(fileManager.pad) - fileManager.visibleH + fileManager.Y
+            #if fileManager.visibleY > unicurses.getmaxy(fileManager.pad) - fileManager.visibleH + fileManager.Y:
+                #fileManager.visibleY = unicurses.getmaxy(fileManager.pad) - fileManager.visibleH + fileManager.Y
             self.parent.lines   = new_lines
             self.parent.columns = new_columns
             self.resort()
-            touchwin(self.parent.win)
+            unicurses.touchwin(self.parent.win)
             
         elif event in self.events.get('KEY_BACKSPACE'):
             self.open(self.directory + sep + '..')
-        elif event == self.events.get('CTRL_S') and IS_TERMUX:
-            if self.is_on_termux_select_mode:  # hmm..
-                self.is_on_termux_select_mode = False
-            else:
-                self.is_on_termux_select_mode = True
+            
         elif event in self.events.get('KEY_ENTER'):
             if self.__count_selected == 1 and self.__clicked_file.is_selected:
-                if self.open(self.__clicked_file):
-                    self.__index_of_clicked_file = None
-                    self.__pre_clicked_file      = None
-                    
+                self.open(self.__clicked_file)
+            
+        elif event == self.events.get('KEY_HOME'):
+            self.open(HOME_DIR) 
+                   
         elif event == self.events.get('KEY_UP'):  # Not the most reliable way but nvm for now | A lot of REPEATING CODE but  nvm ffor now
             if not self.__index_of_clicked_file == None:
                 for i in range(self.__index_of_clicked_file,0,-1):
@@ -500,6 +600,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                         self.deselect()
                         self.__index_of_clicked_file = i -1
                         self.__clicked_file = self.files[i-1]
+                        self.__mouse_btn1_pressed_file = self.__clicked_file
+                        self.__pre_clicked_file = self.__clicked_file
                         self.scroll_to_file(self.__clicked_file, True)
                         break
             else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
@@ -514,6 +616,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                         self.deselect()
                         self.__index_of_clicked_file = i +1
                         self.__clicked_file = self.files[i+1]
+                        self.__mouse_btn1_pressed_file = self.__clicked_file
+                        self.__pre_clicked_file = self.__clicked_file
                         self.scroll_to_file(self.__clicked_file, True)
                         break
             else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
@@ -527,6 +631,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     self.deselect()
                     self.__index_of_clicked_file = self.__index_of_clicked_file +1
                     self.__clicked_file = self.files[self.__index_of_clicked_file]
+                    self.__mouse_btn1_pressed_file = self.__clicked_file
+                    self.__pre_clicked_file = self.__clicked_file
                     self.scroll_to_file(self.__clicked_file, True)
                 else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
                     self.select(self.files[0])
@@ -539,6 +645,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     self.deselect()
                     self.__index_of_clicked_file = self.__index_of_clicked_file -1
                     self.__clicked_file = self.files[self.__index_of_clicked_file]
+                    self.__mouse_btn1_pressed_file = self.__clicked_file
+                    self.__pre_clicked_file = self.__clicked_file
                     self.scroll_to_file(self.__clicked_file, True)
                 else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
                     self.select(self.files[0])
@@ -555,27 +663,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 self.select(self.__clicked_file)
                 
         elif event == self.events.get('KEY_DC'): # TODO: FIX ISSUE WHEN NAVIGATING trough link and deleting | Update i think i fixed it lol
-            if self.__clicked_file and not self.__clicked_file.name == '..':
-                if self.__count_selected == 1:
-                    self.__delete_file(self.__clicked_file)
-                    temp_i = self.__index_of_clicked_file - 1
-                    self.reload()
-                    self.__index_of_clicked_file = temp_i
-                    self.__clicked_file = self.files[temp_i]
-                    self.__pre_clicked_file = None # hmm.. sus?
-                    self.select(self.__clicked_file)
-                else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
-                    temp_i = self.__index_of_clicked_file - self.__count_selected 
-                    for f in self.files:
-                        if f.is_selected:
-                            self.__delete_file(f)
-                            if self.__count_selected == 0:
-                                self.reload()
-                                self.__index_of_clicked_file = temp_i
-                                self.__clicked_file = self.files[temp_i]
-                                self.__pre_clicked_file = None # hmm.. sus
-                                self.select(self.__clicked_file)
-                                break
+            self.delete()
                     
         elif event == self.events.get('CTRL_R'):
             self.reload()  
@@ -587,24 +675,37 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             self.cut() 
             
         elif event == self.events.get('CTRL_V'): # check if path the  same as self.directory maybe? 
-            if not len(self.__temp__copied_files) == 0 and os.path.exists(self.__temp_dir_of_copied_files):  # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
-                if not self.__temp_dir_of_copied_files == self.directory:
-                    for f in self.__temp__copied_files:
-                        f_path_name = self.__temp_dir_of_copied_files + sep + f.name
-                        if os.path.isfile(f_path_name):   # Does 'file' exist?
-                            shutil.copyfile(f_path_name,self.directory + sep + f.name, follow_symlinks=False)
-                            if self.__is_cut:
-                                os.remove(f_path_name) 
-                        elif not f_path_name == self.directory and os.path.isdir(f_path_name):  # Does 'directory' exist?                
-                            shutil.copytree(f_path_name,self.directory + sep + f.name, symlinks=True)
-                            if self.__is_cut:
-                                shutil.rmtree(f_path_name)                             
-                else:
-                    pass # just duplicate the files 
-                self.reload()
+            self.paste()
                 
-        elif event == CTRL('f'):
-            pass # find 
-        else:
-            waddstr(self.pad, lib1.keyname(event))
-    
+        elif event == unicurses.CTRL('f'):
+            pass # find
+        
+        elif unicurses.keyname(event) == self.events.get('ALT_DOWN'): 
+            if self.menu.exists:
+                self.menu.delete()
+            else:
+                self.menu.create(self.__clicked_file.y,self.__clicked_file.x +1)
+
+        elif IS_TERMUX: # TERMUX ONLY, EASILY ACCESIBLE KEYBINDINGS  
+            if unicurses.keyname(event) == self.events.get('CTRL_DOWN'): # 
+                if self.is_on_termux_select_mode:  # hmm..
+                    self.is_on_termux_select_mode = False
+                    self.copy()
+                else:
+                    self.is_on_termux_select_mode = True 
+            elif unicurses.keyname(event) == self.events.get('CTRL_LEFT'):
+                if self.is_on_termux_select_mode:
+                    self.is_on_termux_select_mode = False
+                    self.cut()
+                else:
+                    self.__is_cut = True
+            elif unicurses.keyname(event) == self.events.get('CTRL_UP'):
+                self.paste()
+            elif event == self.events.get('KEY_END'):
+                if self.is_on_termux_select_mode:
+                    self.is_on_termux_select_mode = False
+                self.delete()
+        #else:
+        #    unicurses.waddstr(self.pad, unicurses.keyname(event))
+        
+        #TODO: return event\action or none if any performed 

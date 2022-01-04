@@ -1,12 +1,7 @@
-from      unicurses import *
+#from     unicurses import *
+import unicurses
 from .TUIFIProfile import *
  
- 
- 
-class TUIFIMenu:    
-    def __init__(self,menu_pad,h,w,y,x):
-        pass
-
 
  
 class TUIFile:
@@ -56,11 +51,11 @@ class TUIFile:
 
     def __draw_icon(self, atpad):
         for offY, ln in enumerate((self.profile.text + '\n').split('\n')):
-            mvwaddwstr(atpad,offY + self.y,self.x, ln, COLOR_PAIR(self.profile.color_map) )                    
+            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.profile.color_map) )                    
         for offY, ln in enumerate(self.chunkStr(self.name,self.profile.width).split('\n'), offY):
-            mvwaddwstr(atpad,offY + self.y,self.x, ln, COLOR_PAIR(self.name_color) ) # A_BOLD | 
+            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color) ) # A_BOLD | 
         if self.is_link: # no idea why but mvwadd_wch misbehaves ...
-            mvwaddwstr(atpad, self.y + self.profile.height -1 , self.x + self.profile.width -1, LINK_SYMBOL, COLOR_PAIR(LINK_SYMBOL_COLOR))  # | A_BOLD
+            unicurses.mvwaddwstr(atpad, self.y + self.profile.height -1 , self.x + self.profile.width -1, LINK_SYMBOL, unicurses.COLOR_PAIR(LINK_SYMBOL_COLOR))  # | A_BOLD
 
     
     
@@ -68,16 +63,16 @@ class TUIFile:
         if y: self.y = y
         if x: self.x = x
         
-        pLINES, pCOLS = getmaxyx(atpad)
+        pLINES, pCOLS = unicurses.getmaxyx(atpad)
 
         if self.is_selected:
             if redraw_icon:self.__draw_icon(atpad)
             for y in range(self.y, self.y + self.profile.height):
-                mvwchgat(atpad,y, self.x, self.profile.width,A_REVERSE,7)             
+                unicurses.mvwchgat(atpad,y, self.x, self.profile.width,unicurses.A_REVERSE,7)             
         elif self.is_cut:
             if redraw_icon:self.__draw_icon(atpad)
             for y in range(self.y, self.y + self.profile.height):
-                mvwchgat(atpad,y, self.x, self.profile.width,A_DIM,1)
+                unicurses.mvwchgat(atpad,y, self.x, self.profile.width,unicurses.A_DIM,1)
         else:
             self.__draw_icon(atpad)
 
