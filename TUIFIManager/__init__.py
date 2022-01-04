@@ -459,7 +459,11 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             self.__pre_clicked_file = None # hmm.. sus?
             self.select(self.__clicked_file)
         else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
-            temp_i = self.__index_of_clicked_file - self.__count_selected 
+            if self.__clicked_file:
+                temp_i = self.__index_of_clicked_file - self.__count_selected 
+            else:
+                temp_i = 0 # VERY SUS BUT NVM NOW
+                
             for f in self.files:
                 if f.is_selected:
                     self.__delete_file(f)

@@ -30,3 +30,7 @@
 # v.1.1.5
 * ***Fixed:***
 * * [I think I Fixed this issue](https://github.com/GiorgosXou/TUIFIManager/issues/5)
+
+# v.1.1.6
+* ***Fixed:***
+* * [FINALLY I think I KIND OF Fixed this issue](https://github.com/GiorgosXou/TUIFIManager/issues/5)
