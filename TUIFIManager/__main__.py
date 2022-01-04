@@ -6,7 +6,7 @@ from TUIFIManager import *
 from unicurses import *             
              
 
-def main():
+def main(): 
     event  = -1
     global stdscr
     stdscr = initscr()  # Global UniCurses Variable

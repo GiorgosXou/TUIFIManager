@@ -75,7 +75,7 @@ class TUIMenu:
     
     
     __it = -1
-    def handle_keyboard_events(self, event):
+    def handle_keyboard_events(self, event): 
         performed = False
         if self.exists and not event == self.events.get('KEY_MOUSE'):
             if event == self.events.get('KEY_DOWN'):

@@ -1,5 +1,5 @@
 __pycache__/
-tuifi_config.json
+tuifi_config.json 
 *.py[cod]
 dtest_*.py
 files.txt

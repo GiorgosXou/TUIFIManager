@@ -22,7 +22,7 @@ TUIFIProfiles = {}
 
 def load_config(): # create if not load_config | I feel a bit ashamed of this code below but nvm, i've no time for optimizations and etc. right now  
     path = os.path.dirname(os.path.abspath(__file__))   
-    file = path + os.sep + 'tuifi_config.json'
+    file = path + os.sep + 'tuifi_config.json' 
     if not os.path.isfile(file):
         with open(file, "w") as outfile:
             json.dump({

@@ -671,7 +671,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         elif event == self.events.get('CTRL_C'):  # or KEY_IC ? | copy selected files
             self.copy()
              
-        elif event == self.events.get('CTRL_X'): 
+        elif event == self.events.get('CTRL_X'):  
             self.cut() 
             
         elif event == self.events.get('CTRL_V'): # check if path the  same as self.directory maybe? 

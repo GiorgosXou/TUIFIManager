@@ -1,7 +1,7 @@
 # v.1.0.0
 * this version is (kinda) a beta version
 
-# v.1.1.2
+# v.1.1.3
 * ***Fixed:***
 * * [Now when running `tuifi`, it starts from the current working directory](https://github.com/GiorgosXou/TUIFIManager/issues/4)
 * * Overall minor code improvments

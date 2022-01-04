@@ -12,7 +12,7 @@ class TUIFile:
     is_selected = False
     is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files 
       
-    def chunkStr(self,text, n): # sorry  for this :P
+    def chunkStr(self,text, n): # sorry  for this :P 
         counter2 = 0
         counter1 = 0
         tempTxT  = ''
