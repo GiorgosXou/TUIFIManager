@@ -415,15 +415,15 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         this function is TEMPOTATY and will be REMOVED, 
         it will be pressent until i find a way of drawing/managing cutted files efficiently
         """
-        if self.__clicked_file and not self.__clicked_file.name == '..':
-            self.__temp_dir_of_copied_files = self.directory
-            if self.__count_selected == 1:                                        
-                self.__temp__copied_files = [self.__clicked_file]                 
-            else:
-                self.__temp__copied_files = []
-                for f in self.files:                      
-                    if f.is_selected:
-                        self.__temp__copied_files.append(f) 
+        
+        self.__temp_dir_of_copied_files = self.directory
+        if self.__count_selected == 1 and self.__clicked_file and not self.__clicked_file.name == '..':                                        
+            self.__temp__copied_files = [self.__clicked_file]                 
+        else:
+            self.__temp__copied_files = []
+            for f in self.files:                      
+                if f.is_selected:
+                    self.__temp__copied_files.append(f) 
                         
                         
     def paste(self):

@@ -23,3 +23,7 @@
 * * * * `CTRL + UP` *(Same as`CTRL + V`, Pastes the copied/cutted files)*
 * * * * `END` *(Deletes selected files)*
 
+# v.1.1.4
+* ***Fixed:***
+* * [I think I Fixed this issue](https://github.com/GiorgosXou/TUIFIManager/issues/5)
+
