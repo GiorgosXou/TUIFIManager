@@ -414,8 +414,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         """
         this function is TEMPOTATY and will be REMOVED, 
         it will be pressent until i find a way of drawing/managing cutted files efficiently
-        """
-        
+        """   
         self.__temp_dir_of_copied_files = self.directory
         if self.__count_selected == 1 and self.__clicked_file and not self.__clicked_file.name == '..':                                        
             self.__temp__copied_files = [self.__clicked_file]                 
@@ -451,28 +450,27 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         """
         Deletes the selected file(s).
         """
-        if self.__clicked_file and not self.__clicked_file.name == '..':
-            if self.__count_selected == 1:
-                self.__delete_file(self.__clicked_file)
-                temp_i = self.__index_of_clicked_file - 1
-                self.reload()
-                self.__index_of_clicked_file = temp_i
-                self.__clicked_file = self.files[temp_i]
-                self.__pre_clicked_file = None # hmm.. sus?
-                self.select(self.__clicked_file)
-            else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
-                temp_i = self.__index_of_clicked_file - self.__count_selected 
-                for f in self.files:
-                    if f.is_selected:
-                        self.__delete_file(f)
-                        if self.__count_selected == 0:
-                            self.reload()
-                            self.__index_of_clicked_file = temp_i
-                            self.__clicked_file = self.files[temp_i]
-                            self.__pre_clicked_file = None # hmm.. sus
-                            self.select(self.__clicked_file)
-                            break
-                        
+        if self.__count_selected == 1 and self.__clicked_file and not self.__clicked_file.name == '..':
+            self.__delete_file(self.__clicked_file)
+            temp_i = self.__index_of_clicked_file - 1
+            self.reload()
+            self.__index_of_clicked_file = temp_i
+            self.__clicked_file = self.files[temp_i]
+            self.__pre_clicked_file = None # hmm.. sus?
+            self.select(self.__clicked_file)
+        else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
+            temp_i = self.__index_of_clicked_file - self.__count_selected 
+            for f in self.files:
+                if f.is_selected:
+                    self.__delete_file(f)
+                    if self.__count_selected == 0:
+                        self.reload()
+                        self.__index_of_clicked_file = temp_i
+                        self.__clicked_file = self.files[temp_i]
+                        self.__pre_clicked_file = None # hmm.. sus
+                        self.select(self.__clicked_file)
+                        break
+                    
                         
     def __perform_menu_selected_action(self, action):
         if   action == 'Open'  : 
