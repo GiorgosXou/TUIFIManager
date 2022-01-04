@@ -42,6 +42,7 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 |`SHIFT + TAB`  | Moves selected file to the previous directory
 |`KEY_BACKSPACE`| Opens\Goes to the previous directory|
 |`ALT + DOWN`   | Opens\Closes the "right-click menu"|
+|`KEY_HOME`     | Navigates to the $HOME directory|
 |`CTRL + V`     | Pastes the Copied or Cuted files|
 |`DEL`          | Deletes the selected files
 |`CTRL + C`     | Copies the selected files|
@@ -57,6 +58,7 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 |`CTRL + LEFT`| Goes out of select-mode while also cuts the seleccted file(s)|
 |`CTRL + END` | Goes out of select-mode while also deleting the selected file(s)|
 |`CTRL + UP`  | Same as `CTRL + V`, Pastes the Copied or Cuted files|
+|`END`        | Deletes selected files |
 
 # Outro 
 ### Documentation and other things are coming ...  

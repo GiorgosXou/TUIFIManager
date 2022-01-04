@@ -21,4 +21,5 @@
 * * * * `CTRL + LEFT` *(Goes out of select-mode while also cuts the seleccted file(s))*
 * * * * `CTRL + END` *(Goes out of select-mode while also deleting the selected file(s))*
 * * * * `CTRL + UP` *(Same as`CTRL + V`, Pastes the copied/cutted files)*
+* * * * `END` *(Deletes selected files)*
 
