@@ -8,7 +8,7 @@ A cross-platform terminal-based file manager *(and component)*, meant to be used
 sudo pip3 install tuifimanager --upgrade
 ```
 ```terminal
-`pip3 install TUIFIManager --upgrade` 
+pip3 install TUIFIManager --upgrade
 ```
 or just ^^^ if it works for you. *(eg. on termux?)*
 
