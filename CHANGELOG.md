@@ -41,6 +41,8 @@
 * * *["Select mode navigation to '..'"](https://github.com/GiorgosXou/TUIFIManager/issues/6)* 
 * * Copying folder and pasting it inside the copied folder
 * ***Added:***
+* * ***Extensions:*** 
+* * * `.psd`
 * * ***Keybindings:***
 * * * `CTRL + R` Rename selected file. *(Not the best implementation but nvm for now)* 
 * ***Changed:***
