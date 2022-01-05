@@ -37,7 +37,6 @@ class TUIFile:
         self.name_color  = name_color
         self.profile     = profile
         self.name_color  = name_color
-        tempprofileSplit = self.profile.text.split('\n')
         self.y           = y
         self.x           = x
         self.name        = name
@@ -47,13 +46,26 @@ class TUIFile:
 
     def clear(self,atpad):
         pass
-
-
-    def __draw_icon(self, atpad):
-        for offY, ln in enumerate((self.profile.text + '\n').split('\n')):
-            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.profile.color_map) )                    
-        for offY, ln in enumerate(self.chunkStr(self.name,self.profile.width).split('\n'), offY):
+    
+    
+    def draw_name(self, atpad, name, prename, chgatXY):  # fuck, lol
+        """
+        DON'T USE IT
+        """
+        y = chgatXY // self.profile.width
+        x = chgatXY - y * (self.profile.width)
+        for offY, ln in enumerate(self.chunkStr(prename + ' ',self.profile.width).split('\n'), self.profile.height):
+            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ' ' * len(ln)) # A_BOLD | 
+        for offY, ln in enumerate(self.chunkStr(name,self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color) ) # A_BOLD | 
+        unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6)
+        
+
+    def __draw_file(self, atpad):
+        for offY, ln in enumerate((self.profile.text + '\n').split('\n')):
+            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.profile.color_map) ) 
+        for offY, ln in enumerate(self.chunkStr(self.name,self.profile.width).split('\n'), offY):
+            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color) )                  
         if self.is_link: # no idea why but mvwadd_wch misbehaves ...
             unicurses.mvwaddwstr(atpad, self.y + self.profile.height -1 , self.x + self.profile.width -1, LINK_SYMBOL, unicurses.COLOR_PAIR(LINK_SYMBOL_COLOR))  # | A_BOLD
 
@@ -66,14 +78,14 @@ class TUIFile:
         pLINES, pCOLS = unicurses.getmaxyx(atpad)
 
         if self.is_selected:
-            if redraw_icon:self.__draw_icon(atpad)
+            if redraw_icon:self.__draw_file(atpad)
             for y in range(self.y, self.y + self.profile.height):
                 unicurses.mvwchgat(atpad,y, self.x, self.profile.width,unicurses.A_REVERSE,7)             
         elif self.is_cut:
-            if redraw_icon:self.__draw_icon(atpad)
+            if redraw_icon:self.__draw_file(atpad)
             for y in range(self.y, self.y + self.profile.height):
                 unicurses.mvwchgat(atpad,y, self.x, self.profile.width,unicurses.A_DIM,1)
         else:
-            self.__draw_icon(atpad)
+            self.__draw_file(atpad)
 
 

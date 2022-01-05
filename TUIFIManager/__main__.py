@@ -28,22 +28,22 @@ def main():
     
     # Initializing Mouse and then Update/refresh() stdscr
     mouseinterval(0)
-    mousemask(ALL_MOUSE_EVENTS)  # | REPORT_MOUSE_POSITION); print("\033[?1003h\n")
-    keypad(stdscr, True)
-    refresh()
+    mousemask    (ALL_MOUSE_EVENTS)  # | REPORT_MOUSE_POSITION); print("\033[?1003h\n")
+    keypad       (stdscr, True)
+    refresh      ()
     
     # Initializing TUIFIManager
-    tLINES,tCOLS   = getmaxyx(stdscr) 
-    fileManagerPad = newpad(tLINES, tCOLS)
+    tLINES,tCOLS       = getmaxyx(stdscr) 
+    fileManagerPad     = newpad(tLINES, tCOLS)
     starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
-    fileManager = TUIFIManager(fileManagerPad,0,0,True,True,True,True,starting_directory)  # Use suffixes=['*','.*'] for hidden files 
+    fileManager        = TUIFIManager(fileManagerPad,0,0,True,True,True,True,starting_directory)  # Use suffixes=['*','.*'] for hidden files 
     fileManager.refresh()
 
-    # Main loop exit at event/(ch)aracter 27 = ESC
-    while (event != 27 ):
-        event = wget_wch(stdscr)
+    # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.is_on_reaname_mode 
+    while (event != 27 or fileManager.is_on_reaname_mode):
+        event = get_wch()
         fileManager.handle_events(event)          
-        fileManager.refresh()
+        fileManager.refresh()  
         if event == KEY_RESIZE: 
             resize_term(0,0)
         
@@ -58,4 +58,5 @@ if __name__ == "__main__":
 # https://askubuntu.com/questions/17299/what-do-the-different-colors-mean-in-ls
 # https://stackoverflow.com/questions/11753909/clean-up-ncurses-mess-in-terminal-after-a-crash
 # https://stackoverflow.com/questions/35336532/ncurses-subwin-or-subpad-of-a-pad
+# https://stackoverflow.com/questions/31488362/
     

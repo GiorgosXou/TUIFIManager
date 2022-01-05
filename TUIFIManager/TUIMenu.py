@@ -12,8 +12,16 @@ import unicurses
 class TUIMenu:    
     
     x    , y      = 0 , 0
-    width, height = 20, 13
-    items  = ['Open','Cut','Delete','Copy','Paste','Properties']
+    width, height = 20, 15
+    items  = ['Open       │ ENTER' ,
+              'Cut        │ CTRL+X',
+              'Delete     │ DEL'   ,
+              'Copy       │ CTRL+C',
+              'Paste      │ CTRL+V',
+              'Rename     │ CTRL+R',  
+              'Reload     │ KEY_F5',
+              'Properties '
+    ]
     events = {
         'KEY_UP'          : unicurses.KEY_UP          ,
         'KEY_DOWN'        : unicurses.KEY_DOWN        ,
@@ -24,10 +32,13 @@ class TUIMenu:
         'BUTTON3_RELEASED': unicurses.BUTTON3_RELEASED         
     }
     
-    def __init__(self):
+    def __init__(self, items=None):
         self.parent = unicurses.stdscr
-        self.exists = False 
-
+        self.exists = False
+        if items:self.items = items   
+        self.width  = len(max(self.items, key=len)) + 4 
+        self.height = len(self.items)*2 + 1 
+            
 
     def create(self, atY=None, atX=None):
         if atX is not None: self.x = atX 
@@ -74,6 +85,10 @@ class TUIMenu:
             unicurses.wrefresh(self.win)
     
     
+    def __getItem(self,i):
+        return self.items[i].split('│')[0].strip()
+
+    
     __it = -1
     def handle_keyboard_events(self, event): 
         performed = False
@@ -97,7 +112,7 @@ class TUIMenu:
             elif event in self.events.get('KEY_ENTER'):
                 i = self.__it
                 self.delete()
-                return self.items[i]
+                return self.__getItem(i)
             else:                   
                 self.delete()
                 performed=True
@@ -114,7 +129,7 @@ class TUIMenu:
                     item_position = len(self.items)
                     if (relative_y % 2) == 0:
                         self.delete()
-                        return self.items[relative_y//2 -1]
+                        return self.__getItem(relative_y//2 -1)
                             
                     performed=True
                 if (bstate & self.events.get('BUTTON1_PRESSED')):

@@ -364,6 +364,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         'CTRL_UP'               : 'kUP5'                                 ,
         'CTRL_LEFT'             : 'kLFT5'                                ,
         'ALT_DOWN'              : 'kDN3'                                 ,
+        'KEY_F5'                : unicurses.KEY_F(5)                     ,
         'CTRL_R'                : unicurses.CTRL('R')                    ,
         'CTRL_X'                : unicurses.CTRL('X')                    ,  
         'CTRL_C'                : unicurses.CTRL('C')                    ,  
@@ -374,9 +375,9 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             file = self.directory + sep + file.name
         elif not isinstance(file, str):
             raise Exception('TUIFileTypeError: file must be of type string or TUIFile.')
-        if not os.path.isdir(file):
+        if os.path.isfile(file): # checking if exists too.
             os.remove(file)
-        else:
+        elif os.path.exists(file) and not file.endswith(sep + '..'): # "and not .." whatever
             shutil.rmtree(file)    
         self.__count_selected -= 1
             
@@ -396,7 +397,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     __is_cut = False
     def cut(self):
         """
-        Cut-copies the selected files
+        Cut-copies the selected files | Not fully implemented yet
         """
         self.__is_cut = True  # TODO: DON'T FORGET TO CHANGE TERMUX CUT WHEN NEW VERSION[...]
         self.__copy()
@@ -404,7 +405,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
          
     def copy(self, signum=None, frame=None):
         """
-        Copies the selected files (ignore signum=None, frame=None [...])
+        Copies the selected files (ignore signum=None, frame=None [...]) | Not fully implemented yet
         """ 
         self.__is_cut = False
         self.__copy()    
@@ -437,7 +438,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                         shutil.copyfile(f_path_name,self.directory + sep + f.name, follow_symlinks=False)
                         if self.__is_cut:
                             os.remove(f_path_name) 
-                    elif not f_path_name == self.directory and os.path.isdir(f_path_name):  # Does 'directory' exist?                
+                    elif os.path.isdir(f_path_name):  # Does 'directory' exist?                
                         shutil.copytree(f_path_name,self.directory + sep + f.name, symlinks=True)
                         if self.__is_cut:
                             shutil.rmtree(f_path_name)                             
@@ -448,16 +449,17 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     
     def delete(self):
         """
-        Deletes the selected file(s).
+        Deletes the selected file(s). | Not fully implemented yet
         """
-        if self.__count_selected == 1 and self.__clicked_file and not self.__clicked_file.name == '..':
-            self.__delete_file(self.__clicked_file)
-            temp_i = self.__index_of_clicked_file - 1
-            self.reload()
-            self.__index_of_clicked_file = temp_i
-            self.__clicked_file = self.files[temp_i]
-            self.__pre_clicked_file = None # hmm.. sus?
-            self.select(self.__clicked_file)
+        if self.__count_selected == 1 and self.__clicked_file : 
+            if not self.__clicked_file.name == '..': # checking under __delete_file too but nvm cause i have no time right now
+                self.__delete_file(self.__clicked_file)
+                temp_i = self.__index_of_clicked_file - 1
+                self.reload()
+                self.__index_of_clicked_file = temp_i
+                self.__clicked_file = self.files[temp_i]
+                self.__pre_clicked_file = None # hmm.. sus?
+                self.select(self.__clicked_file)
         else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
             if self.__clicked_file:
                 temp_i = self.__index_of_clicked_file - self.__count_selected 
@@ -475,21 +477,62 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                         self.select(self.__clicked_file)
                         break
                     
+    
+    is_on_reaname_mode                         = False
+    __on_second_loop_change_is_on_reaname_mode = False
+    __temp_pre_name                            = ''
+    __temp_name                                = ''
+    __temp_i                                   = 0
+    illegal_filename_characters                = ('<', '>', ':',  '/', '\\', '|', '?', '*')
+    def handle_rename_events(self, event):  # At this momment i don't even care about optimizing anything... just kidding, you get the point, no free time
+        if event == unicurses.KEY_LEFT:
+            if not self.__temp_i == 0: self.__temp_i -= 1
+        elif event == unicurses.KEY_RIGHT:
+            if not self.__temp_i == len(self.__temp_name): self.__temp_i += 1
+        elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
+            if not self.__temp_i == 0:
+                self.__temp_i -= 1
+                self.__temp_name = self.__temp_name[0:self.__temp_i] + self.__temp_name[self.__temp_i+1:]
+        elif unicurses.RCCHAR(event) in self.illegal_filename_characters:
+            return
+        elif event == 27 or event in (unicurses.KEY_ENTER,10):
+            self.__temp_i = 0
+            self.__on_second_loop_change_is_on_reaname_mode = True
+            if not event == 27:
+                os.rename(self.directory + sep + self.__clicked_file.name  , self.directory + sep + self.__temp_name)        
+                self.__clicked_file.name = self.__temp_name
+                self.resort()
+                self.scroll_to_file(self.__clicked_file, True)
+            else:
+                self.__temp_name = self.__clicked_file.name
+        else:
+            self.__temp_name = self.__temp_name[0:self.__temp_i] + unicurses.RCCHAR(event) + self.__temp_name[self.__temp_i:]
+            self.__temp_i += 1  
+        self.__clicked_file.draw_name(self.pad,self.__temp_name,self.__temp_pre_name, self.__temp_i)
+        self.__temp_pre_name = self.__temp_name
+        #if event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
+        #    pass
+    
                         
-    def __perform_menu_selected_action(self, action):
-        if   action == 'Open'  : 
-            self.open(self.__clicked_file)
-        elif action == 'Cut'   : 
-            self.cut()
-        elif action == 'Delete': 
-            self.delete()
-        elif action == 'Copy'  : 
-            self.copy()
-        elif action == 'Paste' : 
-            self.paste()
+    def __perform_menu_selected_action(self, action):  # TODO: USE DICT INSTEAD OF IF, ELIF
+        if   action == 'Open'  : self.open  (self.__clicked_file)
+        elif action == 'Cut'   : self.cut   ()
+        elif action == 'Delete': self.delete()
+        elif action == 'Copy'  : self.copy  ()
+        elif action == 'Paste' : self.paste ()
+        elif action == 'Rename': self.is_on_reaname_mode = True
+        elif action == 'Reload': self.reload()
             
                             
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD
+        if self.is_on_reaname_mode == True: # REDIRECT ALL KEYBOARD EVENTS 
+            if not self.__on_second_loop_change_is_on_reaname_mode: 
+                self.handle_rename_events(event)
+                return
+            else:
+                self.__on_second_loop_change_is_on_reaname_mode = False
+                self.is_on_reaname_mode = False
+        
         action = self.menu.handle_keyboard_events(event)  # if performed the event   
         if action: # action-εστί που λεμε και στη βυζαντινη
             self.__perform_menu_selected_action(action)         
@@ -519,7 +562,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                             self.deselect()
                         if (bstate & self.events.get('BUTTON3_RELEASED')):
                             self.menu.create(y,x)
-                        if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..':
+                        if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
                             self.select(self.__mouse_btn1_pressed_file )
                         if (((sumed_time < self.double_click_DELAY) and (bstate & self.events.get('BUTTON1_RELEASED'))) or bstate & self.events.get('BUTTON1_DOUBLE_CLICKED')) and self.__clicked_file: #and count == 2  :
                             self.open(self.__clicked_file)
@@ -546,20 +589,23 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                             self.deselect(self.__mouse_btn1_pressed_file)
                             
                     self.__pre_clicked_file = self.__mouse_btn1_pressed_file 
-            else:
+            else:  # TERMUX 
                 if bstate & self.events.get('BUTTON1_CLICKED') or bstate & self.events.get('BUTTON1_PRESSED'): # TERMUX                
-                    clicked_file = self.get_tuifile_by_coordinates(y, x)
+                    self.__index_of_clicked_file, self.__clicked_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True) 
                     
                     if not self.is_on_termux_select_mode: # bstate & BUTTON_CTRL :
                         self.deselect()
                             
-                    if self.is_on_termux_select_mode and clicked_file and not clicked_file.name == '..' : # bstate & BUTTON_CTRL 
-                        if not clicked_file.is_selected : 
-                            self.select(clicked_file)
+                    if self.is_on_termux_select_mode and self.__clicked_file and not self.__clicked_file.name == '..' : # bstate & BUTTON_CTRL 
+                        if not self.__clicked_file.is_selected : 
+                            self.select(self.__clicked_file)
                         else:                   
-                            self.deselect(clicked_file)
-                    elif clicked_file:
-                        self.open(clicked_file)
+                            self.deselect(self.__clicked_file)
+                    elif self.__clicked_file:
+                        if self.is_on_termux_select_mode: # AUTO COPY IF IN SELECT-MODE AND CLICKED ON  '..'
+                            self.is_on_termux_select_mode = False
+                            self.copy()
+                        self.open(self.__clicked_file)
            
         elif event == unicurses.KEY_RESIZE: # maybe i will add a calculate_size() function for this code part that will call a function from the TUIWindowManager 
             new_lines, new_columns = unicurses.getmaxyx(self.parent.win)
@@ -584,7 +630,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             self.parent.columns = new_columns
             self.resort()
             unicurses.touchwin(self.parent.win)
-            
+        
         elif event in self.events.get('KEY_BACKSPACE'):
             self.open(self.directory + sep + '..')
             
@@ -664,21 +710,15 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 self.__clicked_file = self.files[temp_i]
                 self.select(self.__clicked_file)
                 
-        elif event == self.events.get('KEY_DC'): # TODO: FIX ISSUE WHEN NAVIGATING trough link and deleting | Update i think i fixed it lol
-            self.delete()
-                    
-        elif event == self.events.get('CTRL_R'):
-            self.reload()  
-            
-        elif event == self.events.get('CTRL_C'):  # or KEY_IC ? | copy selected files
-            self.copy()
-             
-        elif event == self.events.get('CTRL_X'):  
-            self.cut() 
-            
-        elif event == self.events.get('CTRL_V'): # check if path the  same as self.directory maybe? 
-            self.paste()
-                
+        elif event == self.events.get('CTRL_R'): 
+            self.is_on_reaname_mode = True
+            self.__temp_name        = self.__clicked_file.name
+            self.__temp_pre_name    = self.__temp_name
+        elif event == self.events.get('KEY_DC'): self.delete()  # TODO: FIX ISSUE WHEN NAVIGATING trough link and deleting | Update i think i fixed it lol
+        elif event == self.events.get('KEY_F5'): self.reload()  
+        elif event == self.events.get('CTRL_C'): self.copy  ()  # or KEY_IC ? | copy selected files
+        elif event == self.events.get('CTRL_X'): self.cut   ()  
+        elif event == self.events.get('CTRL_V'): self.paste ()  # check if path the  same as self.directory maybe? 
         elif event == unicurses.CTRL('f'):
             pass # find
         

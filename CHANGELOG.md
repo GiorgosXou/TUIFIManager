@@ -34,3 +34,16 @@
 # v.1.1.6
 * ***Fixed:***
 * * [FINALLY I think I KIND OF Fixed this issue](https://github.com/GiorgosXou/TUIFIManager/issues/5)
+
+# v.1.1.7
+* ***Fixed:***
+* * [Issue](https://github.com/GiorgosXou/TUIFIManager/issues/7) *(Kind of, I mean...)* 
+* * *["Select mode navigation to '..'"](https://github.com/GiorgosXou/TUIFIManager/issues/6)* 
+* * Copying folder and pasting it inside the copied folder
+* ***Added:***
+* * ***Keybindings:***
+* * * `CTRL + R` Rename selected file. *(Not the best implementation but nvm for now)* 
+* ***Changed:***
+* * `reload()`/refresh now works with `KEY_F5` insted of `CTRL+R`
+* ***Removed:***
+* * `tuifi_config.json` Ability to change default `TUIFIProfiles` | Reason: *(Bad Implementation)*
