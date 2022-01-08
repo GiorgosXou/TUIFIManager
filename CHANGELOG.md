@@ -42,10 +42,24 @@
 * * Copying folder and pasting it inside the copied folder
 * ***Added:***
 * * ***Extensions:*** 
-* * * `.psd`
+* * * `psd`
 * * ***Keybindings:***
 * * * `CTRL + R` Rename selected file. *(Not the best implementation but nvm for now)* 
 * ***Changed:***
 * * `reload()`/refresh now works with `KEY_F5` insted of `CTRL+R`
 * ***Removed:***
 * * `tuifi_config.json` Ability to change default `TUIFIProfiles` | Reason: *(Bad Implementation)*
+
+# v.1.2.0
+* ***Fixed:***
+* * [Replace profile when renaming extension](https://github.com/GiorgosXou/TUIFIManager/issues/8)
+* * Renaming to an already existing file-name *(temp-fix?)*
+* * Renaming to "nothing"/''
+* ***Added:***
+* * Ability to create files and folders
+* * ***Extensions:*** 
+* * * `py`, `lua`, `vbs`, `go`, `rs`, `java`
+* * * ***Improved:***
+* * * * `vb`
+* ***Changed:***
+* * `is_on_reaname_mode` to `escape_event_consumed` *[(name inspired by java)](https://docs.oracle.com/javase/7/docs/api/java/awt/event/InputEvent.html#consume())*

@@ -39,8 +39,8 @@ def main():
     fileManager        = TUIFIManager(fileManagerPad,0,0,True,True,True,True,starting_directory)  # Use suffixes=['*','.*'] for hidden files 
     fileManager.refresh()
 
-    # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.is_on_reaname_mode 
-    while (event != 27 or fileManager.is_on_reaname_mode):
+    # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.escape_event_consumed 
+    while (event != 27 or fileManager.escape_event_consumed): 
         event = get_wch()
         fileManager.handle_events(event)          
         fileManager.refresh()  
@@ -58,5 +58,5 @@ if __name__ == "__main__":
 # https://askubuntu.com/questions/17299/what-do-the-different-colors-mean-in-ls
 # https://stackoverflow.com/questions/11753909/clean-up-ncurses-mess-in-terminal-after-a-crash
 # https://stackoverflow.com/questions/35336532/ncurses-subwin-or-subpad-of-a-pad
-# https://stackoverflow.com/questions/31488362/
-    
+# https://stackoverflow.com/questions/31488362/why-is-dict-faster-than-if-else-in-python
+# https://stackoverflow.com/questions/18166977/cd-to-dir-after-exiting-script-system-independent-way-purely-in-python    

@@ -1,4 +1,3 @@
-#from     unicurses import *
 import unicurses
 from .TUIFIProfile import *
  
@@ -48,7 +47,7 @@ class TUIFile:
         pass
     
     
-    def draw_name(self, atpad, name, prename, chgatXY):  # fuck, lol
+    def draw_name(self, atpad, name, prename, chgatXY, attr=unicurses.A_NORMAL):  # fuck, lol
         """
         DON'T USE IT
         """
@@ -57,7 +56,7 @@ class TUIFile:
         for offY, ln in enumerate(self.chunkStr(prename + ' ',self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ' ' * len(ln)) # A_BOLD | 
         for offY, ln in enumerate(self.chunkStr(name,self.profile.width).split('\n'), self.profile.height):
-            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color) ) # A_BOLD | 
+            unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color) | attr) # A_BOLD | 
         unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6)
         
 
@@ -69,8 +68,7 @@ class TUIFile:
         if self.is_link: # no idea why but mvwadd_wch misbehaves ...
             unicurses.mvwaddwstr(atpad, self.y + self.profile.height -1 , self.x + self.profile.width -1, LINK_SYMBOL, unicurses.COLOR_PAIR(LINK_SYMBOL_COLOR))  # | A_BOLD
 
-    
-    
+      
     def draw(self,atpad, y=None, x=None, redraw_icon=False): #  na valw NEW giati sto resort() xanei to icon kai text h kati tetoio !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if y: self.y = y
         if x: self.x = x

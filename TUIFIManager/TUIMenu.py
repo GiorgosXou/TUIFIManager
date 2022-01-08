@@ -15,11 +15,13 @@ class TUIMenu:
     width, height = 20, 15
     items  = ['Open       │ ENTER' ,
               'Cut        │ CTRL+X',
-              'Delete     │ DEL'   ,
               'Copy       │ CTRL+C',
               'Paste      │ CTRL+V',
+              'Delete     │ DEL'   ,
               'Rename     │ CTRL+R',  
               'Reload     │ KEY_F5',
+              'New File   │ CTRL+W',
+              'New Folder │ CTRL+N',
               'Properties '
     ]
     events = {
@@ -116,7 +118,6 @@ class TUIMenu:
             else:                   
                 self.delete()
                 performed=True
-
         return performed
     
       
@@ -129,14 +130,12 @@ class TUIMenu:
                     item_position = len(self.items)
                     if (relative_y % 2) == 0:
                         self.delete()
-                        return self.__getItem(relative_y//2 -1)
-                            
+                        return self.__getItem(relative_y//2 -1)                   
                     performed=True
                 if (bstate & self.events.get('BUTTON1_PRESSED')):
                     performed=True
             else:
                 self.delete() #unicurses.ungetmouse(id, x, y, z, bstate ) 
-                        
         return performed
         
         

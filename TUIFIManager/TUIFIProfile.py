@@ -54,17 +54,53 @@ TUIFIProfiles = {
         ' ▀▀▀  ▀▀▀ '
     ),2, DEFAULT_EDITOR),
     '.vb':TUIFIProfile(( 
-        ' ▆ ▆ █▀▆  \n'
+        ' █ █ █▀▆  \n'
         ' █ █ █▀▆  \n'  
-        ' █ █ █▃▀  \n'
-        '  ▀       '                         
+        ' ▀▃▀ █▃▀  \n'
+        '          '                         
     ),4, DEFAULT_EDITOR),
+    '.vbs':TUIFIProfile(( 
+        '▃ ▃ ▃▃  ▃▃\n'
+        '█ █ █▃█ █▃\n'  
+        '▀▃▀ █▃▀ ▃█\n'
+        '          '                         
+    ),4, DEFAULT_EDITOR),
+    '.lua':TUIFIProfile(( 
+        '▃  ▃ ▃ ▃▃▃\n'
+        '█  █ █ █▃█\n'  
+        '█▃▖█▃█ █ █\n'
+        '          '                         
+    ),4, DEFAULT_EDITOR),
+    '.java':TUIFIProfile(( 
+        '    Šƨ    \n'
+        '  ⊏█▇▇█   \n'  
+        ' ▗▃▃▃▃▃▃▖ \n'
+        '  ▔▔▔▔▔▔  '                         
+    ),3, DEFAULT_EDITOR),
     '.cs':TUIFIProfile(( 
         '▃▃▃▃  ▃ ▃ \n'
         '█▔▔▔ ▀█▀█▀\n'  
         '█▃▃▃ ▀█▀█▀\n'
         '▔▔▔▔      '
     ),5, DEFAULT_EDITOR),
+    '.go':TUIFIProfile(( 
+        '▄▄▄▄ ▄▄▄▄-\n'
+        '█ ▄▄ █ ▒█/\n'  
+        '█▃▃█/█▃▃█/\n'
+        '▔▔▔▔ ▔▔▔▔ '
+    ),4, DEFAULT_EDITOR),
+    '.rs':TUIFIProfile(( 
+        ' ▅▅▅▅▄▃▂  \n'
+        '  █▄▃▃▟▛  \n'  
+        ' ▃█▃ ▀▆▄▅ \n'
+        ' ▔▔▔   ▔  '
+    ),3, DEFAULT_EDITOR),
+    '.py':TUIFIProfile(( 
+        ' ▃▃▃ ▃ ▃. \n'
+        ' █▃█▒█▃█▒ \n'
+        ' █▒·   █▒ \n'
+        '          '
+    ),2, DEFAULT_EDITOR),
     '.txt':TUIFIProfile((
         ' ┏━━┓┓┓┓┓ \n'
         ' ┃┏┇┃☵☲┃┇ \n'

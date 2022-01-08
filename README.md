@@ -33,12 +33,12 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 * and more
 
 ### *Desired:*
+* Undo\Redo
 * tool-tips
 * Scroll bar
 * Search bar
-* Information bar
+* Information bar <!-- possibly i'll use mvwin_wch which i need to implement on unicurses-->
 * Dim-Effect on cutted Files
-* Create file *(Not yet Implemented)*
 
 ### *Common Shortcuts\Keybindings*
 | Shortcut      | Action                                        |
@@ -53,6 +53,8 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 |`CTRL + C`     | Copies the selected files                     |
 |`CTRL + X`     | Cuts the selected files                       |
 |`CTRL + R`     | Rename selected file                          | 
+|`CTRL + N`     | Create new folder                             |
+|`CTRL + W`     | Create new file                               |
 |`ARROW KEYS`   | Navigates files                               |
 |`KEY_ENTER`    | Opens files                                   |
 |`ESCAPE`       | Exit                                          |
@@ -68,4 +70,4 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 
 # Outro 
 ### Documentation and other things are coming ...  
-[stackedit.io](https://stackedit.io/app) have been used for the editing of this MD file
+[stackedit.io](https://stackedit.io/app) has been used for the editing of this MD file

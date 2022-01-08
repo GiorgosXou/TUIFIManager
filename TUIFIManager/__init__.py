@@ -339,7 +339,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     __temp__copied_files       = [] 
     __temp_dir_of_copied_files = ''
         
-    events = { # Disable or replace Events if you want (with 0x11111111? and None for CTRL(x)? i think) 
+    events = { # Disable or replace Events if you want (with 0x11111111? and None for CTRL(x)? i think) | UPDATE: lol wtf i did, i could just used them instead of if-elif pointing to functions but ...
         'BUTTON1_DOUBLE_CLICKED': unicurses.BUTTON1_DOUBLE_CLICKED       ,  # Temp because https://github.com/wmcbrine/PDCurses/issues/130 
         'KEY_MOUSE'             : unicurses.KEY_MOUSE                    ,
         'BUTTON4_PRESSED'       : unicurses.BUTTON4_PRESSED              ,
@@ -368,7 +368,9 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         'CTRL_R'                : unicurses.CTRL('R')                    ,
         'CTRL_X'                : unicurses.CTRL('X')                    ,  
         'CTRL_C'                : unicurses.CTRL('C')                    ,  
-        'CTRL_V'                : unicurses.CTRL('V')                      
+        'CTRL_V'                : unicurses.CTRL('V')                    ,  
+        'CTRL_N'                : unicurses.CTRL('N')                    ,  
+        'CTRL_W'                : unicurses.CTRL('W')                    , 
     }  
     def __delete_file(self,file):
         if isinstance(file, TUIFile):
@@ -476,14 +478,22 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                         self.__pre_clicked_file = None # hmm.. sus
                         self.select(self.__clicked_file)
                         break
+   
+   
+    def rename(self):
+        if self.__clicked_file: 
+            self.escape_event_consumed = True
+            self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE)  # Yeah ok, whatever
+            self.__temp_name        = self.__clicked_file.name
+            self.__temp_pre_name    = self.__temp_name
                     
     
-    is_on_reaname_mode                         = False
-    __on_second_loop_change_is_on_reaname_mode = False
-    __temp_pre_name                            = ''
-    __temp_name                                = ''
-    __temp_i                                   = 0
-    illegal_filename_characters                = ('<', '>', ':',  '/', '\\', '|', '?', '*')
+    escape_event_consumed          = False
+    __change_escape_event_consumed = False  # on second loop 
+    __temp_pre_name                = ''
+    __temp_name                    = ''
+    __temp_i                       = 0
+    __illegal_filename_characters  = ('<', '>', ':',  '/', '\\', '|', '?', '*')
     def handle_rename_events(self, event):  # At this momment i don't even care about optimizing anything... just kidding, you get the point, no free time
         if event == unicurses.KEY_LEFT:
             if not self.__temp_i == 0: self.__temp_i -= 1
@@ -493,14 +503,18 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             if not self.__temp_i == 0:
                 self.__temp_i -= 1
                 self.__temp_name = self.__temp_name[0:self.__temp_i] + self.__temp_name[self.__temp_i+1:]
-        elif unicurses.RCCHAR(event) in self.illegal_filename_characters:
+        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters:
             return
         elif event == 27 or event in (unicurses.KEY_ENTER,10):
-            self.__temp_i = 0
-            self.__on_second_loop_change_is_on_reaname_mode = True
-            if not event == 27:
-                os.rename(self.directory + sep + self.__clicked_file.name  , self.directory + sep + self.__temp_name)        
+            self.__temp_i                       = 0
+            self.__change_escape_event_consumed = True
+            new_path_name                       = self.directory + sep + self.__temp_name
+            if not event == 27 and not self.__temp_name.strip() == '' and not os.path.exists(new_path_name):
+                file_extension = os.path.splitext(self.__temp_name)[1]
+                temp_profile = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) 
+                os.rename(self.directory + sep + self.__clicked_file.name  , new_path_name)        
                 self.__clicked_file.name = self.__temp_name
+                self.__clicked_file.profile = temp_profile
                 self.resort()
                 self.scroll_to_file(self.__clicked_file, True)
             else:
@@ -513,25 +527,49 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         #if event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
         #    pass
     
+    
+    def create_new(self,_type='folder'): # temporary implementation but nvm      
+        i, j = '', 0
+        if _type == 'folder': exists = os.path.isdir
+        else                : exists = os.path.isfile 
+        while exists(self.directory + sep + 'New ' + _type + i):  
+            i = ' (' + str(j) + ')'
+            j += 1 
+        filename = 'New ' + _type + i
+        if _type == 'folder': 
+            os.mkdir(self.directory + sep + filename)
+            _type = 'empty_folder'
+        else                : 
+            open(self.directory + sep + filename, 'w').close()
+        self.deselect()
+        self.__clicked_file = TUIFile(filename, profile=TUIFIProfiles.get(_type))
+        self.__index_of_clicked_file = 1
+        self.files.insert(1,self.__clicked_file)
+        self.resort()
+        self.scroll_to_file(self.__clicked_file,True)
+        self.rename()
+    
                         
     def __perform_menu_selected_action(self, action):  # TODO: USE DICT INSTEAD OF IF, ELIF
-        if   action == 'Open'  : self.open  (self.__clicked_file)
-        elif action == 'Cut'   : self.cut   ()
-        elif action == 'Delete': self.delete()
-        elif action == 'Copy'  : self.copy  ()
-        elif action == 'Paste' : self.paste ()
-        elif action == 'Rename': self.is_on_reaname_mode = True
-        elif action == 'Reload': self.reload()
+        if   action == 'Open'      : self.open  (self.__clicked_file)
+        elif action == 'Cut'       : self.cut   ()
+        elif action == 'Delete'    : self.delete()
+        elif action == 'Copy'      : self.copy  ()
+        elif action == 'Paste'     : self.paste ()
+        elif action == 'Rename'    : self.rename()
+        elif action == 'New File'  : self.create_new('file')
+        elif action == 'New Folder': self.create_new('folder')
+        elif action == 'Reload'    : self.reload()
             
                             
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD
-        if self.is_on_reaname_mode == True: # REDIRECT ALL KEYBOARD EVENTS 
-            if not self.__on_second_loop_change_is_on_reaname_mode: 
+        if self.escape_event_consumed == True: # REDIRECT ALL KEYBOARD EVENTS 
+            if not self.__change_escape_event_consumed: 
                 self.handle_rename_events(event)
                 return
             else:
-                self.__on_second_loop_change_is_on_reaname_mode = False
-                self.is_on_reaname_mode = False
+                self.__change_escape_event_consumed = False
+                self.escape_event_consumed = False
         
         action = self.menu.handle_keyboard_events(event)  # if performed the event   
         if action: # action-εστί που λεμε και στη βυζαντινη
@@ -557,7 +595,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
   
                     
                     if (self.__mouse_btn1_pressed_file == self.__clicked_file and not bstate & self.events.get('BUTTON_CTRL')) :
-                        if not ((bstate & self.events.get('BUTTON3_RELEASED')) and self.__count_selected > 1 and  self.__clicked_file.is_selected): 
+                        if not ((bstate & self.events.get('BUTTON3_RELEASED')) and self.__count_selected > 1 and self.__clicked_file and self.__clicked_file.is_selected): 
                             self.menu.delete()
                             self.deselect()
                         if (bstate & self.events.get('BUTTON3_RELEASED')):
@@ -710,15 +748,14 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 self.__clicked_file = self.files[temp_i]
                 self.select(self.__clicked_file)
                 
-        elif event == self.events.get('CTRL_R'): 
-            self.is_on_reaname_mode = True
-            self.__temp_name        = self.__clicked_file.name
-            self.__temp_pre_name    = self.__temp_name
+        elif event == self.events.get('CTRL_R'): self.rename()
         elif event == self.events.get('KEY_DC'): self.delete()  # TODO: FIX ISSUE WHEN NAVIGATING trough link and deleting | Update i think i fixed it lol
         elif event == self.events.get('KEY_F5'): self.reload()  
         elif event == self.events.get('CTRL_C'): self.copy  ()  # or KEY_IC ? | copy selected files
         elif event == self.events.get('CTRL_X'): self.cut   ()  
-        elif event == self.events.get('CTRL_V'): self.paste ()  # check if path the  same as self.directory maybe? 
+        elif event == self.events.get('CTRL_V'): self.paste ()  # check if path the  same as self.directory maybe?
+        elif event == self.events.get('CTRL_W'): self.create_new('file')
+        elif event == self.events.get('CTRL_N'): self.create_new('folder')        
         elif event == unicurses.CTRL('f'):
             pass # find
         
