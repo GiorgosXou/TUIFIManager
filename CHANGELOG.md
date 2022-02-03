@@ -66,8 +66,8 @@
 
 # v.1.2.3
 * ***Fixed:***
-* Issue when renaming a folder
-* ***Improved:**
+* * Issue when renaming a folder
+* ***Improved:***
 * * code *(added: `get_profile()`)*
 * ***Extensions:*** 
 * * ***Added:***
