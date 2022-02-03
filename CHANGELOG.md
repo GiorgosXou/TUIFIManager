@@ -63,3 +63,16 @@
 * * * * `vb`
 * ***Changed:***
 * * `is_on_reaname_mode` to `escape_event_consumed` *[(name inspired by java)](https://docs.oracle.com/javase/7/docs/api/java/awt/event/InputEvent.html#consume())*
+
+# v.1.2.3
+* ***Fixed:***
+* Issue when renaming a folder
+* ***Improved:**
+* * code *(added: `get_profile()`)*
+* ***Extensions:*** 
+* * ***Added:***
+* * * `h`, `fs`, `html`, `jar`
+* * ***Improved:***
+* * * `c`, `cpp`, `psd`
+* *  ***Fixed:***
+* * * [`.ogv`](https://github.com/GiorgosXou/TUIFIManager/issues/9) icon

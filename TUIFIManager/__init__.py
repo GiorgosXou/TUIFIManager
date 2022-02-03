@@ -1,4 +1,5 @@
 #TODO: I NEED TO ADD GETTERS AND SETTERS FOR Y AND X BECAUSE THEY NEED unicurses.touchwin(self.parent.win)
+#TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS) 
 
 from           glob import glob
 from           time import time
@@ -126,6 +127,19 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     
     #def get_TUIFIProfile_by_key(self, key): # https://stackoverflow.com/a/2974082/11465149       
         #return next((v for k, v in TUIFIProfiles.items() if (key == k) or (isinstance(k,tuple) and key in k)),FILE_profile)
+        
+    
+    def get_profile(self, file_directory):
+        if os.path.isdir(file_directory):
+            temp_profile = TUIFIProfiles.get("empty_folder")
+            for suffix in self.suffixes:
+                if not len(glob(file_directory + sep + suffix)) == 0:
+                    temp_profile = TUIFIProfiles.get('folder')
+                    break
+        else:
+            file_extension = os.path.splitext(file_directory)[1]
+            temp_profile   = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) # ..[-1] = extension  
+        return temp_profile
     
     
     def load_files(self, directory, suffixes=None, sort_by=None):  # DON'T load and then don't show :P
@@ -144,22 +158,11 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             
         max_h, pCOLS, count, y, x = 0, self.visibleW, 0, PADDING_TOP, PADDING_LEFT 
         for f in glob_files:
-            is_link  = os.path.islink(f)
-            filename = f.split(sep)[-1]
-              
-            if os.path.isdir(f):
-                temp_profile = TUIFIProfiles.get("empty_folder")
-                for suffix in self.suffixes:
-                    if not len(glob(f + sep + suffix)) == 0:
-                        temp_profile = TUIFIProfiles.get('folder')
-                        break
-            else:
-                file_extension = os.path.splitext(filename)[1]
-                temp_profile = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) # ..[-1] = extension                                                    
-                
-            file_ = TUIFile(filename,y,x,temp_profile,is_link=is_link)
+            is_link      = os.path.islink(f)
+            filename     = f.split(sep)[-1]
+            file_        = TUIFile(filename, y, x, self.get_profile(f), is_link=is_link)
+            tempX        = (PADDING_LEFT + file_.profile.width + PADDING_RIGHT)
             self.files.append(file_)
-            tempX = (PADDING_LEFT + file_.profile.width + PADDING_RIGHT)
             
             if x > pCOLS-tempX + PADDING_RIGHT - self.X:
                 x  = PADDING_LEFT
@@ -509,12 +512,10 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             self.__temp_i                       = 0
             self.__change_escape_event_consumed = True
             new_path_name                       = self.directory + sep + self.__temp_name
-            if not event == 27 and not self.__temp_name.strip() == '' and not os.path.exists(new_path_name):
-                file_extension = os.path.splitext(self.__temp_name)[1]
-                temp_profile = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) 
-                os.rename(self.directory + sep + self.__clicked_file.name  , new_path_name)        
+            if not event == 27 and not self.__temp_name.strip() == '' and not os.path.exists(new_path_name):  
+                os.rename(self.directory + sep + self.__clicked_file.name, new_path_name)        
                 self.__clicked_file.name = self.__temp_name
-                self.__clicked_file.profile = temp_profile
+                self.__clicked_file.profile = self.get_profile(new_path_name)
                 self.resort()
                 self.scroll_to_file(self.__clicked_file, True)
             else:

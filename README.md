@@ -13,7 +13,7 @@ pip3 install TUIFIManager --upgrade
 or just ^^^ if it works for you. *(eg. on termux?)*
 
 ## Usage
-Run `tuifi` in your terminal to use it or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
+Run `tuifi` in your terminal to use it as is or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
 ```
 from TUIFIManager import *
 ```

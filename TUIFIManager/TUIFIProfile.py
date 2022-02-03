@@ -1,3 +1,7 @@
+from unicurses import OPERATING_SYSTEM
+
+
+
 class TUIFIProfile: #█┇▓┃▒┃░┃ 
     """
     Profile/Icon/Type
@@ -13,6 +17,7 @@ class TUIFIProfile: #█┇▓┃▒┃░┃
 
 
 
+DEFAULT_OPENER       = 'start' if 'Windows' else 'open' if 'Darwin' else 'xdg-open'  # meh..
 DEFAULT_EDITOR       = 'vim'
 DEFAULT_UNCOMPRESSOR = 'vim'
 
@@ -35,16 +40,22 @@ TUIFIProfiles = {
         ' ┃┋┇┃┃┇┋┃ \n'
         ' ┗━━━━━━┛ ' 
     ),2, DEFAULT_EDITOR),
+    '.h':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┇ █▂▂█ ┃ \n'  
+        ' ┃ █▔▔█ ┃ \n'
+        ' ┗━━━━━━┛ ' 
+    ),2, DEFAULT_EDITOR),
     '.c':TUIFIProfile((
         ' ┏━━━━━━┓ \n'
         ' ┇ █▀▀▀ ┃ \n'  
-        ' ┃ █▃▃▃ ┃ \n'
+        ' ┃ █▄▄▄ ┃ \n'
         ' ┗━━━━━━┛ ' 
     ),2, DEFAULT_EDITOR),
     '.cpp':TUIFIProfile((
         ' ┏━━━━++┓ \n'
         ' ┇ █▀▀▀ ┃ \n'  
-        ' ┃ █▃▃▃ ┃ \n'
+        ' ┃ █▄▄▄ ┃ \n'
         ' ┗━━━━━━┛ ' 
     ),2, DEFAULT_EDITOR),
     '.js':TUIFIProfile(( 
@@ -52,6 +63,12 @@ TUIFIProfiles = {
         'JS▔█▔ █▃▃ \n'  
         ' ▃ █  ▔▔█ \n'
         ' ▀▀▀  ▀▀▀ '
+    ),2, DEFAULT_EDITOR),
+    '.html':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┇ HTML ┃ \n'  
+        ' ┃ </ > ┃ \n'
+        ' ╰━━━━━━╯ ' 
     ),2, DEFAULT_EDITOR),
     '.vb':TUIFIProfile(( 
         ' █ █ █▀▆  \n'
@@ -77,12 +94,24 @@ TUIFIProfiles = {
         ' ▗▃▃▃▃▃▃▖ \n'
         '  ▔▔▔▔▔▔  '                         
     ),3, DEFAULT_EDITOR),
+    '.jar':TUIFIProfile(( 
+        '    Šƨ    \n'
+        '  ⊏█▇▇█   \n'  
+        ' ▗▃▃▃▃▃▃▖ \n'
+        '  ▔▔▔▔▔▔  '                         
+    ),1, DEFAULT_EDITOR),
     '.cs':TUIFIProfile(( 
         '▃▃▃▃  ▃ ▃ \n'
         '█▔▔▔ ▀█▀█▀\n'  
         '█▃▃▃ ▀█▀█▀\n'
         '▔▔▔▔      '
     ),5, DEFAULT_EDITOR),
+    '.fs':TUIFIProfile(( 
+        '▃▃▃▃  ▃ ▃ \n'
+        '█▃▃  ▀█▀█▀\n'  
+        '█    ▀█▀█▀\n'
+        '▔         '
+    ),4, DEFAULT_EDITOR),
     '.go':TUIFIProfile(( 
         '▄▄▄▄ ▄▄▄▄-\n'
         '█ ▄▄ █ ▒█/\n'  
@@ -230,7 +259,7 @@ TUIFIProfiles = {
     ),2),
     '.ogv':TUIFIProfile((
         ' ┏┳┳┳┳┳┳┓ \n'
-        ' ┇OGG∴∵◖┇ \n'
+        ' ┇OGV∴∵◖┇ \n'
         ' ┇_░▃_▓▆┇ \n'
         ' ┗┻┻┻┻┻┻┛ '
     ),2),
@@ -332,8 +361,8 @@ TUIFIProfiles = {
     ),8),
     '.psd':TUIFIProfile((
         ' ╭▃▃▃ ▃▃╮ \n'
-        ' ┃█ █ █▃┃ \n'
-        ' ┃█▔▔ ▃█┃ \n'
+        ' ┃█▂█ █▂┃ \n'
+        ' ┃█   ▃█┃ \n'
         ' ┗━PSD━━┛ '
     ),4),
     '.mdf':TUIFIProfile((
