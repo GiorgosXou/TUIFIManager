@@ -1,5 +1,6 @@
 
 
+
 # TUIFI Manager
 A cross-platform terminal-based file manager *(and component)*, meant to be used with a [Uni-Curses](https://github.com/unicurses/unicurses) project or as is. This project is mainly an attempt to get more attention to the [Uni-Curses](https://github.com/unicurses/unicurses) project.
 
@@ -68,6 +69,18 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 |`CTRL + UP`  | Same as `CTRL + V`, Pastes the Copied or Cuted files                           |
 |`END`        | Deletes selected files                                                         |
 
-# Outro 
-### Documentation and other things are coming ...  
+# Documentation
+<sub>Work in progress 🛠️🏗 ...</sub>
+## Customization 
+* How do I choose which program to use for opening files?
+> navigate to `python -c "import TUIFIManager;print(TUIFIManager.__path__)"` and add `xdg-open` or change `DEFAULT_EDITOR` ,by editing `TUIFIProfile.py`.
+
+* How do I toggle hidden files/folders?
+> Navigate to `__main__.py` and specify `suffixes=['*','.*']` for hidden files.
+
+<sub>[^Source](https://www.reddit.com/r/termux/comments/rsmdmc/comment/hu7t88g/?utm_source=share&utm_medium=web2x&context=3)</sub>
+
+# Help
+Any Idea with this issue https://github.com/unicurses/unicurses/issues/21 ?
+
 [stackedit.io](https://stackedit.io/app) has been used for the editing of this MD file

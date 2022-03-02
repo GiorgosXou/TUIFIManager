@@ -82,6 +82,18 @@ TUIFIProfiles = {
         '▀▃▀ █▃▀ ▃█\n'
         '          '                         
     ),4, DEFAULT_EDITOR),
+    '.md':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┃█▅▂▅█┇┇ \n'  
+        ' ┃█▔▀▔█v┃ \n'
+        ' ┗━━━━━━┛ ' 
+    ),4, DEFAULT_EDITOR),
+    '.json':TUIFIProfile((
+        ' ┏━━━━┓━┓ \n'
+        ' ┃┏┇┏┏┓┓┃ \n'
+        ' ┃┇┛JSON┃ \n'
+        ' ┗━━━━┛━┛ '
+    ),1, DEFAULT_EDITOR),
     '.lua':TUIFIProfile(( 
         '▃  ▃ ▃ ▃▃▃\n'
         '█  █ █ █▃█\n'  
@@ -297,43 +309,43 @@ TUIFIProfiles = {
         ' ┏━━WEBP╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.tiff':TUIFIProfile(( 
         ' ┏━━TIFF╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.tif':TUIFIProfile(( 
         ' ┏━━TIFF╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.tga':TUIFIProfile(( 
         ' ┏━TARGA╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.heif':TUIFIProfile(( 
         ' ┏━━HEIF╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.heifs':TUIFIProfile(( 
         ' ┏━━HEIF╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.heic':TUIFIProfile(( 
         ' ┏━━HEIC╮ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
-        ' ┗━━━━━━┛ '
+        ' ╰━━━━━━┛ '
     ),2),
     '.mp3':TUIFIProfile(( 
         ' ┏┓━━━━┏┓ \n'

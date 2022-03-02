@@ -5,6 +5,8 @@ dtest_*.py
 files.txt
 # C extensions
 *.so
+potential_icons.txt
+notes.md
 
 # Distribution / packaging
 .Python

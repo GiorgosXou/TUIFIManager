@@ -76,3 +76,13 @@
 * * * `c`, `cpp`, `psd`
 * *  ***Fixed:***
 * * * [`.ogv`](https://github.com/GiorgosXou/TUIFIManager/issues/9) icon
+
+# v.1.2.5
+* ***Changed:***
+* * Now hidden files are visible by default `suffixes=['*','.*']`
+* ***Fixed:***
+* * [Multiple instances when opening and closing a file](https://github.com/GiorgosXou/TUIFIManager/issues/10) Thanks to [this](https://github.com/michael-lazar/rtv/blob/b3d5bf16a70dba685e05db35308cc8a6d2b7f7aa/rtv/terminal.py#L164)
+* ***Extensions:***
+* Improved\Fixed typo in the corner of image-extensions
+* * ***Added:***
+* * * `json`, `md`

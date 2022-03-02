@@ -1,6 +1,7 @@
 #TODO: I NEED TO ADD GETTERS AND SETTERS FOR Y AND X BECAUSE THEY NEED unicurses.touchwin(self.parent.win)
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS) 
 
+from     contextlib import contextmanager
 from           glob import glob
 from           time import time
 from             os import  sep
@@ -15,12 +16,12 @@ import          sys
 import           os
 
 
-
 PADDING_LEFT   = 2
 PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
+STTY_EXISTS = shutil.which('stty')
 HOME_DIR  = os.getenv('UserProfile') if unicurses.OPERATING_SYSTEM == 'Windows' else os.getenv('HOME')
 IS_TERMUX = True if 'com.termux' in HOME_DIR else False
 
@@ -30,7 +31,7 @@ DOWN =  1
 
 
 def stty_a(key=None):  # whatever [...] 
-    if shutil.which('stty'):
+    if STTY_EXISTS:
         if key:
             for sig in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';'):
                 if sig.endswith(key):
@@ -241,6 +242,18 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             self.draw()
     
     
+    @contextmanager
+    def suspend(self):
+        """
+        Suspend curses in order to open another subprocess in the terminal.
+        """
+        try:
+            unicurses.endwin()
+            yield
+        finally:
+            unicurses.doupdate()
+    
+    
     def open(self, directory, suffixes=None, sort_by=None):
         """
         `open()` is `load_files()` + `draw()`
@@ -252,10 +265,17 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         if not os.path.isdir(directory): 
             open_with = TUIFIProfiles.get(os.path.splitext(directory)[1],DEFAULT_PROFILE).open_with
             if open_with:
-                proc = subprocess.Popen([open_with, directory])
-                proc.wait()
-                subprocess.call(['tuifi', self.directory])  # sys.executable, __file__
-            #subprocess.call(['micro', directory])   
+                with self.suspend():
+                    os.system('clear')
+                    proc = subprocess.Popen([open_with, directory])
+                    proc.wait()
+                
+                #if STTY_EXISTS:  # Meh..
+                #    os.system('stty sane')
+                #os.execl(sys.argv[0], sys.argv[0], self.directory)  # Meeeeeeeh
+                
+                #subprocess.call(['tuifi', self.directory])  # sys.executable, __file__
+                #subprocess.call(['micro', directory])   
             return None
 
         self.__clicked_file          = None
@@ -367,6 +387,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         'CTRL_UP'               : 'kUP5'                                 ,
         'CTRL_LEFT'             : 'kLFT5'                                ,
         'ALT_DOWN'              : 'kDN3'                                 ,
+        #'ALT_LEFT'              : 'kLFT3'                                ,
         'KEY_F5'                : unicurses.KEY_F(5)                     ,
         'CTRL_R'                : unicurses.CTRL('R')                    ,
         'CTRL_X'                : unicurses.CTRL('X')                    ,  
@@ -385,7 +406,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         elif os.path.exists(file) and not file.endswith(sep + '..'): # "and not .." whatever
             shutil.rmtree(file)    
         self.__count_selected -= 1
-            
+                       
     
     def scroll_to_file(self, tuifile, select=False, deselect=False):
         if select:
@@ -786,6 +807,6 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     self.is_on_termux_select_mode = False
                 self.delete()
         #else:
-        #    unicurses.waddstr(self.pad, unicurses.keyname(event))
-        
-        #TODO: return event\action or none if any performed 
+            #unicurses.waddstr(self.pad, unicurses.keyname(event))
+            
+        #TODO: return event\action or none if any performed
