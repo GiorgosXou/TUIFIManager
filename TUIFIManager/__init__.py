@@ -362,7 +362,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     __temp__copied_files       = [] 
     __temp_dir_of_copied_files = ''
         
-    events = { # Disable or replace Events if you want (with 0x11111111? and None for CTRL(x)? i think) | UPDATE: lol wtf i did, i could just used them instead of if-elif pointing to functions but ...
+    events = { # Disable or replace Events if you want (with 0x11111111? and None for CTRL(x)? i think) | UPDATE: lol wtf i did, i could just used them instead of if-elif pointing to functions but ... | lol i said the same thing on an UPDATE comment
         'BUTTON1_DOUBLE_CLICKED': unicurses.BUTTON1_DOUBLE_CLICKED       ,  # Temp because https://github.com/wmcbrine/PDCurses/issues/130 
         'KEY_MOUSE'             : unicurses.KEY_MOUSE                    ,
         'BUTTON4_PRESSED'       : unicurses.BUTTON4_PRESSED              ,
@@ -483,8 +483,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 temp_i = self.__index_of_clicked_file - 1
                 self.reload()
                 self.__index_of_clicked_file = temp_i
-                self.__clicked_file = self.files[temp_i]
-                self.__pre_clicked_file = None # hmm.. sus?
+                self.__clicked_file          = self.files[temp_i]
+                self.__pre_clicked_file      = None # hmm.. sus?
                 self.select(self.__clicked_file)
         else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
             if self.__clicked_file:
@@ -498,8 +498,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                     if self.__count_selected == 0:
                         self.reload()
                         self.__index_of_clicked_file = temp_i
-                        self.__clicked_file = self.files[temp_i]
-                        self.__pre_clicked_file = None # hmm.. sus
+                        self.__clicked_file          = self.files[temp_i]
+                        self.__pre_clicked_file      = None # hmm.. sus
                         self.select(self.__clicked_file)
                         break
    
@@ -535,7 +535,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             new_path_name                       = self.directory + sep + self.__temp_name
             if not event == 27 and not self.__temp_name.strip() == '' and not os.path.exists(new_path_name):  
                 os.rename(self.directory + sep + self.__clicked_file.name, new_path_name)        
-                self.__clicked_file.name = self.__temp_name
+                self.__clicked_file.name    = self.__temp_name
                 self.__clicked_file.profile = self.get_profile(new_path_name)
                 self.resort()
                 self.scroll_to_file(self.__clicked_file, True)
@@ -584,7 +584,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         elif action == 'Reload'    : self.reload()
             
                             
-    def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD
+    def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD  | UPDATE: WHAT HAVE I DONE, WHY SO MANY IF AND NOT JSUT A DIRCT WITH FUNCTIONS
         if self.escape_event_consumed == True: # REDIRECT ALL KEYBOARD EVENTS 
             if not self.__change_escape_event_consumed: 
                 self.handle_rename_events(event)
@@ -673,15 +673,15 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 if self.anchor.get('top'):
                     self.visibleH += (new_lines - self.parent.lines)
                 else:
-                    deltaY = (new_lines - self.parent.lines)
-                    self.Y += deltaY
-                    self.visibleH += deltaY 
+                    deltaY         = (new_lines - self.parent.lines)
+                    self.Y        += deltaY
+                    self.visibleH += deltaY
             if self.anchor.get('right'):
                 if self.anchor.get('left'):
                     self.visibleW += (new_columns - self.parent.columns)
                 else:
-                    deltaX = (new_columns - self.parent.columns)
-                    self.X += deltaX
+                    deltaX         = (new_columns - self.parent.columns)
+                    self.X        += deltaX
                     self.visibleW += deltaX
                
             #if fileManager.visibleY > unicurses.getmaxy(fileManager.pad) - fileManager.visibleH + fileManager.Y:
@@ -706,10 +706,10 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 for i in range(self.__index_of_clicked_file,0,-1):
                     if (self.files[i-1].y < self.files[self.__index_of_clicked_file].y) and (self.files[i-1].x <= self.files[self.__index_of_clicked_file].x):
                         self.deselect()
-                        self.__index_of_clicked_file = i -1
-                        self.__clicked_file = self.files[i-1]
+                        self.__index_of_clicked_file   = i -1
+                        self.__clicked_file            = self.files[i-1]
                         self.__mouse_btn1_pressed_file = self.__clicked_file
-                        self.__pre_clicked_file = self.__clicked_file
+                        self.__pre_clicked_file        = self.__clicked_file
                         self.scroll_to_file(self.__clicked_file, True)
                         break
             else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
@@ -722,10 +722,10 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 for i in range(self.__index_of_clicked_file,len(self.files)-1):
                     if (self.files[i+1].y > self.files[self.__index_of_clicked_file].y) and (self.files[i+1].x >= self.files[self.__index_of_clicked_file].x):
                         self.deselect()
-                        self.__index_of_clicked_file = i +1
-                        self.__clicked_file = self.files[i+1]
+                        self.__index_of_clicked_file   = i +1
+                        self.__clicked_file            = self.files[i+1]
                         self.__mouse_btn1_pressed_file = self.__clicked_file
-                        self.__pre_clicked_file = self.__clicked_file
+                        self.__pre_clicked_file        = self.__clicked_file
                         self.scroll_to_file(self.__clicked_file, True)
                         break
             else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
@@ -737,10 +737,10 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             if not self.__index_of_clicked_file == len(self.files) - 1:
                 if not self.__index_of_clicked_file == None:
                     self.deselect()
-                    self.__index_of_clicked_file = self.__index_of_clicked_file +1
-                    self.__clicked_file = self.files[self.__index_of_clicked_file]
+                    self.__index_of_clicked_file   = self.__index_of_clicked_file +1
+                    self.__clicked_file            = self.files[self.__index_of_clicked_file]
                     self.__mouse_btn1_pressed_file = self.__clicked_file
-                    self.__pre_clicked_file = self.__clicked_file
+                    self.__pre_clicked_file        = self.__clicked_file
                     self.scroll_to_file(self.__clicked_file, True)
                 else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
                     self.select(self.files[0])
@@ -751,10 +751,10 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             if not self.__index_of_clicked_file == 0:
                 if not self.__index_of_clicked_file == None:
                     self.deselect()
-                    self.__index_of_clicked_file = self.__index_of_clicked_file -1
-                    self.__clicked_file = self.files[self.__index_of_clicked_file]
+                    self.__index_of_clicked_file   = self.__index_of_clicked_file -1
+                    self.__clicked_file            = self.files[self.__index_of_clicked_file]
                     self.__mouse_btn1_pressed_file = self.__clicked_file
-                    self.__pre_clicked_file = self.__clicked_file
+                    self.__pre_clicked_file        = self.__clicked_file
                     self.scroll_to_file(self.__clicked_file, True)
                 else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
                     self.select(self.files[0])
@@ -806,7 +806,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 if self.is_on_termux_select_mode:
                     self.is_on_termux_select_mode = False
                 self.delete()
-        #else:
+        #else: # TODO: SEARCH FOR FILENAME AND DRAW FINDINGS or i can just open the same folder with suffixes by replacing all * with ('*' + str + '*')? lazy way but cool one too xD | search mode when typing
             #unicurses.waddstr(self.pad, unicurses.keyname(event))
             
         #TODO: return event\action or none if any performed

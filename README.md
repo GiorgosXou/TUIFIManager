@@ -2,7 +2,7 @@
 
 
 # TUIFI Manager
-A cross-platform terminal-based file manager *(and component)*, meant to be used with a [Uni-Curses](https://github.com/unicurses/unicurses) project or as is. This project is mainly an attempt to get more attention to the [Uni-Curses](https://github.com/unicurses/unicurses) project.
+A cross-platform terminal-based termux-oriented file manager *(and component)*, meant to be used with a [Uni-Curses](https://github.com/unicurses/unicurses) project or as is. This project is mainly an attempt to get more attention to the [Uni-Curses](https://github.com/unicurses/unicurses) project.
 
 ## Installation
 ```terminal
@@ -15,7 +15,7 @@ or just ^^^ if it works for you. *(eg. on termux?)*
 
 ## Usage
 Run `tuifi` in your terminal to use it as is or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
-```
+```python
 from TUIFIManager import *
 ```
 for more details look into the `__main__.py`
@@ -82,5 +82,3 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 
 # Help
 Any Idea with this issue https://github.com/unicurses/unicurses/issues/21 ?
-
-[stackedit.io](https://stackedit.io/app) has been used for the editing of this MD file
