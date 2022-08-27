@@ -282,7 +282,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             return None
 
         self.is_in_find_mode                = False
-        self.__change_escape_event_consumed = True
+        self.__change_escape_event_consumed = False
+        self.escape_event_consumed          = False
         self.__temp_findname                = ''
         self.__clicked_file          = None
         self.__pre_clicked_file      = None

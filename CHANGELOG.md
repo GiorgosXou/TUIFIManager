@@ -1,3 +1,7 @@
+# v.1.3.2
+* ***Fixed:***
+* * Creation of new file immediately after opening a folder
+ 
 # v.1.3.1
 * ***Fixed:***
 * * Scroll issues and etc. when finding
