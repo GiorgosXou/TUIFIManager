@@ -21,7 +21,7 @@ from TUIFIManager import *
 for more details look into the `__main__.py`
 
 <img src="/Peek.gif">
-https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx 
+<sub>https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx</sub>
 
 ## Features & Shortcuts  
 ### *Current:*
