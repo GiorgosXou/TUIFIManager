@@ -1,3 +1,7 @@
+# v.1.3.1
+* ***Fixed:***
+* * Scroll issues and etc. when finding
+
 # v.1.3.0
 * ***Added:***
 * * Searching now is possible *(with a tiny issue when deleting files)*

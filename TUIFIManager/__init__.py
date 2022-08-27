@@ -281,6 +281,9 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 #subprocess.call(['micro', directory])   
             return None
 
+        self.is_in_find_mode                = False
+        self.__change_escape_event_consumed = True
+        self.__temp_findname                = ''
         self.__clicked_file          = None
         self.__pre_clicked_file      = None
         self.__index_of_clicked_file = None
@@ -519,6 +522,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         self.draw() # i might want to scroll_to_file after that here too? or nah..
         
    
+    __mouse_keys = (events.get('BUTTON1_DOUBLE_CLICKED'),events.get('KEY_MOUSE'),events.get('BUTTON4_PRESSED'),events.get('BUTTON5_PRESSED'),events.get('BUTTON1_PRESSED'),events.get('BUTTON1_RELEASED'),events.get('BUTTON1_CLICKED'),events.get('BUTTON3_PRESSED'),events.get('BUTTON3_RELEASED' ))
     __arrow_keys = (events.get('KEY_UP'), events.get('KEY_DOWN'), events.get('KEY_LEFT'), events.get('KEY_RIGHT') )
     is_in_find_mode = False
     __temp_findname = ''
@@ -538,11 +542,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             self.__index_of_clicked_file        = 0
             self.__clicked_file                 = self.files[0]
             return False
-        elif event in self.events.get('KEY_ENTER'):
-            if os.path.isdir(self.directory + sep + self.__clicked_file.name): # repeating fucking code but nvm right now
-                self.is_in_find_mode                = False
-                self.__change_escape_event_consumed = True
-                self.__temp_findname = ''
+        elif event in self.events.get('KEY_ENTER') or event == unicurses.KEY_RESIZE or event in self.__mouse_keys or event == self.events.get('KEY_HOME'): # Ignore this shit :P
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
