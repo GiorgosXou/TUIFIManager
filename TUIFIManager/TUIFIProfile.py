@@ -94,6 +94,18 @@ TUIFIProfiles = { # TODO: open zip rar and etc. files on __init__.py as if they 
         '▀▃▀ █▃▀ ▃█\n'
         '          '                         
     ),4, DEFAULT_EDITOR),
+    '.apk':TUIFIProfile(( 
+        ' ▃  ▃▃ ▃ ▃\n'
+        '█▃█ ██ █▃▀\n'  
+        '█ █ █  █ █\n'
+        '          '                         
+    ),5, DEFAULT_OPENER),
+    '.vim':TUIFIProfile(( 
+        ' ┏━━━━━┳┓ \n'
+        ' ┃VI━━━┫┇ \n'  
+        ' ┃█▀▅▀▄┃┃ \n'
+        ' ╰━━━━━┻┛ '                         
+    ),5, DEFAULT_EDITOR),
     '.md':TUIFIProfile((
         ' ┏━━━━━━┓ \n'
         ' ┃█▀▅▀▄/┇ \n'  
@@ -423,7 +435,29 @@ TUIFIProfiles = { # TODO: open zip rar and etc. files on __init__.py as if they 
         '  C                                                            j \n' 
         '   L                                                          ]  \n'
         '                                                                 '     
-    ),2)     
+    ),2),
+    '.tuifi3':TUIFIProfile((
+        '              .^        \n'
+        '            ~GB^        \n'
+        '          7B&G.         \n'
+        '        !B&&J   oOo     \n'
+        '      :G&&#~    oOo     \n'
+        '     ?&&&G.             \n'
+        '   :G&&&B7:  ^^^^^^^    \n'
+        '  7#&&&&&&#7J&#&&&##G^  \n'
+        '.5&&&G!!Y######J77P###? \n'
+        'J&&##:   ^G##G:   .BBB#7\n'
+        ' ?#&#B^    ??    ^GBBB7 \n'
+        '  :G&##J        7BB#G:  \n'
+        '    Y##&~     .5#BBJ    \n'
+        '     ~BP.    ^GBBG^     \n'
+        '  oOo       ?BBBJ       \n'
+        '  oOo     .P#B5:        \n'
+        '         ~B#P^          \n'
+        '        JBY^            \n'
+        '       .^.              \n'
+        '                        '
+    ),3)
 }
 DEFAULT_PROFILE   = TUIFIProfiles['file'] 
 LINK_SYMBOL       = '↩'  # Potential:⤶ ⤾ ↲ ⎌ ☍ ⧉ 

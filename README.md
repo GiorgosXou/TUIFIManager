@@ -37,7 +37,6 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 * Undo\Redo
 * tool-tips
 * Scroll bar
-* Search bar
 * Information bar <!-- possibly i'll use mvwin_wch which i need to implement on unicurses-->
 * Dim-Effect on cutted Files
 
@@ -51,7 +50,9 @@ https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx
 |`KEY_F5`       | Reload\Refresh current directory              |
 |`CTRL + V`     | Pastes the Copied or Cuted files              |
 |`DEL`          | Deletes the selected files                    |
+|`CTRL + F`     | Find Files *(if not auto_find_on_typing)*     |
 |`CTRL + C`     | Copies the selected files                     |
+|`CTRL + K`     | Copies the selected files                     |
 |`CTRL + X`     | Cuts the selected files                       |
 |`CTRL + R`     | Rename selected file                          | 
 |`CTRL + N`     | Create new folder                             |

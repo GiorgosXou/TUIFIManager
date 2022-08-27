@@ -2,7 +2,7 @@
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS) 
 
 from     contextlib import contextmanager
-from           glob import glob
+from        pathlib import Path
 from           time import time
 from             os import  sep
 from       .TUIMenu import    * 
@@ -22,8 +22,9 @@ PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
 STTY_EXISTS = shutil.which('stty')
-HOME_DIR  = os.getenv('UserProfile') if unicurses.OPERATING_SYSTEM == 'Windows' else os.getenv('HOME')
-IS_TERMUX = True if 'com.termux' in HOME_DIR else False
+IS_WINDOWS  = True if 'Windows' == unicurses.OPERATING_SYSTEM else False
+HOME_DIR    = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
+IS_TERMUX   = True if 'com.termux' in HOME_DIR else False
 
 UP   = -1
 DOWN =  1
@@ -55,7 +56,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     suffixes   (list  , optional): "Path expansion rules (file patterns to be found). Defaults to ['*'].
     sort_by    ([type], optional): [Not implemented yet]. Defaults to None.
     draw_files (bool  , optional): "draws" files the moment of initialization (must unicurses.prefresh to show). Defaults to True.
-    termux_touch_only (bool, optional)  : if true: full touch, no mouse support else: full mouse half touch support. Defaults to True.
+    termux_touch_only   (bool, optional): if true: full touch, no mouse support else: full mouse half touch support. Defaults to True.
+    auto_find_on_typing (bool, optional): if true: when starting to type, automatically search else only if CTRL_F
     """  
     
     class struct_TUIFIparent:
@@ -69,22 +71,23 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     __count_selected   = 0
     double_click_DELAY = 0.4 
     
-    def __init__(self, pad, y=0, x=0, anchor_top=False, anchor_left=False, anchor_bottom=False, anchor_right=False, directory=HOME_DIR, suffixes=['*'], sort_by=None, parent=None, draw_files=True, termux_touch_only=True):
-        self.suffixes          = suffixes
-        self.draw_files        = draw_files
-        self.pad               = pad
-        self.visibleW          = unicurses.getmaxx(pad)
-        self.visibleH          = unicurses.getmaxy(pad)
-        self.Y                 = y
-        self.maxY              = None
-        self.minY              = None
-        self.X                 = x
-        self.maxX              = None
-        self.minX              = None
-        self.visibleY          = 0  # Y at the visible range of pad
-        self.prepl             = 0 ## i thk this need delete
-        self.termux_touch_only = termux_touch_only
-        self.menu              = TUIMenu()
+    def __init__(self, pad, y=0, x=0, anchor_top=False, anchor_left=False, anchor_bottom=False, anchor_right=False, directory=HOME_DIR, suffixes=['*'], sort_by=None, parent=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True):
+        self.suffixes            = suffixes
+        self.draw_files          = draw_files
+        self.pad                 = pad
+        self.visibleW            = unicurses.getmaxx(pad)
+        self.visibleH            = unicurses.getmaxy(pad)
+        self.Y                   = y
+        self.maxY                = None
+        self.minY                = None
+        self.X                   = x
+        self.maxX                = None
+        self.minX                = None
+        self.visibleY            = 0  # Y at the visible range of pad
+        self.prepl               = 0 ## i thk this need delete
+        self.termux_touch_only   = termux_touch_only
+        self.auto_find_on_typing = auto_find_on_typing
+        self.menu                = TUIMenu()
         if parent:
             self.parent        = self.struct_TUIFIparent(parent)  
         else:
@@ -134,7 +137,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         if os.path.isdir(file_directory):
             temp_profile = TUIFIProfiles.get("empty_folder")
             for suffix in self.suffixes:
-                if not len(glob(file_directory + sep + suffix)) == 0:
+                if len(list(Path(file_directory + sep).glob(suffix))) != 0:
                     temp_profile = TUIFIProfiles.get('folder')
                     break
         else:
@@ -147,18 +150,19 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         directory = os.path.realpath(os.path.normpath(directory))
         if not os.path.isdir(directory):
             raise Exception('DirectoryNotFound: "' + directory + '"') 
-        if not suffixes == None: 
-            self.suffixes = suffixes
+        if suffixes == None: 
+            suffixes = self.suffixes 
         
         self.directory = directory
         self.files = []
         glob_files = []
         glob_files.append(directory + sep + '..')
-        for suffix in self.suffixes:
-            glob_files.extend(glob(directory + sep + suffix))
-            
+        for suffix in suffixes:
+            glob_files.extend(Path(directory + sep).glob(suffix))
+        
         max_h, pCOLS, count, y, x = 0, self.visibleW, 0, PADDING_TOP, PADDING_LEFT 
         for f in glob_files:
+            f            = str(f)
             is_link      = os.path.islink(f)
             filename     = f.split(sep)[-1]
             file_        = TUIFile(filename, y, x, self.get_profile(f), is_link=is_link)
@@ -266,8 +270,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
             open_with = TUIFIProfiles.get(os.path.splitext(directory)[1],DEFAULT_PROFILE).open_with
             if open_with:
                 with self.suspend():
-                    os.system('clear')
-                    proc = subprocess.Popen([open_with, directory])
+                    proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
                     proc.wait()
                 
                 #if STTY_EXISTS:  # Meh..
@@ -392,9 +395,11 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         'CTRL_R'                : unicurses.CTRL('R')                    ,
         'CTRL_X'                : unicurses.CTRL('X')                    ,  
         'CTRL_C'                : unicurses.CTRL('C')                    ,  
+        'CTRL_K'                : unicurses.CTRL('K')                    ,  
         'CTRL_V'                : unicurses.CTRL('V')                    ,  
         'CTRL_N'                : unicurses.CTRL('N')                    ,  
         'CTRL_W'                : unicurses.CTRL('W')                    , 
+        'CTRL_F'                : unicurses.CTRL('F')                    , 
     }  
     def __delete_file(self,file):
         if isinstance(file, TUIFile):
@@ -409,6 +414,8 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                        
     
     def scroll_to_file(self, tuifile, select=False, deselect=False):
+        if deselect:
+            self.deselect()
         if select:
             self.select(tuifile)
         if tuifile.y - PADDING_TOP < self.visibleY :
@@ -504,31 +511,91 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                         break
    
    
+    def clear_find_results(self):
+        self.is_in_find_mode                = False
+        self.__change_escape_event_consumed = True
+        self.__temp_findname                = ''
+        self.load_files(self.directory)
+        self.draw() # i might want to scroll_to_file after that here too? or nah..
+        
+   
+    __arrow_keys = (events.get('KEY_UP'), events.get('KEY_DOWN'), events.get('KEY_LEFT'), events.get('KEY_RIGHT') )
+    is_in_find_mode = False
+    __temp_findname = ''
+    def handle_find_events(self,event): # TODO: FIX SUFFIXES WHEN DELETING, find_file
+        if event == 27: 
+            self.clear_find_results()
+            return True 
+        elif event in self.events.get('KEY_BACKSPACE'):
+            if len(self.__temp_findname) > 1:
+                self.__temp_findname = self.__temp_findname[:-1]
+            else:
+                self.clear_find_results()
+                return True
+        elif event in self.__arrow_keys:
+            self.__change_escape_event_consumed = True
+            self.is_in_find_mode                = False
+            self.__index_of_clicked_file        = 0
+            self.__clicked_file                 = self.files[0]
+            return False
+        elif event in self.events.get('KEY_ENTER'):
+            if os.path.isdir(self.directory + sep + self.__clicked_file.name): # repeating fucking code but nvm right now
+                self.is_in_find_mode                = False
+                self.__change_escape_event_consumed = True
+                self.__temp_findname = ''
+            return False
+        else:
+            self.__temp_findname += unicurses.RCCHAR(event)
+        self.find_file(self.__temp_findname)
+        if len(self.files) > 1:
+            tmp_file = self.files[1]  
+            self.__index_of_clicked_file        = 1
+            self.__clicked_file                 = self.files[1]
+        else:
+            tmp_file = self.files[0]
+            self.__index_of_clicked_file        = 0
+            self.__clicked_file                 = self.files[0]
+        self.scroll_to_file(tmp_file, True, True)    
+        return True
+    
+
+    def find_file(self, filename): # meh, slightly computationally expensive but easier to implement, whatever at least it does it's job lol 
+        suffs = []
+        for suf in self.suffixes:
+            suffs.append(suf.replace('*', '*' + filename + '*'))
+        self.load_files(self.directory, suffs) 
+        self.draw()
+
+
+    def find(self):
+        self.is_in_find_mode = True
+        self.escape_event_consumed = True
+        self.__temp_findname = '' # just ot make sure although it might not be need it
+
+
     def rename(self):
         if self.__clicked_file: 
             self.escape_event_consumed = True
             self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE)  # Yeah ok, whatever
             self.__temp_name        = self.__clicked_file.name
             self.__temp_pre_name    = self.__temp_name
+            self.__first_pass       = True
                     
     
     escape_event_consumed          = False
+    __first_pass                   = True
     __change_escape_event_consumed = False  # on second loop 
     __temp_pre_name                = ''
     __temp_name                    = ''
     __temp_i                       = 0
-    __illegal_filename_characters  = ('<', '>', ':',  '/', '\\', '|', '?', '*')
-    def handle_rename_events(self, event):  # At this momment i don't even care about optimizing anything... just kidding, you get the point, no free time
+    __illegal_filename_characters  = ('<', '>', ':',  '/', '\\', '|', '?', '*', '"')
+    def handle_rename_events(self, event):  # At this momment i don't even care about optimizing anything... just kidding, you get the point, no free time | TODO: change event == ... to self.events.get(...)
         if event == unicurses.KEY_LEFT:
             if not self.__temp_i == 0: self.__temp_i -= 1
         elif event == unicurses.KEY_RIGHT:
             if not self.__temp_i == len(self.__temp_name): self.__temp_i += 1
-        elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
-            if not self.__temp_i == 0:
-                self.__temp_i -= 1
-                self.__temp_name = self.__temp_name[0:self.__temp_i] + self.__temp_name[self.__temp_i+1:]
         elif unicurses.RCCHAR(event) in self.__illegal_filename_characters:
-            return
+            return 
         elif event == 27 or event in (unicurses.KEY_ENTER,10):
             self.__temp_i                       = 0
             self.__change_escape_event_consumed = True
@@ -538,14 +605,28 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
                 self.__clicked_file.name    = self.__temp_name
                 self.__clicked_file.profile = self.get_profile(new_path_name)
                 self.resort()
-                self.scroll_to_file(self.__clicked_file, True)
+                self.scroll_to_file(self.__clicked_file, True, True)
             else:
                 self.__temp_name = self.__clicked_file.name
+        elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
+            if not self.__temp_i == 0:
+                self.__temp_i -= 1
+                self.__temp_name = self.__temp_name[0:self.__temp_i] + self.__temp_name[self.__temp_i+1:]                
+            elif self.__first_pass:
+                self.__temp_name = ''    
+        elif event == unicurses.KEY_HOME:
+            self.__temp_i = 0
+        elif event == unicurses.KEY_END:
+            self.__temp_i = len(self.__temp_name)
+        elif self.__first_pass:
+            self.__temp_name = unicurses.RCCHAR(event)
+            self.__temp_i += 1  
         else:
             self.__temp_name = self.__temp_name[0:self.__temp_i] + unicurses.RCCHAR(event) + self.__temp_name[self.__temp_i:]
             self.__temp_i += 1  
         self.__clicked_file.draw_name(self.pad,self.__temp_name,self.__temp_pre_name, self.__temp_i)
         self.__temp_pre_name = self.__temp_name
+        self.__first_pass    = False
         #if event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
         #    pass
     
@@ -568,7 +649,7 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         self.__index_of_clicked_file = 1
         self.files.insert(1,self.__clicked_file)
         self.resort()
-        self.scroll_to_file(self.__clicked_file,True)
+        self.scroll_to_file(self.__clicked_file,True,True)
         self.rename()
     
                         
@@ -587,8 +668,12 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD  | UPDATE: WHAT HAVE I DONE, WHY SO MANY IF AND NOT JSUT A DIRCT WITH FUNCTIONS
         if self.escape_event_consumed == True: # REDIRECT ALL KEYBOARD EVENTS 
             if not self.__change_escape_event_consumed: 
-                self.handle_rename_events(event)
-                return
+                if self.is_in_find_mode:
+                    if self.handle_find_events(event): 
+                        return
+                else:
+                    self.handle_rename_events(event) 
+                    return
             else:
                 self.__change_escape_event_consumed = False
                 self.escape_event_consumed = False
@@ -774,39 +859,52 @@ class TUIFIManager:  # TODO: I need to create a TUIWindowManager class where i w
         elif event == self.events.get('KEY_DC'): self.delete()  # TODO: FIX ISSUE WHEN NAVIGATING trough link and deleting | Update i think i fixed it lol
         elif event == self.events.get('KEY_F5'): self.reload()  
         elif event == self.events.get('CTRL_C'): self.copy  ()  # or KEY_IC ? | copy selected files
+        elif event == self.events.get('CTRL_K'): self.copy  () 
         elif event == self.events.get('CTRL_X'): self.cut   ()  
         elif event == self.events.get('CTRL_V'): self.paste ()  # check if path the  same as self.directory maybe?
         elif event == self.events.get('CTRL_W'): self.create_new('file')
         elif event == self.events.get('CTRL_N'): self.create_new('folder')        
-        elif event == unicurses.CTRL('f'):
-            pass # find
-        
+        elif event == self.events.get('CTRL_F'): self.find() # Not tested, but i think it works | to enable find mode and consume escape event
+
         elif unicurses.keyname(event) == self.events.get('ALT_DOWN'): 
             if self.menu.exists:
                 self.menu.delete()
             else:
                 self.menu.create(self.__clicked_file.y,self.__clicked_file.x +1)
 
-        elif IS_TERMUX: # TERMUX ONLY, EASILY ACCESIBLE KEYBINDINGS  
-            if unicurses.keyname(event) == self.events.get('CTRL_DOWN'): # 
-                if self.is_on_termux_select_mode:  # hmm..
-                    self.is_on_termux_select_mode = False
-                    self.copy()
-                else:
-                    self.is_on_termux_select_mode = True 
-            elif unicurses.keyname(event) == self.events.get('CTRL_LEFT'):
-                if self.is_on_termux_select_mode:
-                    self.is_on_termux_select_mode = False
-                    self.cut()
-                else:
-                    self.__is_cut = True
-            elif unicurses.keyname(event) == self.events.get('CTRL_UP'):
-                self.paste()
-            elif event == self.events.get('KEY_END'):
-                if self.is_on_termux_select_mode:
-                    self.is_on_termux_select_mode = False
-                self.delete()
-        #else: # TODO: SEARCH FOR FILENAME AND DRAW FINDINGS or i can just open the same folder with suffixes by replacing all * with ('*' + str + '*')? lazy way but cool one too xD | search mode when typing
+        else:
+            if IS_TERMUX: # TERMUX ONLY, EASILY ACCESIBLE KEYBINDINGS  
+                if unicurses.keyname(event) == self.events.get('CTRL_DOWN'): # 
+                    if self.is_on_termux_select_mode:  # hmm..
+                        self.is_on_termux_select_mode = False
+                        self.copy()
+                        return
+                    else:
+                        self.is_on_termux_select_mode = True 
+                        return
+                elif unicurses.keyname(event) == self.events.get('CTRL_LEFT'):
+                    if self.is_on_termux_select_mode:
+                        self.is_on_termux_select_mode = False
+                        self.cut()
+                        return
+                    else:
+                        self.__is_cut = True
+                        return
+                elif unicurses.keyname(event) == self.events.get('CTRL_UP'):
+                    self.paste()
+                    return
+                elif event == self.events.get('KEY_END'):
+                    if self.is_on_termux_select_mode:
+                        self.is_on_termux_select_mode = False
+                    self.delete()
+                    return
+            
+            # this thing i think it will mess up alot with the customization so i'll itroduce a variable auto_find_on_typing
+            if self.auto_find_on_typing and event != 27:
+                self.find() # to enable find mode and consume escape event
+                self.handle_find_events(event)
+                
+        #else: # TODO: SEARCH FOR FILENAME AND DRAW FINDINGS or i can just open the same folder with suffixes by replacing all * with ('*' + str + '*')? lazy way but cool one too xD | search mode when typing | lol i have an elif IS_TERMUX
             #unicurses.waddstr(self.pad, unicurses.keyname(event))
             
-        #TODO: return event\action or none if any performed
+        #TODO: return event\action or none if any performed 

@@ -1,3 +1,17 @@
+# v.1.3.0
+* ***Added:***
+* * Searching now is possible *(with a tiny issue when deleting files)*
+* * Renaming now deletes the whole underlined name if no movement occurres
+* ***Fixed:***
+* * `HOME`\\`END` keys now work on renaming mode
+* * No more *["Oppsie | re.error"](https://github.com/GiorgosXou/TUIFIManager/issues/13)*
+* * `subprocess.Popen` *["OSError"](https://github.com/GiorgosXou/TUIFIManager/issues/14)*
+* * `DEFAULT_OPENER` [issue 9](https://github.com/GiorgosXou/TUIFIManager/issues/9)
+* * Now it doesn't clear everything when open()
+* ***Extensions:*** 
+* * ***Added:***
+* * `apk`, `vim`, `tuifi3`
+
 # v.1.2.6
 * ***Added:***
 * * `DEFAULT_OPENER` [issue 9](https://github.com/GiorgosXou/TUIFIManager/issues/9) but temporarily
