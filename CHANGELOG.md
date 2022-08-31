@@ -1,3 +1,7 @@
+# v.1.3.3
+* ***Fixed:***
+* * TEMPORARILY the issue with double hidden files.
+
 # v.1.3.2
 * ***Fixed:***
 * * Creation of new file immediately after opening a folder

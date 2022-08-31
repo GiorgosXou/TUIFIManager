@@ -13,7 +13,7 @@ if sys.version_info.major < 3:
 
 setup(
     name="TUIFIManager",
-    version="1.3.2",
+    version="1.3.3",
     description="A cross-platform terminal-based termux-oriented file manager (and component), meant to be used with a Uni-Curses project or as is. This project is mainly an attempt to get more attention to the Uni-Curses project.",
     #long_description=readfile('README.md'),
     author="George Chousos",

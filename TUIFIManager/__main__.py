@@ -36,7 +36,7 @@ def main():
     tLINES,tCOLS       = getmaxyx(stdscr) 
     fileManagerPad     = newpad(tLINES, tCOLS)
     starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
-    fileManager        = TUIFIManager(fileManagerPad,0,0,True,True,True,True,starting_directory,suffixes=['*','.*'])  # Use ['*'] for only non-hidden files 
+    fileManager        = TUIFIManager(fileManagerPad,0,0,True,True,True,True,starting_directory,suffixes=['*']) 
     fileManager.refresh()
 
     # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.escape_event_consumed 
