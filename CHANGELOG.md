@@ -1,3 +1,25 @@
+# v 2.0.0 
+- ***Changed:***
+- - Introduced `TUItilities.py` and `Component`-class into the `TUIFIManager` [...]
+- ***Added:***
+- - [LICENSE](./README.md)
+- - [Vim like motions](https://github.com/GiorgosXou/TUIFIManager/issues/19)
+- - Dim effect on hidden files
+- - Duplicate action on copy paste
+- - Introduced `self.info_label` from `TUItilities.py`
+- - `CTRL+O` open directory with `DEFAULT_WITH` = `DEFAULT_EDITOR`
+- ***Fixed:***
+- - [CTRL+C raises auto-search function](https://github.com/GiorgosXou/TUIFIManager/issues/24)
+- - [Over-lapping files when exiting search mode](https://github.com/GiorgosXou/TUIFIManager/issues/25)
+- - Major issue with dynamic resizing of the pad when used as a component
+- - Permanently, fixed issue with keyname *(TODO: fix decode() inside uni-curses keyname())*
+- - Replaced `cut`ing method 
+- ***Extensions:*** 
+- - ***Added:***
+- - - `pyc`, `ttf`, `otf`, `woff`, `woff2`, `reg`, `gitignore`, `makefile`, `conf`, `config`
+- - ***Improved:***
+- - `ino`, `vb`, `pdf`, `html`, `md`, `bin`, `psd`, tar once
+
 # v.1.3.3
 * ***Fixed:***
 * * TEMPORARILY the issue with double hidden files.

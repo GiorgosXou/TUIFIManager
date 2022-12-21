@@ -13,14 +13,14 @@ if sys.version_info.major < 3:
 
 setup(
     name="TUIFIManager",
-    version="1.3.3",
+    version="2.0.0",
     description="A cross-platform terminal-based termux-oriented file manager (and component), meant to be used with a Uni-Curses project or as is. This project is mainly an attempt to get more attention to the Uni-Curses project.",
     #long_description=readfile('README.md'),
     author="George Chousos",
     author_email="gxousos@gmail.com",
     url="https://github.com/GiorgosXou/TUIFIManager",
     packages=['TUIFIManager'],
-    install_requires=['Uni-Curses>=2.0.4'],
+    install_requires=['Uni-Curses>=2.1.0'],
     entry_points={
         'console_scripts': [
             'tuifi = TUIFIManager.__main__:main'
