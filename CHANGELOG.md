@@ -1,3 +1,7 @@
+# v 2.0.1
+- ***Fixed:***
+- - Issue with `DEFAULT_OPENER`
+
 # v 2.0.0 
 - ***Changed:***
 - - Introduced `TUItilities.py` and `Component`-class into the `TUIFIManager` [...]

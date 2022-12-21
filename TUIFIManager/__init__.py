@@ -250,7 +250,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if isinstance(directory,TUIFile):
             directory = self.directory + sep + directory.name
         if not os.path.isdir(directory) or _with:
-            open_with = TUIFIProfiles.get(os.path.splitext(directory)[1],DEFAULT_PROFILE).open_with if not _with else _with
+            open_with = TUIFIProfiles.get('/'+os.path.splitext(directory)[1][1:],DEFAULT_PROFILE).open_with if not _with else _with
             if open_with:
                 with self.suspend():
                     proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
