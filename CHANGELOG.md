@@ -1,3 +1,7 @@
+# v 2.0.2
+- ***Fixed:***
+- - Forgot to comment the first 3 lines of code in `__main__.py`
+
 # v 2.0.1
 - ***Fixed:***
 - - Issue with `DEFAULT_OPENER`

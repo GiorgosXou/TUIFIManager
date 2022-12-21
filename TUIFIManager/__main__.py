@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys                                               # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
-from os.path import dirname, abspath                     # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149                
-sys.path.insert(0, dirname(dirname(abspath(__file__))))  # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
+# import sys                                               # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
+# from os.path import dirname, abspath                     # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149                
+# sys.path.insert(0, dirname(dirname(abspath(__file__))))  # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
 from TUIFIManager import *
 from unicurses    import *             
              
