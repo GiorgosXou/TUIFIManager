@@ -6,7 +6,7 @@
     <a href="https://github.com/GiorgosXou/TUIFIManager/pulse">
       <img src="https://img.shields.io/github/last-commit/GiorgosXou/TUIFIManager?color=%4dc71f&label=Last%20Commit&logo=github&style=flat-square"/>
     </a>
-    <a href="https://github.com/GiorgosXou/TUIFIManager/LICENSE.md">
+    <a href="https://github.com/GiorgosXou/TUIFIManager/blob/master/LICENSE.md">
       <img src="https://img.shields.io/github/license/GiorgosXou/TUIFIManager?label=License&logo=GNU&style=flat-square"/>
 	</a>
 </p>
