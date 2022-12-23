@@ -1,12 +1,19 @@
-# v 2.0.2
+# v.2.0.4
+- ***Fixed:***
+- - Annoying issue with keyboard movement after searching
+- - Issue with Control keys when in search mode
+- ***Added:**
+- - Extra informations when copy/cut pasting
+
+# v.2.0.2
 - ***Fixed:***
 - - Forgot to comment the first 3 lines of code in `__main__.py`
 
-# v 2.0.1
+# v.2.0.1
 - ***Fixed:***
 - - Issue with `DEFAULT_OPENER`
 
-# v 2.0.0 
+# v.2.0.0 
 - ***Changed:***
 - - Introduced `TUItilities.py` and `Component`-class into the `TUIFIManager` [...]
 - ***Added:***

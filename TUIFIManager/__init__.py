@@ -466,14 +466,22 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         this function is TEMPOTATY and will be REMOVED, 
         it will be pressent until i find a way of drawing/managing cutted files efficiently
         """   
+        if self.__count_selected == 0 or (self.__clicked_file and self.__clicked_file.name == '..') : return
+        size = 0
         self.__temp_dir_of_copied_files = self.directory
-        if self.__count_selected == 1 and self.__clicked_file and not self.__clicked_file.name == '..':                                        
+        if self.__count_selected == 1:
             self.__temp__copied_files = [self.__clicked_file]                 
         else:
             self.__temp__copied_files = []
             for f in self.files:                      
                 if f.is_selected:
                     self.__temp__copied_files.append(f) 
+                    size += os.path.getsize(self.directory + sep + f.name)
+
+        length = len(self.__temp__copied_files)
+        text   = f'{length} files [{size} bytes]' if length > 1 else f'{self.__clicked_file.name}'
+        action = 'CUTED' if self.__is_cut else 'COPIED'
+        self.__set_label_text(f'[{action}]: {text}')
                         
                         
     def __duplicate(self):
@@ -564,10 +572,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def handle_find_events(self,event): # TODO: FIX SUFFIXES WHEN DELETING, find_file
         if event == 27: 
             if self.vim_mode:
+                i = 0 if len(self.files) == 1 else 1
                 self.__change_escape_event_consumed = True
                 self.is_in_find_mode                = False
-                self.__index_of_clicked_file        = 0
-                self.__clicked_file                 = self.files[0]
+                self.__index_of_clicked_file        = i
+                self.__clicked_file                 = self.files[i]
                 self.__set_label_text('[NORMAL]')
                 return False
             self.clear_find_results()
@@ -578,11 +587,12 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             else:
                 self.clear_find_results()
                 return True
-        elif event in self.__arrow_keys:
+        elif event in self.__arrow_keys or unicurses.CTRL(event) == event:
+            i = 0 if len(self.files) == 1 else 1
             self.__change_escape_event_consumed = True
             self.is_in_find_mode                = False
-            self.__index_of_clicked_file        = 0
-            self.__clicked_file                 = self.files[0]
+            self.__index_of_clicked_file        = i
+            self.__clicked_file                 = self.files[i]
             return False
         elif event in (unicurses.KEY_ENTER,10) or event == unicurses.KEY_RESIZE or event in self.__mouse_keys or event == unicurses.KEY_HOME: # Ignore this shit :P
             return False
@@ -591,15 +601,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
         self.find_file(self.__temp_findname)
         self.__set_label_text(f'SEAERCH: {self.__temp_findname}')
-        if len(self.files) > 1:
-            tmp_file = self.files[1]  
-            self.__index_of_clicked_file        = 1
-            self.__clicked_file                 = self.files[1]
-        else:
-            tmp_file = self.files[0]
-            self.__index_of_clicked_file        = 0
-            self.__clicked_file                 = self.files[0]
-        self.scroll_to_file(tmp_file, True, True)    
+        i = 0 if len(self.files) == 1 else 1
+        self.__clicked_file          = self.files[i]
+        self.__index_of_clicked_file = i
+
+        self.scroll_to_file(self.__clicked_file, True, True)    
         return True
     
 
