@@ -14,6 +14,7 @@
 
 A cross-platform terminal-based termux-oriented file manager *(and component)*, meant to be used with a [Uni-Curses](https://github.com/unicurses/unicurses) project or as is. This project is mainly an attempt to get more attention to the [Uni-Curses](https://github.com/unicurses/unicurses) project.
 
+
 ## Installation
 ```terminal
 sudo pip3 install tuifimanager --upgrade
@@ -22,6 +23,7 @@ sudo pip3 install tuifimanager --upgrade
 pip3 install TUIFIManager --upgrade
 ```
 or just ^^^ if it works for you. *(eg. on termux?)*
+
 
 ## Usage
 Run `tuifi` in your terminal to use it as is or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
@@ -82,8 +84,11 @@ for more details look into the `__main__.py`
 |`CTRL + UP`  | Same as `CTRL + V`, Pastes the Copied or Cuted files                           |
 |`END`        | Deletes selected files                                                         |
 
+
 # Documentation
 <sub>Work in progress 🛠️🏗 ...</sub>
+
+
 ## Customization 
 ***How do I enable vim_mode ?***
 > Set `tuifi_vim_mode` enviroment variable to `True`
@@ -100,7 +105,6 @@ for more details look into the `__main__.py`
 ***How do I change the default colors?***
 > A bit complicated to explain here just make an issue and I will explain it there
 
-<sub>[^Source](https://www.reddit.com/r/termux/comments/rsmdmc/comment/hu7t88g/?utm_source=share&utm_medium=web2x&context=3)</sub>
 
 # Donation
 I do really need money to survive, I have no job, living in a basement, making things for free, because I love to.
@@ -110,6 +114,11 @@ I do really need money to survive, I have no job, living in a basement, making t
 <div align="center">
 <img src='./TUIFI.png'>
 </div>
+
+
+# Special thanks to
+- [Bryan Lunduke for this article](https://lunduke.substack.com/p/tuifi-manager-a-file-manager-in-the)
+
 
 # Help
 Any Idea with this issue https://github.com/unicurses/unicurses/issues/21 ?
