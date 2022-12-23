@@ -1,3 +1,7 @@
+# v.2.0.5
+- ***Fixed:***
+- - Temporary FIX, conflicting with TERMUX ctrl keys 
+
 # v.2.0.4
 - ***Fixed:***
 - - Annoying issue with keyboard movement after searching
