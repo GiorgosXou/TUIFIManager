@@ -48,12 +48,6 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇▓░┣┻▄ ┇ \n' 
         ' ┗━ ▀  ━┛ ' 
     ),1, DEFAULT_EDITOR),
-    '.conf':TUIFIProfile((
-        ' ┏┏━━━━┓┓ \n'
-        ' ┇CONFIG┃ \n' 
-        ' ┃┋┇┃┃┇┋┃ \n'
-        ' ┗━━━━━━┛ ' 
-    ),2, DEFAULT_EDITOR),
 
     'makefile':TUIFIProfile((
         ' ┏━━━━━┳┓ \n'
@@ -63,11 +57,17 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),2, DEFAULT_EDITOR),
     'config':TUIFIProfile((
         ' ┏┏━━━━┓┓ \n'
-        ' ┇CONFIG┃ \n' 
+        ' ┇CONFIG┃ \n'
         ' ┃┋┇┃┃┇┋┃ \n'
         ' ┗━━━━━━┛ ' 
     ),2, DEFAULT_EDITOR),
 
+    '/conf':TUIFIProfile((
+        ' ┏┏━━━━┓┓ \n'
+        ' ┇CONFIG┃ \n'
+        ' ┃┋┇┃┃┇┋┃ \n'
+        ' ┗━━━━━━┛ ' 
+    ),2, DEFAULT_EDITOR),
     '/xlsx':TUIFIProfile((
         ' ┏━━━━┳┳┓ \n'
         ' ┃██▓░┣╋┫ \n'

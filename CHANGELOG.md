@@ -1,6 +1,9 @@
 # v.
 - ***Fixed:***
 - - [Typo `SEAERCH` to `SEAERCH`](https://github.com/GiorgosXou/TUIFIManager/pull/29)
+- ***Extensions:***
+- - ***Fixed:***
+- - - typo at `conf`
 
 # v.2.0.5
 - ***Fixed:***
