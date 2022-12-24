@@ -50,6 +50,8 @@ for more details look into the `__main__.py`
 * Undo\Redo
 * tool-tips
 * Scroll bar
+* Multiple tabs
+* Better performance
 * Effect on cutted Files
 * [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
@@ -118,7 +120,7 @@ I do really need money to survive, I have no job, living in a basement, making t
 
 # Special thanks to
 - [Bryan Lunduke for this article](https://lunduke.substack.com/p/tuifi-manager-a-file-manager-in-the)
-
+- [r/commandline community for their comments](https://www.reddit.com/r/commandline/comments/zt30v9)
 
 # Help
 Any Idea with this issue https://github.com/unicurses/unicurses/issues/21 ?

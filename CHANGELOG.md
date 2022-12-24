@@ -1,3 +1,7 @@
+# v.
+- ***Fixed:***
+- - [Typo `SEAERCH` to `SEAERCH`](https://github.com/GiorgosXou/TUIFIManager/pull/29)
+
 # v.2.0.5
 - ***Fixed:***
 - - Temporary FIX, conflicting with TERMUX ctrl keys 
