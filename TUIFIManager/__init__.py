@@ -600,7 +600,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             self.__temp_findname += unicurses.RCCHAR(event)
 
         self.find_file(self.__temp_findname)
-        self.__set_label_text(f'SEAERCH: {self.__temp_findname}')
+        self.__set_label_text(f'SEARCH: {self.__temp_findname}')
         i = 0 if len(self.files) == 1 else 1
         self.__clicked_file          = self.files[i]
         self.__index_of_clicked_file = i
