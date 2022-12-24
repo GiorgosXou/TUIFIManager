@@ -33,7 +33,7 @@ from TUIFIManager import *
 for more details look into the `__main__.py`
 
 <img src="./Peek.gif">
-<sub>https://asciinema.org/a/gVD8T8nHCI4xaMHomwiR3m3hx</sub>
+<sub>FONT: Cartograph CF</sub>
 
 ## Features & Shortcuts  
 ### *Current:*
