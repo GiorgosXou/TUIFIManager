@@ -3,7 +3,7 @@
 - - [Typo `SEAERCH` to `SEAERCH`](https://github.com/GiorgosXou/TUIFIManager/pull/29)
 - ***Extensions:***
 - - ***Fixed:***
-- - - typo at `conf`
+- - - [typo at `conf`](https://github.com/GiorgosXou/TUIFIManager/issues/27)
 
 # v.2.0.5
 - ***Fixed:***
