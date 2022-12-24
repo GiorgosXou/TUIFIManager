@@ -10,7 +10,7 @@
 - ***Fixed:***
 - - Annoying issue with keyboard movement after searching
 - - Issue with Control keys when in search mode
-- ***Added:**
+- ***Added:***
 - - Extra informations when copy/cut pasting
 
 # v.2.0.2
