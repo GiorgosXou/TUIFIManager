@@ -260,6 +260,8 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │█┃▒││▓╿ \n'
         ' ╰━┘━┘╰━┘ ' 
     ),2, DEFAULT_OPENER),
+
+
     '/rar':TUIFIProfile((
         ' ▃▃RAR▃▃╮ \n'
         ' ▒▒░ ░▒▒┃ \n'
@@ -303,13 +305,15 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ZST░░▀▀▀ '
     ),2, DEFAULT_OPENER),
     
+
     '/gif':TUIFIProfile((
         ' ┏━━━┳┳┳┓ \n'
         ' ┃GIF:∵◖┇ \n'
         ' ┠┓░▃_▓▆┇ \n'
         ' ╰━━━┻┻┻┛ '
     ),2, DEFAULT_OPENER),
-    
+
+
     '/mp4':TUIFIProfile((
         ' ┏┳┳┳┳┳┳┓ \n'
         ' ┇MP4∴∵◖┇ \n'
@@ -322,7 +326,6 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇_░▃_▓▆┇ \n'
         ' ┗┻┻┻┻┻┻┛ '
     ),2, DEFAULT_OPENER),
-    
     '/avi':TUIFIProfile((
         ' ┏┳┳┳┳┳┳┓ \n'
         ' ┇AVI∴∵◖┇ \n'
@@ -347,6 +350,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇_░▃_▓▆┇ \n'
         ' ┗┻┻┻┻┻┻┛ '
     ),2, DEFAULT_OPENER),
+
 
     '/otf':TUIFIProfile(( 
         '▃▃▃ ▃▃▃ ▃▃\n'
@@ -373,6 +377,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ╰━━━━━┻┛ '
     ),1, DEFAULT_OPENER),
 
+
     '/reg':TUIFIProfile(( 
         ' ┏━━┳━┳━┓ \n'
         ' ┃▓█┣━╋━┫ \n'
@@ -385,6 +390,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇EXE━┻━┫ \n'
         ' ╰━━┻━━━┛ '
     ),1, DEFAULT_OPENER),
+
 
     '/jpg':TUIFIProfile(( 
         ' ┏━━━JPG╮ \n'
@@ -453,37 +459,47 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     
+
+    '/m4a':TUIFIProfile(( 
+        ' ┏━━━━━━╮ \n'
+        ' ┇.:.M4A┫ \n'
+        ' ╋┻╋┻╋┻━┇ \n'
+        ' ╰━━━━━━┛ '
+    ),8, DEFAULT_OPENER),
     '/mp3':TUIFIProfile(( 
-        ' ╭┓━━━━┏╮ \n'
-        ' ┣╯MP3♪╰┫ \n'
-        ' ┇┓♯⦇⦈♯┏┇ \n'
-        ' ╰┛━━━━┗╯ '
+        ' ┏━━━━━━┓ \n'
+        ' ┇.:.MP3┫ \n'
+        ' ╋┻╋┻╋┻━┇ \n'
+        ' ╰━━━━━━┛ '
     ),8, DEFAULT_OPENER),
     '/wav':TUIFIProfile(( 
-        ' ╭┓━━━━┏╮ \n'
-        ' ┣╯WAV♪╰┫ \n'
-        ' ┇┓♯⦇⦈♯┏┇ \n'
-        ' ╰┛━━━━┗╯ '
+        ' ┏━━━━━━┓ \n'
+        ' ┇.:.WAV┫ \n'
+        ' ╋┻╋┻╋┻━┇ \n'
+        ' ╰━━━━━━┛ '
     ),8, DEFAULT_OPENER),
     '/mid':TUIFIProfile(( 
-        ' ╭┓━━━━┏╮ \n'
-        ' ┣╯MID♪╰┫ \n'
-        ' ┇┓♯⦇⦈♯┏┇ \n'
-        ' ╰┛━━━━┗╯ '
+        ' ┏━━━━━━┓ \n'
+        ' ┇.:.MID┫ \n'
+        ' ╋┻╋┻╋┻━┇ \n'
+        ' ┗━━━━━━┛ '
     ),8, DEFAULT_OPENER),
     '/aac':TUIFIProfile(( 
-        ' ╭┓━━━━┏╮ \n'
-        ' ┣╯AAC♪╰┫ \n'
-        ' ┇┓♯⦇⦈♯┏┇ \n'
-        ' ╰┛━━━━┗╯ '
+        ' ╭━━━━━━┓ \n'
+        ' ┇.:.AAC┫ \n'
+        ' ╋┻╋┻╋┻━┇ \n'
+        ' ┗━━━━━━┛ '
     ),8, DEFAULT_OPENER),
-    
+
+
     '/psd':TUIFIProfile((
         ' ╭▃▃▃ ▃▃╮ \n'
         ' │█▂█ █▃┃ \n'
         ' │█   ▃█┃ \n'
         ' ┕━PSD━━┛ '
     ),4, DEFAULT_OPENER),
+
+
     '/mdf':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
         ' ┃┇DB╭▒█┫ \n'

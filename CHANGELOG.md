@@ -4,6 +4,10 @@
 - ***Extensions:***
 - - ***Fixed:***
 - - - [typo at `conf`](https://github.com/GiorgosXou/TUIFIManager/issues/27)
+- - ***Added:***
+- - - `m4a` 
+- - ***Improved:***
+- - - `mp3`, `wav`, `mid`, `aac`
 
 # v.2.0.5
 - ***Fixed:***
