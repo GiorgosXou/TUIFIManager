@@ -1,13 +1,19 @@
-# v.
+# v.2.1.3
+- Changed:
+- - Search\\INPUT-mode in `vim_mode` doesn't change *(automatically to NORMAL)* anymore when entering a directory
 - ***Fixed:***
+- - Label text when exiting a from file
 - - [Typo `SEAERCH` to `SEAERCH`](https://github.com/GiorgosXou/TUIFIManager/pull/29)
+- - Issue in `vim_mode` when escaping search\\INPUT-mode without searching anything at all
+- ***Added:***
+- - [Using `EDITOR`-env-variable if no `tuifi_default_editor`](https://github.com/GiorgosXou/TUIFIManager/issues/30)
 - ***Extensions:***
 - - ***Fixed:***
 - - - [typo at `conf`](https://github.com/GiorgosXou/TUIFIManager/issues/27)
 - - ***Added:***
 - - - `m4a` 
 - - ***Improved:***
-- - - `mp3`, `wav`, `mid`, `aac`
+- - - `mp3`, `wav`, `mid`, `aac`, `bat`, `cmd`, `dll`, `so`
 
 # v.2.0.5
 - ***Fixed:***

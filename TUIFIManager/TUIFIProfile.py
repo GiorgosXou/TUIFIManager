@@ -19,7 +19,7 @@ class TUIFIProfile: #█┇▓┃▒┃░┃
 
 
 DEFAULT_OPENER = 'start' if 'Windows' == OPERATING_SYSTEM else 'open' if 'Darwin' == OPERATING_SYSTEM  else 'xdg-open'   # meh.. # TODO: make an enviromental variable insted of those 2 vars, for everything
-DEFAULT_EDITOR = which(getenv('tuifi_default_editor', 'nvim')) or which('emacs') or which('vim') or which('micro') or which('nano')  or DEFAULT_OPENER 
+DEFAULT_EDITOR = which(getenv('tuifi_default_editor', getenv('EDITOR', 'nvim'))) or which('emacs') or which('vim') or which('micro') or which('nano')  or which('vi') or DEFAULT_OPENER 
 DEFAULT_WITH   = DEFAULT_EDITOR
 
 TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and etc. files on __init__.py as if they where kind of folders?
@@ -238,27 +238,27 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),2, DEFAULT_EDITOR),
     '/cmd':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
-        ' ┃ C:\>_┃ \n'
-        ' ┇ CMD  ┇ \n'
+        ' ┃ C:\> ┃ \n'
+        ' ┇ CMD_ ┇ \n'
         ' ╰━━━━━━╯ '
     ),2, DEFAULT_EDITOR),
     '/bat':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
-        ' ┃ C:\>_┃ \n'
-        ' ┇ BAT  ┇ \n'
+        ' ┃ C:\> ┃ \n'
+        ' ┇ BAT_ ┇ \n'
         ' ╰━━━━━━╯ '
     ),2, DEFAULT_EDITOR),
     '/so':TUIFIProfile((
-        ' ╭━┓━┓╭━┓ \n'
-        ' │S┃O┃│Ξ┃ \n'
-        ' │█┃▒││▓╿ \n'
-        ' ╰━┘━┘╰━┘ ' 
+        ' ╭━╭━┳╭━╮ \n'
+        ' │S│O┠│Ξ│ \n'
+        ' │▒│█┠│▒│ \n'
+        ' ╰━╰━┹╰━╯ ' 
     ),2, DEFAULT_OPENER),
     '/dll':TUIFIProfile((
-        ' ╭━┓━┓╭━┓ \n'
-        ' │D┃L┃│L┃ \n'
-        ' │█┃▒││▓╿ \n'
-        ' ╰━┘━┘╰━┘ ' 
+        ' ╭━╭━┳╭━╮ \n'
+        ' │D│L┠│L│ \n'
+        ' │▒│█┠│▒│ \n'
+        ' ╰━╰━┹╰━╯ ' 
     ),2, DEFAULT_OPENER),
 
 
@@ -460,7 +460,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),2, DEFAULT_OPENER),
     
 
-    '/m4a':TUIFIProfile(( 
+    '/m4a':TUIFIProfile((  # 8 = Aqua, just like the waves 
         ' ┏━━━━━━╮ \n'
         ' ┇.:.M4A┫ \n'
         ' ╋┻╋┻╋┻━┇ \n'
