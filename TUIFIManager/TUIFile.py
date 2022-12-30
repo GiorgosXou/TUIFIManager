@@ -11,6 +11,7 @@ class TUIFile:
     is_selected = False
     is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files
 
+
     def chunk_str(self, text, n):
         base = '\n'.join(text[i:i+n] for i in range(0, len(text), n))
         self.name_height = base.count('\n') + 1
@@ -31,8 +32,8 @@ class TUIFile:
 
     def clear(self,atpad):
         pass
-    
-    
+
+
     def draw_name(self, atpad, name, prename, chgatXY, attr=unicurses.A_NORMAL, color_pair_offset=0):  # fuck, lol
         """
         DON'T USE IT
@@ -44,21 +45,22 @@ class TUIFile:
         for offY, ln in enumerate(self.chunk_str(name,self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) | attr) # A_BOLD | 
         unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6 + color_pair_offset)
-        
+
 
     def __draw_file(self, atpad, color_pair_offset=0):
         for offY, ln in enumerate((self.profile.text + '\n').split('\n')):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.profile.color_map + color_pair_offset) ) 
         for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n'), offY):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) )                  
+
         if self.is_link: # no idea why but mvwadd_wch misbehaves ...
             unicurses.mvwaddwstr(atpad, self.y + self.profile.height -1 , self.x + self.profile.width -1, LINK_SYMBOL, unicurses.COLOR_PAIR(LINK_SYMBOL_COLOR + color_pair_offset))  # | A_BOLD
 
-      
+
     def __perform_effect(self, atpad, effect, color_map, redraw_icon=False):
         if redraw_icon:self.__draw_file(atpad)
         for y in range(self.y, self.y + self.profile.height):
-            unicurses.mvwchgat(atpad,y, self.x, self.profile.width, effect, color_map)             
+            unicurses.mvwchgat(atpad,y, self.x, self.profile.width, effect, color_map)
 
 
     def reverse_effect  (self, atpad, redraw_icon=False, color_pair_offset=0): self.__perform_effect(atpad, unicurses.A_REVERSE, 7 + color_pair_offset, redraw_icon                            )
@@ -69,7 +71,7 @@ class TUIFile:
     def draw(self,atpad, y=None, x=None, redraw_icon=False, color_pair_offset=0): #  na valw NEW giati sto resort() xanei to icon kai text h kati tetoio !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if y: self.y = y
         if x: self.x = x
-        
+
         if self.is_selected: self.reverse_effect(atpad, redraw_icon , color_pair_offset)
         elif self.is_cut   : self.dim_effect    (atpad, redraw_icon , color_pair_offset)
         else:

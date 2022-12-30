@@ -1,5 +1,5 @@
 """
-TUItilities is a set of TUI components in ALPHA version. 
+TUItilities is a set of TUI components in ALPHA version.
 """
 import unicurses   as uc
 from   dataclasses import dataclass
@@ -20,9 +20,9 @@ class Position:
 @dataclass
 class Size:
     height    :int # visible
-    width     :int # visible 
+    width     :int # visible
     iheight   :int # inner
-    iwidth    :int # inner 
+    iwidth    :int # inner
     maxheight :int = 0
     maxwidth  :int = 0
     minheight :int = 0
@@ -76,7 +76,7 @@ class Component():
 
     @property #TODO: ADD descrition like use `self.position.x` instead if you don't want to redraw the `parent.win` immediately after
     def x(self): return self.position.x
-    
+
     @x.setter
     def x(self, X): self.position.x = X; self.refresh(redraw_parent=True)
 
@@ -112,7 +112,7 @@ class Component():
 
 
     def get_mouse(self):
-        id, x, y, z, bstate = uc.getmouse() 
+        id, x, y, z, bstate = uc.getmouse()
         in_range = True if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height else False
         return (in_range, id, x, y, z, bstate )
 
@@ -122,7 +122,7 @@ class Component():
         if self.anchor.bottom:
             if self.anchor.top:
                 self.size.height += (new_lines - self.parent.lines)
-                uc.wresize(self.pad, self.height, self.width) 
+                uc.wresize(self.pad, self.height, self.width)
             else:
                 deltaY           = (new_lines - self.parent.lines)
                 self.position.y  += deltaY
@@ -130,7 +130,7 @@ class Component():
         if self.anchor.right:
             if self.anchor.left:
                 self.size.width += (new_columns - self.parent.columns)
-                uc.wresize(self.pad, self.height, self.width) 
+                uc.wresize(self.pad, self.height, self.width)
             else:
                 deltaX           = (new_columns - self.parent.columns)
                 self.position.x += deltaX
@@ -161,10 +161,10 @@ class Label(Component):
     def text(self): return self.__text
 
     @text.setter
-    def text(self, text): 
+    def text(self, text):
         self.__text = text
-        uc.mvwaddstr(self.pad,0,0, ' '*self.width, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style ) 
-        uc.mvwaddstr(self.pad,0,0, text, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style ) 
+        uc.mvwaddstr(self.pad,0,0, ' '*self.width, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style )
+        uc.mvwaddstr(self.pad,0,0, text, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style )
 
 
     def handle_resize(self, redraw_parent=True):
@@ -174,7 +174,7 @@ class Label(Component):
 
 
 # THIS IS ONLY FOR TESTING PURPOSES
-def main(): 
+def main():
     event  = -1
     global stdscr
     stdscr = uc.initscr()  # Global UniCurses Variable
@@ -207,11 +207,11 @@ def main():
 
     while (event != 27):
         event = uc.get_wch()
-        tb.handle_events(event)          
-        tc.handle_events(event)          
-        tb.refresh()  
+        tb.handle_events(event)
+        tc.handle_events(event)
+        tb.refresh()
         tc.refresh()
-        if event == uc.KEY_RESIZE: 
+        if event == uc.KEY_RESIZE:
             uc.resize_term(0,0)
 
     uc.endwin()
