@@ -952,13 +952,9 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         elif event == self.events.get('CTRL_F'): self.find() # Not tested, but i think it works | to enable find mode and consume escape event
         elif event == self.events.get('CTRL_O'): self.open(self.__clicked_file, _with=DEFAULT_WITH)
 
-        #     VVVVVVVVVVVV TEMPORARY FIX
-        # elif not IS_TERMUX and event == 526: # self.events.get('ALT_DOWN'): # unicurses.keyname(event) TODO: FIX unicurses keyname that returns None if no decode()
-        #     if self.menu.exists:
-        #         self.menu.delete()
-        #     else:
-        #         self.menu.create(self.__clicked_file.y,self.__clicked_file.x +1)
-
+        elif self.events.get('ALT_DOWN') == unicurses.keyname(event): # TODO: FIX unicurses keyname that returns None if no decode()
+            if self.menu.exists: self.menu.delete()
+            else               : self.menu.create(self.__clicked_file.y,self.__clicked_file.x +1)
         else:
             if self.__handle_termux_keyboard_events(event): return
 
