@@ -1,36 +1,22 @@
 import unicurses
 from .TUIFIProfile import *
- 
 
- 
+
+
 class TUIFile:
     profile = DEFAULT_PROFILE
-    #h,w = 4,11 # 10        
+    #h,w = 4,11 # 10
     x,y         = 0,0
-    name_height = 1  
+    name_height = 1
     is_selected = False
-    is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files 
-      
-    def chunkStr(self,text, n): # sorry  for this :P 
-        counter2 = 0
-        counter1 = 0
-        tempTxT  = ''
-        for i in range(0,len(text)):
-            counter1 += 1
-            tempTxT += text[i]
-            if counter1 == n:
-                counter2 += 1
-                tempTxT  += '\n'
-                counter1  = 0
-            
-        if tempTxT.endswith('\n'):
-            counter2 -= 1
-            tempTxT   = tempTxT[0:-1]
-            
-        self.name_height = counter2 + 1
-        return tempTxT    
-    
-                         
+    is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files
+
+    def chunk_str(self, text, n):  # sorry  for this :P
+        base = '\n'.join(text[i:i+n] for i in range(0, len(text), n))
+        pad = ' ' * (n - (len(base) % n))
+        self.name_height = base.count('\n') + 1
+        return base + pad
+
     def __init__(self, name, y=0, x=0, profile=DEFAULT_PROFILE, name_color=1, is_link=False):
         assert isinstance(profile, TUIFIProfile),'profile needs to be of type class TUIFIProfile'
         self.name_color  = name_color
@@ -40,7 +26,7 @@ class TUIFile:
         self.name        = name
         self.is_link     = is_link
         self.is_hidden   = True if name.startswith('.') else False
-        self.chunkStr(name, self.profile.width)
+        self.chunk_str(name, self.profile.width)
 
 
     def clear(self,atpad):
