@@ -2,6 +2,7 @@
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS) 
 
 from     contextlib import contextmanager
+from functools import partial
 from        pathlib import Path
 from           time import time
 from             os import  sep
@@ -714,20 +715,32 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(self.__index_of_clicked_file) + 3 + len(info) + 2
         self.info_label.text = f'[{len(self.files)-1:04}] [{self.__index_of_clicked_file}] { path[max(len(path)-self.info_label.width + offset,0):len(path)]} {info}' # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
-                        
-    def __perform_menu_selected_action(self, action):  # TODO: USE DICT INSTEAD OF IF, ELIF
-        if   action == False       : return False
-        elif action == 'Open'      : self.open  (self.__clicked_file)
-        elif action == 'Cut'       : self.cut   ()
-        elif action == 'Delete'    : self.delete()
-        elif action == 'Copy'      : self.copy  ()
-        elif action == 'Paste'     : self.paste ()
-        elif action == 'Rename'    : self.rename()
-        elif action == 'New File'  : self.create_new('file')
-        elif action == 'New Folder': self.create_new('folder')
-        elif action == 'Reload'    : self.reload()
-        return True
+    def __perform_menu_selected_action(self, action):
+        if not action:
+            return False
 
+        openfolder = partial(self.open, 'folder')
+        open_file = partial(self.open, 'file')
+        open_clicked_file = partial(self.open, directory=self.__clicked_file)
+
+        menu_select_actions = {
+            'Open': open_clicked_file,
+            'Cut': self.cut,
+            'Delete': self.delete,
+            'Copy': self.copy,
+            'Paste': self.paste,
+            'Rename': self.rename,
+            'New File': open_file,
+            'New Folder': openfolder,
+            'Reload': self.reload,
+        }
+
+        action_func = menu_select_actions.get(action)
+        if not action_func:
+            return False
+
+        action_func()
+        return True
 
     def __handle_termux_touch_events(self, bstate, y, x): # termux needs to implement CTRL + CLICK
         if not (bstate & self.events.get('BUTTON1_CLICKED') or bstate & self.events.get('BUTTON1_PRESSED')): return False
