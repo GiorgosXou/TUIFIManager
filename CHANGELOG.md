@@ -3,6 +3,7 @@
 - - [ncurses not found but existing on macOS](https://github.com/GiorgosXou/TUIFIManager/issues/28)
 - ***Improved:***
 - - [chunk_str method](https://github.com/GiorgosXou/TUIFIManager/pull/31)
+- - [Removed Whitespaces](https://github.com/GiorgosXou/TUIFIManager/pull/34)
 - - [Deleting files now go to trash](https://github.com/GiorgosXou/TUIFIManager/pull/32)
 
 # v.2.1.3
