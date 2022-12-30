@@ -20,7 +20,7 @@ setup(
     author_email="gxousos@gmail.com",
     url="https://github.com/GiorgosXou/TUIFIManager",
     packages=['TUIFIManager'],
-    install_requires=['Uni-Curses>=2.1.0', 'Send2Trash=1.8.0'],
+    install_requires=['Uni-Curses>=2.1.0', 'Send2Trash==1.8.0'],
     entry_points={
         'console_scripts': [
             'tuifi = TUIFIManager.__main__:main'
