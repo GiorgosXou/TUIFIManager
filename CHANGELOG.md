@@ -1,4 +1,6 @@
 # v.
+- ***Fixed:***
+- - [ncurses not found but existing on macOS](https://github.com/GiorgosXou/TUIFIManager/issues/28)
 - ***Improved:***
 - - [chunk_str method](https://github.com/GiorgosXou/TUIFIManager/pull/31)
 - - [Deleting files now go to trash](https://github.com/GiorgosXou/TUIFIManager/pull/32)
