@@ -120,6 +120,7 @@ I do really need money to survive, I have no job, living in a basement, making t
 
 # Special thanks to
 - [Bryan Lunduke for this article](https://lunduke.substack.com/p/tuifi-manager-a-file-manager-in-the)
+- [Brodie Robertson for this video](https://youtu.be/9laxdMKTZLA)
 - [r/commandline community for their comments](https://www.reddit.com/r/commandline/comments/zt30v9)
 
 # Help
