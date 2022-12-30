@@ -10,11 +10,13 @@ from       .TUIMenu import    *
 from       .TUIFile import    *
 from  .TUIFIProfile import    * 
 from   .TUItilities import    * 
+from send2trash import send2trash
 import   subprocess
 import    unicurses  
 import       shutil
 import       signal
 import           os
+
 
 
 PADDING_LEFT   = 2
@@ -421,9 +423,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         elif not isinstance(file, str):
             raise Exception('TUIFileTypeError: file must be of type string or TUIFile.')
         if os.path.isfile(file): # checking if exists too.
-            os.remove(file)
+            # os.remove(file)
+            send2trash(file)
         elif os.path.exists(file) and not file.endswith(sep + '..'): # "and not .." whatever
-            shutil.rmtree(file)    
+            #shutil.rmtree(file)    
+            send2trash(file)
         self.__count_selected -= 1
                        
     
