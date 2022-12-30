@@ -11,11 +11,10 @@ class TUIFile:
     is_selected = False
     is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files
 
-    def chunk_str(self, text, n):  # sorry  for this :P
+    def chunk_str(self, text, n):
         base = '\n'.join(text[i:i+n] for i in range(0, len(text), n))
-        pad = ' ' * (n - (len(base) % n))
         self.name_height = base.count('\n') + 1
-        return base + pad
+        return base
 
 
     def __init__(self, name, y=0, x=0, profile=DEFAULT_PROFILE, name_color=1, is_link=False):
