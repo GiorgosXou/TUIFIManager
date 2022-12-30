@@ -2,6 +2,7 @@
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS)
 
 from     contextlib import contextmanager
+from     send2trash import send2trash
 from        pathlib import Path
 from           time import time
 from             os import  sep
@@ -15,6 +16,7 @@ import    unicurses
 import       shutil
 import       signal
 import           os
+
 
 
 PADDING_LEFT   = 2
@@ -421,9 +423,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         elif not isinstance(file, str):
             raise Exception('TUIFileTypeError: file must be of type string or TUIFile.')
         if os.path.isfile(file): # checking if exists too.
-            os.remove(file)
+            # os.remove(file)
+            send2trash(file)
         elif os.path.exists(file) and not file.endswith(sep + '..'): # "and not .." whatever
-            shutil.rmtree(file)
+            #shutil.rmtree(file)    
+            send2trash(file)
         self.__count_selected -= 1
 
 
