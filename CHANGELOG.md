@@ -1,3 +1,8 @@
+# v.
+- ***Improved:***
+- - [chunk_str method](https://github.com/GiorgosXou/TUIFIManager/pull/31)
+- - [Deleting files now go to trash](https://github.com/GiorgosXou/TUIFIManager/pull/32)
+
 # v.2.1.3
 - Changed:
 - - Search\\INPUT-mode in `vim_mode` doesn't change *(automatically to NORMAL)* anymore when entering a directory
