@@ -2,6 +2,7 @@
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS) 
 
 from     contextlib import contextmanager
+from     send2trash import send2trash
 from        pathlib import Path
 from           time import time
 from             os import  sep
@@ -10,7 +11,6 @@ from       .TUIMenu import    *
 from       .TUIFile import    *
 from  .TUIFIProfile import    * 
 from   .TUItilities import    * 
-from send2trash import send2trash
 import   subprocess
 import    unicurses  
 import       shutil
