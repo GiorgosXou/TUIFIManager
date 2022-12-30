@@ -1,6 +1,6 @@
 #from unicurses import  *
 import unicurses
-# WORK IN PROGRESS  | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS 
+# WORK IN PROGRESS  | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS
 # WORK IN PROGRESS  | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS
 # WORK IN PROGRESS  | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS
 # WORK IN PROGRESS  | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS | WORK IN PROGRESS
@@ -9,8 +9,8 @@ import unicurses
 
 # I had 0 time so the code is a bit messed up
 
-class TUIMenu:    
-    
+class TUIMenu:
+
     x    , y      = 0 , 0
     width, height = 20, 15
     items  = ['Open       │ ENTER' ,
@@ -18,7 +18,7 @@ class TUIMenu:
               'Copy       │ CTRL+C',
               'Paste      │ CTRL+V',
               'Delete     │ DEL'   ,
-              'Rename     │ CTRL+R',  
+              'Rename     │ CTRL+R',
               'Reload     │ KEY_F5',
               'New File   │ CTRL+W',
               'New Folder │ CTRL+N',
@@ -31,27 +31,27 @@ class TUIMenu:
         'KEY_ENTER'       : (unicurses.KEY_ENTER,10)  ,
         'BUTTON1_RELEASED': unicurses.BUTTON1_RELEASED,
         'BUTTON1_PRESSED' : unicurses.BUTTON1_PRESSED ,
-        'BUTTON3_RELEASED': unicurses.BUTTON3_RELEASED         
+        'BUTTON3_RELEASED': unicurses.BUTTON3_RELEASED
     }
-    
+
     def __init__(self, items=None, color_pair_offset=0):
         self.parent = unicurses.stdscr
         self.exists = False
-        if items:self.items = items   
-        self.width  = len(max(self.items, key=len)) + 4 
-        self.height = len(self.items)*2 + 1 
+        if items:self.items = items
+        self.width  = len(max(self.items, key=len)) + 4
+        self.height = len(self.items)*2 + 1
         self.color_pair_offset = color_pair_offset
-            
+
 
     def create(self, atY=None, atX=None):
-        if atX is not None: self.x = atX 
-        if atY is not None: self.y = atY   
-        
+        if atX is not None: self.x = atX
+        if atY is not None: self.y = atY
+
         parent_width  = unicurses.getmaxx(self.parent)
         parent_height = unicurses.getmaxy(self.parent)
         if self.x + self.width  > parent_width : self.x -= self.width
-        if self.y + self.height > parent_height: self.y -= self.height 
-             
+        if self.y + self.height > parent_height: self.y -= self.height
+
         if self.exists:
             unicurses.delwin(self.pad)
 
@@ -65,11 +65,11 @@ class TUIMenu:
             unicurses.mvwaddwstr(self.pad,i+1,0,'├' + ('‒'*(self.width-2)) + '┤')
             i+=2
         unicurses.mvwaddwstr(self.pad,i-1,0,'╰' + ('‒'*(self.width-2)) + '╯')
-        
+
         self.exists = True
         self.refresh()
-        
-    
+
+
     def delete(self):
         if self.exists:
             unicurses.delwin(self.pad)
@@ -77,22 +77,22 @@ class TUIMenu:
             self.exists = False
             unicurses.redrawwin(self.parent) # SuS? kinda same as touchwin?
             # unicurses.wrefresh(self.parent)
-    
-    
+
+
     def refresh(self):
         if self.exists:
             # unicurses.wrefresh(self.parent)
             # unicurses.touchwin(self.pad)
             # unicurses.wrefresh(self.pad)
             unicurses.prefresh(self.pad, 0, 0, self.y, self.x, self.y + self.height -1, self.x + self.width -1)
-    
-    
+
+
     def __getItem(self,i):
         return self.items[i].split('│')[0].strip()
 
-    
+
     __it = -1
-    def handle_keyboard_events(self, event): 
+    def handle_keyboard_events(self, event):
         performed = False
         if self.exists and not event == self.events.get('KEY_MOUSE'):
             if event == self.events.get('KEY_DOWN'):
@@ -115,12 +115,12 @@ class TUIMenu:
                 i = self.__it
                 self.delete()
                 return self.__getItem(i)
-            else:                   
+            else:
                 self.delete()
                 performed=True
         return performed
-    
-      
+
+
     def handle_mouse_events(self, id, x, y, z, bstate):
         performed = False
         if self.exists: # mevent == self.events.get('KEY_MOUSE')  #id, x, y, z, bstate = unicurses.getmouse()
@@ -131,12 +131,12 @@ class TUIMenu:
                     if (relative_y % 2) == 0:
                         # exit()
                         self.delete()
-                        return self.__getItem(relative_y//2 -1)                   
+                        return self.__getItem(relative_y//2 -1)
                     performed=True
                 if (bstate & self.events.get('BUTTON1_PRESSED')):
                     performed=True
             else:
-                self.delete() #unicurses.ungetmouse(id, x, y, z, bstate ) 
+                self.delete() #unicurses.ungetmouse(id, x, y, z, bstate )
         return performed
-        
-        
+
+
