@@ -307,9 +307,9 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 
 
     '/gif':TUIFIProfile((
-        ' ┏━━━┳┳┳┓ \n'
-        ' ┃GIF:∵◖┇ \n'
-        ' ┠┓░▃_▓▆┇ \n'
+        ' ┍━━━┳┳┳┓ \n'
+        ' │GIF:∵◖┇ \n'
+        ' ┝┓░▃_▓▆┇ \n'
         ' ╰━━━┻┻┻┛ '
     ),2, DEFAULT_OPENER),
 
