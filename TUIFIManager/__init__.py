@@ -719,27 +719,28 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(self.__index_of_clicked_file) + 3 + len(info) + 2
         self.info_label.text = f'[{len(self.files)-1:04}] [{self.__index_of_clicked_file}] { path[max(len(path)-self.info_label.width + offset,0):len(path)]} {info}' # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
+    def __open_clicked_file(self):
+        return self.open(self.__clicked_file)
+
+    __openfolder = partial(open, 'folder')
+    __open_file = partial(open, 'file')
+    __menu_select_actions = {
+        'Open': __open_clicked_file,
+        'Cut': cut,
+        'Delete': delete,
+        'Copy': copy,
+        'Paste': paste,
+        'Rename': rename,
+        'New File': __open_file,
+        'New Folder': __openfolder,
+        'Reload': reload,
+    }
+
     def __perform_menu_selected_action(self, action):
         if not action:
             return False
 
-        openfolder = partial(self.open, 'folder')
-        open_file = partial(self.open, 'file')
-        open_clicked_file = partial(self.open, directory=self.__clicked_file)
-
-        menu_select_actions = {
-            'Open': open_clicked_file,
-            'Cut': self.cut,
-            'Delete': self.delete,
-            'Copy': self.copy,
-            'Paste': self.paste,
-            'Rename': self.rename,
-            'New File': open_file,
-            'New Folder': openfolder,
-            'Reload': self.reload,
-        }
-
-        action_func = menu_select_actions.get(action)
+        action_func = self.__menu_select_actions.get(action)
         if not action_func:
             return False
 
