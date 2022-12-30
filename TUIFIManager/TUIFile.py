@@ -17,6 +17,7 @@ class TUIFile:
         self.name_height = base.count('\n') + 1
         return base + pad
 
+
     def __init__(self, name, y=0, x=0, profile=DEFAULT_PROFILE, name_color=1, is_link=False):
         assert isinstance(profile, TUIFIProfile),'profile needs to be of type class TUIFIProfile'
         self.name_color  = name_color
@@ -39,9 +40,9 @@ class TUIFile:
         """
         y = chgatXY // self.profile.width
         x = chgatXY - y * (self.profile.width)
-        for offY, ln in enumerate(self.chunkStr(prename + ' ',self.profile.width).split('\n'), self.profile.height):
+        for offY, ln in enumerate(self.chunk_str(prename + ' ',self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ' ' * len(ln)) # A_BOLD | 
-        for offY, ln in enumerate(self.chunkStr(name,self.profile.width).split('\n'), self.profile.height):
+        for offY, ln in enumerate(self.chunk_str(name,self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) | attr) # A_BOLD | 
         unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6 + color_pair_offset)
         
@@ -49,7 +50,7 @@ class TUIFile:
     def __draw_file(self, atpad, color_pair_offset=0):
         for offY, ln in enumerate((self.profile.text + '\n').split('\n')):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.profile.color_map + color_pair_offset) ) 
-        for offY, ln in enumerate(self.chunkStr(self.name,self.profile.width).split('\n'), offY):
+        for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n'), offY):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) )                  
         if self.is_link: # no idea why but mvwadd_wch misbehaves ...
             unicurses.mvwaddwstr(atpad, self.y + self.profile.height -1 , self.x + self.profile.width -1, LINK_SYMBOL, unicurses.COLOR_PAIR(LINK_SYMBOL_COLOR + color_pair_offset))  # | A_BOLD
