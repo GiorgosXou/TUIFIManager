@@ -847,8 +847,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             self.__change_escape_event_consumed = False
             self.escape_event_consumed          = False
         elif self.is_in_find_mode:
-            if self.handle_find_events(event):
-                return True
+            return self.handle_find_events(event)
         else:
             self.handle_rename_events(event)
             return True
