@@ -715,30 +715,27 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def __open_clicked_file(self):
         return self.open(self.__clicked_file)
 
-    __openfolder = partial(open, 'folder')
-    __open_file = partial(open, 'file')
+
+    __openfolder   = partial(open, 'folder')
+    __open_file    = partial(open, 'file')
     __menu_select_actions = {
-        'Open': __open_clicked_file,
-        'Cut': cut,
-        'Delete': delete,
-        'Copy': copy,
-        'Paste': paste,
-        'Rename': rename,
-        'New File': __open_file,
-        'New Folder': __openfolder,
-        'Reload': reload,
+        'Open'      : __open_clicked_file,
+        'Cut'       : cut                ,
+        'Delete'    : delete             ,
+        'Copy'      : copy               ,
+        'Paste'     : paste              ,
+        'Rename'    : rename             ,
+        'New File'  : __open_file        ,
+        'New Folder': __openfolder       ,
+        'Reload'    : reload             ,
     }
-
     def __perform_menu_selected_action(self, action):
-        if not action:
-            return False
-
+        if not action     : return False
         action_func = self.__menu_select_actions.get(action)
-        if not action_func:
-            return False
-
+        if not action_func: return False
         action_func()
         return True
+
 
     def __handle_termux_touch_events(self, bstate, y, x): # termux needs to implement CTRL + CLICK
         if not (bstate & self.events.get('BUTTON1_CLICKED') or bstate & self.events.get('BUTTON1_PRESSED')): return False
