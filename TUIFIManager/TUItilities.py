@@ -56,9 +56,9 @@ MY_COLOR_PAIRS = (
 class Component():
     def __init__(self, win, y, x, height, width, anchor, is_focused=False, color_pair_offset=0, iheight=None, iwidth=None ) -> None:
         self.pad               = uc.newpad(height, width)
-        self.parent            = Parent   (win if win else uc.stdscr)
+        self.parent            = Parent(win or uc.stdscr)
         self.position          = Position (y, x)
-        self.size              = Size     (height, width, iheight if iheight else height, iwidth if iwidth else width)
+        self.size              = Size(height, width, iheight or height, iwidth or width)
         self.anchor            = Anchor   (*anchor)
         self.is_focused        = is_focused
         self.color_pair_offset = color_pair_offset
@@ -113,7 +113,10 @@ class Component():
 
     def get_mouse(self):
         id, x, y, z, bstate = uc.getmouse()
-        in_range = True if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height else False
+        in_range = (
+            self.x <= x < self.x + self.width
+            and self.y <= y < self.y + self.height
+        )
         return (in_range, id, x, y, z, bstate )
 
 
@@ -205,7 +208,7 @@ def main():
     tb = Label(anchor=(False, True, False, True))
     tc = Label(2,1,anchor=(False, True, True, True))
 
-    while (event != 27):
+    while event != 27:
         event = uc.get_wch()
         tb.handle_events(event)
         tc.handle_events(event)
