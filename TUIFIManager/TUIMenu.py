@@ -58,13 +58,13 @@ class TUIMenu:
         self.pad = unicurses.newpad(self.height, self.width) #unicurses.newwin(len(self.items)*2+1, self.width, self.y+offy , self.x+offx )
         unicurses.wbkgd(self.pad,unicurses.COLOR_PAIR(1 + self.color_pair_offset))
         i = 1
-        unicurses.mvwaddwstr(self.pad,0,0,'╭' + ('‒'*(self.width-2)) + '╮')
+        unicurses.mvwaddwstr(self.pad,0,0,'╭' + ('─'*(self.width-2)) + '╮')
         for item in self.items:
             unicurses.mvwaddwstr(self.pad, i, 0, f'│ {item}', unicurses.A_BOLD)
             unicurses.mvwaddwstr(self.pad,i,self.width-1,'│', unicurses.A_BOLD)
-            unicurses.mvwaddwstr(self.pad,i+1,0,'├' + ('‒'*(self.width-2)) + '┤')
+            unicurses.mvwaddwstr(self.pad,i+1,0,'├' + ('─'*(self.width-2)) + '┤')
             i+=2
-        unicurses.mvwaddwstr(self.pad,i-1,0,'╰' + ('‒'*(self.width-2)) + '╯')
+        unicurses.mvwaddwstr(self.pad,i-1,0,'╰' + ('─'*(self.width-2)) + '╯')
 
         self.exists = True
         self.refresh()
