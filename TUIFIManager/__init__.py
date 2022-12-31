@@ -40,7 +40,7 @@ def stty_a(key=None):  # whatever [...]
         return None
 
     if not key:
-        return return [s.strip() for s in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';')[4:-3]] # risky? i've no idea.. thats why i've not done the same when "if key:"
+        return [s.strip() for s in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';')[4:-3]] # risky? i've no idea.. thats why i've not done the same when "if key:"
 
     for sig in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';'):
         if sig.endswith(key):
@@ -260,10 +260,10 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.vim_mode and self.escape_event_consumed: # SuS SuS SuS SuS SuS
             self.find()
         else:
-            self.is_in_find_mode                = False
-            self.escape_event_consumed          = False
+            self.is_in_find_mode       = False
+            self.escape_event_consumed = False
         self.__change_escape_event_consumed = False
-        self.__temp_findname                = ''
+        self.__temp_findname         = ''
         self.__clicked_file          = None
         self.__pre_clicked_file      = None
         self.__index_of_clicked_file = None
