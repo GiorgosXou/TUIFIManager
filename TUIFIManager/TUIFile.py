@@ -40,7 +40,7 @@ class TUIFile:
         """
         y = chgatXY // self.profile.width
         x = chgatXY - y * (self.profile.width)
-        for offY, ln in enumerate(self.chunk_str(prename + ' ',self.profile.width).split('\n'), self.profile.height):
+        for offY, ln in enumerate(self.chunk_str(f'{prename} ', self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ' ' * len(ln)) # A_BOLD | 
         for offY, ln in enumerate(self.chunk_str(name,self.profile.width).split('\n'), self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) | attr) # A_BOLD | 

@@ -18,7 +18,13 @@ class TUIFIProfile: #█┇▓┃▒┃░┃
 
 
 
-DEFAULT_OPENER = 'start' if 'Windows' == OPERATING_SYSTEM else 'open' if 'Darwin' == OPERATING_SYSTEM  else 'xdg-open'   # meh.. # TODO: make an enviromental variable insted of those 2 vars, for everything
+DEFAULT_OPENER = (
+    'start'
+    if OPERATING_SYSTEM == 'Windows'
+    else 'open'
+    if OPERATING_SYSTEM == 'Darwin'
+    else 'xdg-open'
+)
 DEFAULT_EDITOR = which(getenv('tuifi_default_editor', getenv('EDITOR', 'nvim'))) or which('emacs') or which('vim') or which('micro') or which('nano')  or which('vi') or DEFAULT_OPENER
 DEFAULT_WITH   = DEFAULT_EDITOR
 

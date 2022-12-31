@@ -60,7 +60,7 @@ class TUIMenu:
         i = 1
         unicurses.mvwaddwstr(self.pad,0,0,'╭' + ('‒'*(self.width-2)) + '╮')
         for item in self.items:
-            unicurses.mvwaddwstr(self.pad,i,0,'│ ' + item, unicurses.A_BOLD)
+            unicurses.mvwaddwstr(self.pad, i, 0, f'│ {item}', unicurses.A_BOLD)
             unicurses.mvwaddwstr(self.pad,i,self.width-1,'│',unicurses.A_BOLD)
             unicurses.mvwaddwstr(self.pad,i+1,0,'├' + ('‒'*(self.width-2)) + '┤')
             i+=2

@@ -28,7 +28,7 @@ def main():
     fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), starting_directory,suffixes=['*'], is_focused=True)
     fileManager.refresh()
 
-    while (event != 27 or fileManager.escape_event_consumed): # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.escape_event_consumed
+    while event != 27 or fileManager.escape_event_consumed: # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.escape_event_consumed
         event = get_wch()
         fileManager.handle_events(event)
         fileManager.refresh()
