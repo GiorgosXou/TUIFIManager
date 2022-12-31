@@ -113,7 +113,10 @@ class Component():
 
     def get_mouse(self):
         id, x, y, z, bstate = uc.getmouse()
-        in_range = True if x >= self.x and x < self.x + self.width and y >= self.y and y < self.y + self.height else False
+        in_range = (
+            self.x <= x < self.x + self.width
+            and self.y <= y < self.y + self.height
+        )
         return (in_range, id, x, y, z, bstate )
 
 

@@ -26,9 +26,9 @@ PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
 STTY_EXISTS = shutil.which('stty')
-IS_WINDOWS  = True if 'Windows' == unicurses.OPERATING_SYSTEM else False
-HOME_DIR    = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
-IS_TERMUX   = True if 'com.termux' in HOME_DIR else False
+IS_WINDOWS = unicurses.OPERATING_SYSTEM == 'Windows'
+HOME_DIR = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
+IS_TERMUX = 'com.termux' in HOME_DIR
 
 UP   = -1
 DOWN =  1
@@ -134,7 +134,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         directory = os.path.realpath(os.path.normpath(directory))
         if not os.path.isdir(directory):
             raise Exception('DirectoryNotFound: "' + directory + '"')
-        if suffixes == None:
+        if suffixes is None:
             suffixes = self.suffixes
 
         self.directory = directory
@@ -202,7 +202,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             h = f.profile.height + f.name_height #len(f.chunkStr(f.name, f.profile.width).split('\n')) #total hight i might merge them  but nvm for now, i messed the up anyways
             if h > max_h:
                 max_h = h
-                if not count == 0:
+                if count != 0:
                     self.maxpLines = y + max_h + PADDING_TOP + PADDING_BOTTOM  + self.y
                 else:
                     self.maxpLines = y + self.y
@@ -516,13 +516,13 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 else                : shutil.move    (source, destination)
 
 
-    def paste(self): # TODO: ask to check if overwrite on copy
+    def paste(self):  # TODO: ask to check if overwrite on copy
         """
         Pastes the already selected and copied/cutted files.
         """
         if len(self.__temp__copied_files) == 0 or not os.path.exists(self.__temp_dir_of_copied_files): return # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
-        if not self.__temp_dir_of_copied_files == self.directory: self.__copy_cut ()
-        else                                                    : self.__duplicate()
+        if self.__temp_dir_of_copied_files != self.directory: self.__copy_cut ()
+        else: self.__duplicate()
         self.reload()
 
 
@@ -531,7 +531,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         Deletes the selected file(s). | Not fully implemented yet
         """
         if self.__count_selected == 1 and self.__clicked_file :
-            if not self.__clicked_file.name == '..': # checking under __delete_file too but nvm cause i have no time right now
+            # checking under __delete_file too but nvm cause i have no time right now
+            if self.__clicked_file.name != '..':
                 self.__delete_file(self.__clicked_file)
                 temp_i = self.__index_of_clicked_file - 1
                 self.reload()
@@ -576,7 +577,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             if self.vim_mode:
                 self.__change_escape_event_consumed = True
                 self.is_in_find_mode                = False
-                if not self.__temp_findname == '': # When Escaping without searching anything
+                if self.__temp_findname != '': # When Escaping without searching anything
                     i = 0 if len(self.files) == 1 else 1
                     self.__index_of_clicked_file = i
                     self.__clicked_file          = self.files[i]
@@ -648,14 +649,18 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if event == unicurses.KEY_LEFT:
             if not self.__temp_i == 0: self.__temp_i -= 1
         elif event == unicurses.KEY_RIGHT:
-            if not self.__temp_i == len(self.__temp_name): self.__temp_i += 1
+            if self.__temp_i != len(self.__temp_name): self.__temp_i += 1
         elif unicurses.RCCHAR(event) in self.__illegal_filename_characters:
             return
         elif event == 27 or event in (unicurses.KEY_ENTER,10):
             new_path_name                       = self.directory + sep + self.__temp_name
             self.__temp_i                       = 0
             self.__change_escape_event_consumed = True
-            if not event == 27 and not self.__temp_name.strip() == '' and not os.path.exists(new_path_name):
+            if (
+                event != 27
+                and self.__temp_name.strip() != ''
+                and not os.path.exists(new_path_name)
+            ):
                 os.rename(self.directory + sep + self.__clicked_file.name, new_path_name)
                 self.__clicked_file.name    = self.__temp_name
                 self.__clicked_file.profile = self.get_profile(new_path_name)
@@ -686,8 +691,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
     def create_new(self,_type='folder'): # temporary implementation but nvm
         i, j = '', 0
-        if _type == 'folder': exists = os.path.isdir
-        else                : exists = os.path.isfile
+        exists = os.path.isdir if _type == 'folder' else os.path.isfile
+
         while exists(self.directory + sep + 'New ' + _type + i):
             i = ' (' + str(j) + ')'
             j += 1
@@ -752,7 +757,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.__index_of_clicked_file, self.__clicked_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
         if not self.is_on_termux_select_mode: self.deselect()
 
-        if self.is_on_termux_select_mode and self.__clicked_file and not self.__clicked_file.name == '..' : # bstate & BUTTON_CTRL
+        if self.is_on_termux_select_mode and self.__clicked_file and self.__clicked_file.name != '..' : # bstate & BUTTON_CTRL
             if not self.__clicked_file.is_selected : self.select  (self.__clicked_file)
             else                                   : self.deselect(self.__clicked_file)
         elif self.__clicked_file:
@@ -874,7 +879,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.__is_escape_consumed(event)                                            : return
         if self.__perform_menu_selected_action(self.menu.handle_keyboard_events(event)): return
 
-        if   self.__handle_mouse_events(event): return
+        if self.__handle_mouse_events(event): return
         elif self.__handle_resize_event(event): return
         elif event in self.events.get('KEY_BACKSPACE'): self.open(self.directory + sep + '..')
         elif event == self.events.get('KEY_HOME'     ): self.open(HOME_DIR)
@@ -883,7 +888,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 self.open(self.__clicked_file)
 
         elif event == self.events.get('KEY_UP'):  # Not the most reliable way but nvm for now | A lot of REPEATING CODE but  nvm ffor now
-            if not self.__index_of_clicked_file == None:
+            if self.__index_of_clicked_file is not None:
                 for i in range(self.__index_of_clicked_file,0,-1):
                     if (self.files[i-1].y < self.files[self.__index_of_clicked_file].y) and (self.files[i-1].x <= self.files[self.__index_of_clicked_file].x):
                         self.deselect()
@@ -900,7 +905,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 self.__index_of_clicked_file = 0
 
         elif event == self.events.get('KEY_DOWN'):
-            if not self.__index_of_clicked_file == None:
+            if self.__index_of_clicked_file is not None:
                 for i in range(self.__index_of_clicked_file,len(self.files)-1):
                     if (self.files[i+1].y > self.files[self.__index_of_clicked_file].y) and (self.files[i+1].x >= self.files[self.__index_of_clicked_file].x):
                         self.deselect()
@@ -933,7 +938,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
         elif event == self.events.get('KEY_LEFT'):
             if not self.__index_of_clicked_file == 0:
-                if not self.__index_of_clicked_file == None:
+                if self.__index_of_clicked_file is not None:
                     self.deselect()
                     self.__index_of_clicked_file   = self.__index_of_clicked_file -1
                     self.__clicked_file            = self.files[self.__index_of_clicked_file]
@@ -947,7 +952,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                     self.__index_of_clicked_file = 0
 
         elif event == self.events.get('KEY_BTAB'):
-            if self.__clicked_file and not self.__clicked_file.name == '..':
+            if self.__clicked_file and self.__clicked_file.name != '..':
                 shutil.move(self.directory + sep + self.__clicked_file.name, self.directory + sep + '..' + sep + self.__clicked_file.name)
                 temp_i = self.__index_of_clicked_file - 1
                 self.reload()
@@ -966,7 +971,6 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         elif event == self.events.get('CTRL_N'): self.create_new('folder')
         elif event == self.events.get('CTRL_F'): self.find() # Not tested, but i think it works | to enable find mode and consume escape event
         elif event == self.events.get('CTRL_O'): self.open(self.__clicked_file, _with=DEFAULT_WITH)
-
         elif self.events.get('ALT_DOWN') == unicurses.keyname(event): # TODO: FIX unicurses keyname that returns None if no decode()
             if self.menu.exists: self.menu.delete()
             else               : self.menu.create(self.__clicked_file.y,self.__clicked_file.x +1)

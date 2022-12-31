@@ -26,7 +26,7 @@ class TUIFile:
         self.x           = x
         self.name        = name
         self.is_link     = is_link
-        self.is_hidden   = True if name.startswith('.') else False
+        self.is_hidden   = name.startswith('.')
         self.chunk_str(name, self.profile.width)
 
 

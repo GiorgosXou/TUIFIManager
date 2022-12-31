@@ -94,7 +94,7 @@ class TUIMenu:
     __it = -1
     def handle_keyboard_events(self, event):
         performed = False
-        if self.exists and not event == self.events.get('KEY_MOUSE'):
+        if self.exists and event != self.events.get('KEY_MOUSE'):
             if event == self.events.get('KEY_DOWN'):
                 performed=True
                 if self.__it == len(self.items) -1:
@@ -124,16 +124,16 @@ class TUIMenu:
     def handle_mouse_events(self, id, x, y, z, bstate):
         performed = False
         if self.exists: # mevent == self.events.get('KEY_MOUSE')  #id, x, y, z, bstate = unicurses.getmouse()
-            if (x >= self.x and x <= self.x + self.width and y >= self.y and y <= self.y + self.height):
+            if self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height:
                 relative_y = y - self.y +1 # really Sus the +1 but nvm
-                if (bstate & self.events.get('BUTTON1_RELEASED')):
+                if bstate & self.events.get('BUTTON1_RELEASED'):
                     item_position = len(self.items)
                     if (relative_y % 2) == 0:
                         # exit()
                         self.delete()
                         return self.__getItem(relative_y//2 -1)
                     performed=True
-                if (bstate & self.events.get('BUTTON1_PRESSED')):
+                if bstate & self.events.get('BUTTON1_PRESSED'):
                     performed=True
             else:
                 self.delete() #unicurses.ungetmouse(id, x, y, z, bstate )
