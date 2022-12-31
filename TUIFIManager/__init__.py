@@ -40,13 +40,7 @@ def stty_a(key=None):  # whatever [...]
         return None
 
     if not key:
-        # risky? i've no idea.. thats why i've not done the same when "if key:"
-        return [
-            s.strip()
-            for s in subprocess.Popen(
-                "stty -a", shell=True, stdout=subprocess.PIPE
-            ).stdout.read().decode().split(';')[4:-3]
-        ]
+        return return [s.strip() for s in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';')[4:-3]] # risky? i've no idea.. thats why i've not done the same when "if key:"
 
     for sig in subprocess.Popen("stty -a", shell=True, stdout=subprocess.PIPE).stdout.read().decode().split(';'):
         if sig.endswith(key):
@@ -132,12 +126,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                     break
         else:
             file_extension = os.path.splitext(file_directory)[1]
-            file_extension = (
-                f'/{file_extension[1:]}'
-                if file_extension
-                else os.path.basename(file_directory)
-            )
-            temp_profile = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) # ..[-1] = extension
+            file_extension = f'/{file_extension[1:]}' if file_extension else os.path.basename(file_directory)
+            temp_profile   = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) # ..[-1] = extension
         return temp_profile
 
 
@@ -178,11 +168,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             if h > max_h:
                 max_h = h
 
-        self.maxpLines = (
-            y + self.y
-            if count == 0
-            else y + max_h + PADDING_TOP + PADDING_BOTTOM + self.y
-        )
+        self.maxpLines = y + self.y if count == 0 else y + max_h + PADDING_TOP + PADDING_BOTTOM + self.y
         if not self.is_in_find_mode: self.__set_label_text(f'[{len(self.files)-1:04}] {directory}') # just because i know that len is stored as variable,  that's why i don;t count them in for loop
         return self.files
 
@@ -532,7 +518,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         """
         if len(self.__temp__copied_files) == 0 or not os.path.exists(self.__temp_dir_of_copied_files): return # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
         if self.__temp_dir_of_copied_files != self.directory: self.__copy_cut ()
-        else: self.__duplicate()
+        else                                                : self.__duplicate()
         self.reload()
 
 
@@ -664,11 +650,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             new_path_name                       = self.directory + sep + self.__temp_name
             self.__temp_i                       = 0
             self.__change_escape_event_consumed = True
-            if (
-                event != 27
-                and self.__temp_name.strip() != ''
-                and not os.path.exists(new_path_name)
-            ):
+            if  event != 27 and self.__temp_name.strip() != '' and not os.path.exists(new_path_name):
                 os.rename(self.directory + sep + self.__clicked_file.name, new_path_name)
                 self.__clicked_file.name    = self.__temp_name
                 self.__clicked_file.profile = self.get_profile(new_path_name)
@@ -678,11 +660,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 self.__temp_name = self.__clicked_file.name
         elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
             if self.__temp_i != 0:
-                self.__temp_i -= 1
-                self.__temp_name = (
-                    self.__temp_name[: self.__temp_i]
-                    + self.__temp_name[self.__temp_i + 1 :]
-                )
+                self.__temp_i   -= 1
+                self.__temp_name = self.__temp_name[:self.__temp_i] + self.__temp_name[self.__temp_i+1:]
             elif self.__first_pass:
                 self.__temp_name = ''
         elif event == unicurses.KEY_HOME: self.__temp_i = 0
@@ -691,11 +670,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             self.__temp_name = unicurses.RCCHAR(event)
             self.__temp_i += 1
         else:
-            self.__temp_name = (
-                self.__temp_name[: self.__temp_i]
-                + unicurses.RCCHAR(event)
-                + self.__temp_name[self.__temp_i :]
-            )
+            self.__temp_name = self.__temp_name[:self.__temp_i] + unicurses.RCCHAR(event) + self.__temp_name[self.__temp_i:]
             self.__temp_i += 1
         self.__clicked_file.draw_name(self.pad,self.__temp_name,self.__temp_pre_name, self.__temp_i, color_pair_offset=self.color_pair_offset)
         self.__temp_pre_name = self.__temp_name
@@ -822,10 +797,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 if not bstate & self.events.get('BUTTON_CTRL') and self.__pre_clicked_file and self.__pre_clicked_file.is_selected and  self.__count_selected == 1:#and summ > self.double_click_DELAY:
                     self.deselect(self.__pre_clicked_file)
                     self.menu.delete()
-                if (
-                    self.__mouse_btn1_pressed_file
-                    and self.__mouse_btn1_pressed_file.name != '..'
-                ):
+                if self.__mouse_btn1_pressed_file and self.__mouse_btn1_pressed_file.name != '..':
                     if not self.__mouse_btn1_pressed_file.is_selected and not (bstate & self.events.get('BUTTON3_PRESSED')):
                         self.select(self.__mouse_btn1_pressed_file)
                     elif bstate & self.events.get('BUTTON_CTRL') :#and summ > self.double_click_DELAY:
@@ -891,7 +863,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.__is_escape_consumed(event)                                            : return
         if self.__perform_menu_selected_action(self.menu.handle_keyboard_events(event)): return
 
-        if self.__handle_mouse_events(event): return
+        if   self.__handle_mouse_events(event): return
         elif self.__handle_resize_event(event): return
         elif event in self.events.get('KEY_BACKSPACE'): self.open(self.directory + sep + '..')
         elif event == self.events.get('KEY_HOME'     ): self.open(HOME_DIR)
