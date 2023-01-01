@@ -1,3 +1,11 @@
+# v
+- ***Changed:***
+- - The way `events` are represented
+- ***Added:***
+- - Normal keys now work with `vim_mode` too
+- ***Improved:***
+- - Performance
+
 # v.2.1.9
 - ***Fixed:***
 - - [`ALT_DOWN`](https://github.com/unicurses/unicurses/commit/a185cfb930d783f55c1efccd35e9ae23c0208a6e#diff-4f9493a5a3fb9e08d28013e7923bf5856d4368d076222caaa60c9a5e4a421f8c)
