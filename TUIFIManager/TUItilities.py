@@ -63,7 +63,7 @@ class Component():
         self.is_focused        = is_focused
         self.color_pair_offset = color_pair_offset
         for i in range(1, 10):                                            # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
-            if uc.pair_content(i+color_pair_offset) == (0,0):            # if it exists in some way
+            if uc.pair_content(i+color_pair_offset) in ((0,0),(7,0)):     # if it exists in some way | also TODO: https://github.com/GiorgosXou/TUIFIManager/issues/48
                 uc.init_pair(i+color_pair_offset, *MY_COLOR_PAIRS[i-1] )
 
 
