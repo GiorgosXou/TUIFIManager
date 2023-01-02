@@ -642,7 +642,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             if self.__temp_i != 0: self.__temp_i -= 1
         elif event == unicurses.KEY_RIGHT:
             if self.__temp_i != len(self.__temp_name): self.__temp_i += 1
-        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters:
+        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters or event == unicurses.KEY_MOUSE:
             return
         elif event in (27, unicurses.KEY_ENTER, 10):
             new_path_name                       = self.directory + sep + self.__temp_name
