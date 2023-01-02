@@ -5,6 +5,8 @@ import unicurses   as uc
 from   dataclasses import dataclass
 
 
+BEGIN_MOUSE = "\033[?1003h"
+END_MOUSE   = "\033[?1003l"
 
 @dataclass
 class Position:
