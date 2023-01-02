@@ -224,6 +224,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.position.iy             = 0
         self.__clicked_file          = None
         self.__index_of_clicked_file = None
+        self.__pre_hov               = None           
         self.load_files(self.directory)
         if draw_files:
             self.draw()
