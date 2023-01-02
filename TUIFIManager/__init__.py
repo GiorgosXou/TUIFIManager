@@ -279,9 +279,9 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
     def refresh(self):
         super().refresh()
+        self.menu.refresh()
         if self.info_label:
             self.info_label.refresh()
-        self.menu.refresh()
 
 
     def get_tuifile_by_name(self, name):
