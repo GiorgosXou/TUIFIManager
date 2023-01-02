@@ -698,12 +698,14 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def __int_len(self, n): # https://stackoverflow.com/a/2189827/11465149
         return int(log10(n))+1 if n != 0 else 0
 
-    def __set_label_on_file_selection(self):
+    def __set_label_on_file_selection(self, index=None, file=None):
         if not self.info_label: return
-        path = self.directory + sep + self.__clicked_file.name
+        file = file if file else self.__clicked_file
+        index= index if index else self.__index_of_clicked_file
+        path = self.directory + sep + file.name
         info = f'[{os.path.getsize(path)} bytes]' if os.path.isfile(path) else ''
-        offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(self.__index_of_clicked_file) + 3 + len(info) + 2
-        self.info_label.text = f'[{len(self.files) - 1:04}] [{self.__index_of_clicked_file}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
+        offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(index) + 3 + len(info) + 2
+        self.info_label.text = f'[{len(self.files) - 1:04}] [{index}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
     def __open_clicked_file(self):
