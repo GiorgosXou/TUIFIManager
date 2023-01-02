@@ -415,11 +415,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         elif not isinstance(file, str):
             raise TypeError('TUIFileTypeError: file must be of type string or TUIFile.')
         if os.path.isfile(file): # checking if exists too.
-            # os.remove(file)
-            send2trash(file)
+            if IS_TERMUX: os.remove (file)
+            else        : send2trash(file)
         elif os.path.exists(file) and not file.endswith(f'{sep}..'): # "and not .." whatever
-            #shutil.rmtree(file)
-            send2trash(file)
+            if IS_TERMUX: shutil.rmtree(file)
+            else        : send2trash   (file)
         self.__count_selected -= 1
 
 
