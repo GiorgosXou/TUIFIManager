@@ -751,7 +751,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def __handle_mouse_events(self, event):
         if event != unicurses.KEY_MOUSE: return False
         in_range, id, x, y, z, bstate = self.get_mouse()
-        if not IS_WINDOWS and not in_range: return False # TODO: https://github.com/GiorgosXou/TUIFIManager/issues/49
+        if not IS_WINDOWS and not in_range: return True # TODO: https://github.com/GiorgosXou/TUIFIManager/issues/49
         if self.__perform_menu_selected_action(self.menu.handle_mouse_events(id, x, y, z, bstate)): return True
 
         if   bstate & unicurses.BUTTON4_PRESSED: self.scroll_pad(UP  )
