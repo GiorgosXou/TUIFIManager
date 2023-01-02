@@ -1,10 +1,19 @@
 # v
+- ***Fixed:***
+- - Color initialization on Windows
+- - [Permanently: Windows scroll issue](https://github.com/GiorgosXou/TUIFIManager/issues/49)
+- - Permanently: Use deletion instead of send2trash in TERMUX
 - ***Changed:***
 - - The way `events` are represented
+- - `is_on_termux_select_mode` to `is_on_select_mode`
 - ***Added:***
 - - Normal keys now work with `vim_mode` too
+- - Hover effect over files
 - ***Improved:***
 - - Performance
+- ***Extensions:***
+- - ***Added:***
+- - - `csv`, `xml`, `log`, `ico`, `yml`, `yaml`, `ini`, `ppt`, `pptx`, `license`
 
 # v.2.1.9
 - ***Fixed:***
