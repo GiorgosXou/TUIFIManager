@@ -726,7 +726,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def __perform_menu_selected_action(self, action):
         if not action : return False
         action_func = self.__menu_select_actions.get(action)
-        if action_func: action_func() # don't change this, it has to return true even if no action_func() performed else it doesn't overide the events
+        if action_func: action_func(self) # don't change this, it has to return true even if no action_func() performed else it doesn't overide the events
         return True
 
 
