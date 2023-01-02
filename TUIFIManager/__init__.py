@@ -252,9 +252,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if not os.path.isdir(directory) or _with:
             open_with = TUIFIProfiles.get('/'+os.path.splitext(directory)[1][1:],DEFAULT_PROFILE).open_with if not _with else _with
             if open_with:
+                print(END_MOUSE, end='\r')
                 with self.suspend():
                     proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
                     proc.wait()
+                print(BEGIN_MOUSE, end='\r')
             self.__set_label_on_file_selection()
             return None
 
