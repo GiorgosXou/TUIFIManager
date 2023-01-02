@@ -699,6 +699,9 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.rename()
 
 
+    def create_new_file  (self): self.create_new('file'  )
+    def create_new_folder(self): self.create_new('folder')
+
     def __int_len(self, n): # https://stackoverflow.com/a/2189827/11465149
         return int(log10(n))+1 if n != 0 else 0
 
@@ -716,18 +719,16 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         return self.open(self.__clicked_file)
 
 
-    __openfolder   = partial(open, 'folder')
-    __open_file    = partial(open, 'file')
     __menu_select_actions = {
-        'Open'      : __open_clicked_file,
-        'Cut'       : cut                ,
-        'Delete'    : delete             ,
-        'Copy'      : copy               ,
-        'Paste'     : paste              ,
-        'Rename'    : rename             ,
-        'New File'  : __open_file        ,
-        'New Folder': __openfolder       ,
-        'Reload'    : reload             ,
+        'Open'      : __open_clicked_file           ,
+        'Cut'       : cut                           ,
+        'Delete'    : delete                        ,
+        'Copy'      : copy                          ,
+        'Paste'     : paste                         ,
+        'Rename'    : rename                        ,
+        'New File'  : create_new_file               ,
+        'New Folder': create_new_folder             ,
+        'Reload'    : reload                        ,
     }
     def __perform_menu_selected_action(self, action):
         if not action : return False
