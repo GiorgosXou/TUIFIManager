@@ -336,7 +336,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.position.iy += y
 
 
-    is_on_termux_select_mode   = False
+    is_on_select_mode          = False
     __mouse_btn1_pressed_file  = None
     __pre_clicked_file         = None
     __clicked_file             = None
@@ -733,14 +733,14 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def __handle_termux_touch_events(self, bstate, y, x): # termux needs to implement CTRL + CLICK
         if not (bstate & unicurses.BUTTON1_CLICKED or bstate & unicurses.BUTTON1_PRESSED): return False
         self.__index_of_clicked_file, self.__clicked_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
-        if not self.is_on_termux_select_mode: self.deselect()
+        if not self.is_on_select_mode: self.deselect()
 
-        if self.is_on_termux_select_mode and self.__clicked_file and self.__clicked_file.name != '..' : # bstate & BUTTON_CTRL
+        if self.is_on_select_mode and self.__clicked_file and self.__clicked_file.name != '..' : # bstate & BUTTON_CTRL
             if not self.__clicked_file.is_selected : self.select  (self.__clicked_file)
             else                                   : self.deselect(self.__clicked_file)
         elif self.__clicked_file:
-            if self.is_on_termux_select_mode: # AUTO COPY IF IN SELECT-MODE AND CLICKED ON  '..'
-                self.is_on_termux_select_mode = False
+            if self.is_on_select_mode: # AUTO COPY IF IN SELECT-MODE AND CLICKED ON  '..'
+                self.is_on_select_mode = False
                 self.copy()
             self.open(self.__clicked_file)
         return True
@@ -801,15 +801,18 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def __handle_termux_keyboard_events(self, event):
         if not IS_TERMUX: return False # TERMUX ONLY, EASILY ACCESSIBLE KEYBINDINGS
         if unicurses.keyname(event) == 'kDN5': # CTRL_DOWN
-            if self.is_on_termux_select_mode:  # hmm..
-                self.is_on_termux_select_mode = False
+            if self.is_on_select_mode:  # hmm..
+                self.is_on_select_mode = False
+                self.__set_label_text('[EXITED SELECT MODE]')
                 self.copy()
             else:
-                self.is_on_termux_select_mode = True
+                self.is_on_select_mode = True
+                self.__set_label_text('[ENTERED SELECT MODE]')
             return True
         elif unicurses.keyname(event) == 'kLFT5': # CTRL_LEFT
-            if self.is_on_termux_select_mode:
-                self.is_on_termux_select_mode = False
+            if self.is_on_select_mode:
+                self.is_on_select_mode = False
+                self.__set_label_text('[EXITED SELECT MODE]')
                 self.cut()
             else:
                 self.__is_cut = True
@@ -818,8 +821,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             self.paste()
             return True
         elif event == unicurses.KEY_END:
-            if self.is_on_termux_select_mode:
-                self.is_on_termux_select_mode = False
+            if self.is_on_select_mode:
+                self.is_on_select_mode = False
             self.delete()
             return True
         return False
