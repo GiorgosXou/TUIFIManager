@@ -18,10 +18,11 @@ def main():
     noecho       ( )
     curs_set     (0)
     mouseinterval(0)                 # Initializing Mouse and then Update/refresh() stdscr
-    mousemask    (ALL_MOUSE_EVENTS)  # | REPORT_MOUSE_POSITION); print("\033[?1003h\n")
-    keypad       (stdscr, True)
+    mousemask    (ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
+    keypad       (stdscr, True )
+    nodelay      (stdscr, False)
+    print        (BEGIN_MOUSE)       # Initializing mouse movement | Don't move it above because it won't work on Windows
     refresh      ( )
-
     # Initializing TUIFIManager
     HEIGHT,WIDTH       = getmaxyx(stdscr)
     starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
@@ -34,8 +35,8 @@ def main():
         fileManager.refresh()
         if event == KEY_RESIZE:
             resize_term(0,0)
+    print (END_MOUSE)
     endwin()
-
 
 if __name__ == "__main__":
     main()
