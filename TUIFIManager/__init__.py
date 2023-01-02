@@ -270,6 +270,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.__clicked_file          = None
         self.__pre_clicked_file      = None
         self.__index_of_clicked_file = None
+        self.__pre_hov               = None
         self.__count_selected        = 0
         self.position.iy             = 0
         self.load_files(directory, suffixes, sort_by)
@@ -750,16 +751,39 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         return True
 
 
+    __x = __y  = 0     # previous position
+    hover_mode = False
+    __pre_hov  = None # TODO: clear the value when directory change at open
+    def __handle_hover_mode(self, y, x):
+        if not self.hover_mode: return
+        tmp_id_of_hov_file, tmp_hov_file = self.get_tuifile_by_coordinates(y,x, return_enumerator=True)
+        if tmp_hov_file and tmp_id_of_hov_file and not tmp_hov_file.is_selected: 
+            self.__set_label_on_file_selection(tmp_id_of_hov_file,tmp_hov_file)
+            # tmp_hov_file.is_selected = True
+            tmp_hov_file.draw_effect(self.pad, color_pair_offset=self.color_pair_offset, effect=0)
+            if self.__pre_hov and self.__pre_hov != tmp_hov_file:
+                # self.__pre_hov.is_selected = False
+                self.__pre_hov.draw(self.pad, color_pair_offset=self.color_pair_offset)
+            self.__pre_hov = tmp_hov_file
+        elif self.__pre_hov:
+            self.__pre_hov.draw(self.pad, color_pair_offset=self.color_pair_offset)
+            self.__pre_hov = None
+
+
+
     def __handle_mouse_events(self, event):
         if event != unicurses.KEY_MOUSE: return False
         in_range, id, x, y, z, bstate = self.get_mouse()
         if not IS_WINDOWS and not in_range: return True # TODO: https://github.com/GiorgosXou/TUIFIManager/issues/49
         if self.__perform_menu_selected_action(self.menu.handle_mouse_events(id, x, y, z, bstate)): return True
+        if self.__x != x or self.__y != y: self.hover_mode = True #hover mode
 
-        if   bstate & unicurses.BUTTON4_PRESSED: self.scroll_pad(UP  )
-        elif bstate & unicurses.BUTTON5_PRESSED: self.scroll_pad(DOWN)
+        if   not self.hover_mode and (bstate & unicurses.BUTTON4_PRESSED): self.scroll_pad(UP  )
+        elif not self.hover_mode and (bstate & unicurses.BUTTON5_PRESSED): self.scroll_pad(DOWN)
         elif not IS_TERMUX or not self.termux_touch_only: # because there are some times that long like presses might be translated to BUTTON1_PRESSED instead of CLICK
+            self.__handle_hover_mode(y,x)
             if (bstate & unicurses.BUTTON1_RELEASED) or (bstate & unicurses.BUTTON3_RELEASED) or (unicurses.OPERATING_SYSTEM == 'Windows' and bstate & unicurses.BUTTON1_DOUBLE_CLICKED): # unicurses.OPERATING_SYSTEM == 'Windows' because issues with ncurses
+                if self.hover_mode: return True
                 self.__index_of_clicked_file, self.__clicked_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
                 self.__delay1 = time() - self.__delay1
                 sumed_time    = time() - self.__start_time - self.__delay1 # yeah whatever
@@ -799,6 +823,9 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
                 self.__pre_clicked_file = self.__mouse_btn1_pressed_file
         else: self.__handle_termux_touch_events(bstate, y, x)
+
+        self.__x, self.__y = x,y
+        self.hover_mode = False 
         return True
 
 
