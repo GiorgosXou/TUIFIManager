@@ -94,32 +94,31 @@ class TUIMenu:
 
     __it = -1
     def handle_keyboard_events(self, event):
-        performed = False
         if self.exists and event != self.events.get('KEY_MOUSE'):
             if event == self.events.get('KEY_DOWN'):
-                performed=True
                 if self.__it == len(self.items) -1:
                     self.delete()
                     return True
                 self.__it +=1
                 unicurses.mvwchgat(self.pad, self.__it *2 -1, 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
                 unicurses.mvwchgat(self.pad, self.__it *2 +1, 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
+                return True
             elif event == self.events.get('KEY_UP'):
-                performed=True
                 if self.__it <= 0:
                     self.delete()
                     return True
                 self.__it -=1
                 unicurses.mvwchgat(self.pad, self.__it *2 +3, 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
                 unicurses.mvwchgat(self.pad, self.__it *2 +1, 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
+                return True
             elif event in self.events.get('KEY_ENTER'):
                 i = self.__it
                 self.delete()
                 return self.__getItem(i)
             else:
                 self.delete()
-                performed=True
-        return performed
+                return True
+        return False
 
 
     __x = __y = 0
