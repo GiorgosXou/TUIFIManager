@@ -1,0 +1,34 @@
+ignore:
+  - .github/workflows/
+  - venv
+  - setup.py
+
+rule_settings:
+  enable: [default]
+  disable:
+    - use-next
+  rule_types:
+    - refactoring
+    - suggestion
+    - comment
+  python_version: '3.8'
+
+rules: []
+
+metrics:
+  quality_threshold: 15.0
+
+github:
+  labels: []
+  ignore_labels:
+    - sourcery-ignore
+  request_review: author
+  sourcery_branch: sourcery/{base_branch}
+
+clone_detection:
+  min_lines: 3
+  min_duplicates: 2
+  identical_clones_only: false
+
+proxy:
+  no_ssl_verify: false
