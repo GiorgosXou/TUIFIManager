@@ -5,40 +5,41 @@
 # sys.path.append('..')                                               # TESTING WITH DAP
 # sys.path.append('/home/xou/.local/lib/python3.10/site-packages/')   # TESTING WITH DAP
 import sys
-import unicurses
-
+import unicurses as uc
 from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE
 
 
 def main():
     global stdscr
-    stdscr = unicurses.initscr()              # Global UniCurses Variable
+    stdscr = uc.initscr()              # Global UniCurses Variable
     event  = -1
 
-    unicurses.start_color  ( )
-    unicurses.cbreak       ( )
-    unicurses.noecho       ( )
-    unicurses.curs_set     (0)
-    unicurses.mouseinterval(0)                 # Initializing Mouse and then Update/refresh() stdscr
-    unicurses.mousemask    (unicurses.ALL_MOUSE_EVENTS | unicurses.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
-    unicurses.keypad       (stdscr, True )
-    unicurses.nodelay      (stdscr, False)
-    print        (BEGIN_MOUSE)       # Initializing mouse movement | Don't move it above because it won't work on Windows
-    unicurses.refresh      ( )
+    uc.start_color  ( )
+    uc.cbreak       ( )
+    uc.noecho       ( )
+    uc.curs_set     (0)
+    uc.mouseinterval(0)                 # Initializing Mouse and then Update/refresh() stdscr
+    uc.mousemask    (uc.ALL_MOUSE_EVENTS | uc.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
+    uc.keypad       (stdscr, True )
+    uc.nodelay      (stdscr, False)
+    print           (BEGIN_MOUSE)       # Initializing mouse movement | Don't move it above because it won't work on Windows
+    uc.refresh      ( )
+
     # Initializing TUIFIManager
-    HEIGHT,WIDTH       = unicurses.getmaxyx(stdscr)
+    HEIGHT,WIDTH       = uc.getmaxyx(stdscr)
     starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
     fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), starting_directory,suffixes=['*'], is_focused=True)
     fileManager.refresh()
 
     while event != 27 or fileManager.escape_event_consumed: # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.escape_event_consumed
-        event = unicurses.get_wch()
+        event = uc.get_wch()
         fileManager.handle_events(event)
         fileManager.refresh()
-        if event == unicurses.KEY_RESIZE:
-            unicurses.resize_term(0,0)
+        if event == uc.KEY_RESIZE:
+            uc.resize_term(0,0)
     print (END_MOUSE)
-    unicurses.endwin()
+    uc.endwin()
+
 
 if __name__ == "__main__":
     main()
