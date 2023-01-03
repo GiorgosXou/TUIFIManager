@@ -910,9 +910,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
 
     def __reset_index_of_clicked_file(self) -> None:
+        if self.__index_of_clicked_file is not None: return False # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
         self.select(self.files[0])
         self.__clicked_file = self.files[0]
         self.__index_of_clicked_file = 0
+        return True
 
 
     def __change_index_of_clicked_file(self, index: int) -> None:
@@ -926,9 +928,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
 
     def __perform_key_up(self):
-        if self.__index_of_clicked_file is None: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-            return self.__reset_index_of_clicked_file()
-
+        if self.__reset_index_of_clicked_file(): return
         for i in range(self.__index_of_clicked_file, 0, -1):
             if (self.files[i - 1].y < self.files[self.__index_of_clicked_file].y) and (self.files[i - 1].x <= self.files[self.__index_of_clicked_file].x):
                 self.__change_index_of_clicked_file(i - 1)
@@ -936,9 +936,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
 
     def __perform_key_down(self):
-        if self.__index_of_clicked_file is None: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-            return self.__reset_index_of_clicked_file()
-
+        if self.__reset_index_of_clicked_file(): return
         for i in range(self.__index_of_clicked_file, len(self.files) - 1):
             if (self.files[i + 1].y > self.files[self.__index_of_clicked_file].y) and (self.files[i + 1].x >= self.files[self.__index_of_clicked_file].x):
                 self.__change_index_of_clicked_file(i + 1)
@@ -946,24 +944,16 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
 
     def __perform_key_right(self):
-        if self.__index_of_clicked_file == len(self.files) - 1:
-            return
-
-        if self.__index_of_clicked_file is None:
-            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-            return self.__reset_index_of_clicked_file()
-
+        if self.__index_of_clicked_file == len(self.files) - 1: return
+        if self.__reset_index_of_clicked_file()               : return
         self.__change_index_of_clicked_file(self.__index_of_clicked_file + 1)
 
+
     def __perform_key_left(self):
-        if self.__index_of_clicked_file == 0:
-            return
-
-        if self.__index_of_clicked_file is None:
-            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-            return self.__reset_index_of_clicked_file()
-
+        if self.__index_of_clicked_file == 0   : return
+        if self.__reset_index_of_clicked_file(): return
         self.__change_index_of_clicked_file(self.__index_of_clicked_file - 1)
+
 
     def __perform_key_btab(self):
         if self.__clicked_file and self.__clicked_file.name != '..':
