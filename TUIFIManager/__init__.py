@@ -3,6 +3,8 @@
 
 from     contextlib import contextmanager
 from functools import partial
+from typing import Optional
+
 from     send2trash import send2trash
 from        pathlib import Path
 from           time import time
@@ -241,25 +243,36 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         finally:
             unicurses.doupdate()
 
+    def __try_open_file_with(self, directory: str, open_with: Optional[str]) -> None:
+        if not open_with:
+            return self.__set_label_on_file_selection()
+
+        print(END_MOUSE, end='\r')
+        with self.suspend():
+            proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
+            proc.wait()
+
+        print(BEGIN_MOUSE, end='\r')
+        self.__set_label_on_file_selection()
+        return
 
     def open(self, directory, suffixes=None, sort_by=None, _with=None):
         """
         `open()` is `load_files()` + `draw()`
         """
-        if directory in (None,''):
+        if directory is None or not directory:
             return None
-        if isinstance(directory,TUIFile):
+
+        if isinstance(directory, TUIFile):
             directory = self.directory + sep + directory.name
-        if not os.path.isdir(directory) or _with:
-            open_with = TUIFIProfiles.get('/'+os.path.splitext(directory)[1][1:],DEFAULT_PROFILE).open_with if not _with else _with
-            if open_with:
-                print(END_MOUSE, end='\r')
-                with self.suspend():
-                    proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
-                    proc.wait()
-                print(BEGIN_MOUSE, end='\r')
-            self.__set_label_on_file_selection()
-            return None
+
+        if _with:
+            return self.__try_open_file_with(directory, _with)
+
+        if not os.path.isdir(directory):
+            prof = f'/{os.path.splitext(directory)[1][1:]}'
+            open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
+            return self.__try_open_file_with(directory, open_with)
 
         if self.vim_mode and self.escape_event_consumed: # SuS SuS SuS SuS SuS
             self.find()
