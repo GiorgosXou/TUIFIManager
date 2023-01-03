@@ -2,8 +2,8 @@
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS)
 
 from     contextlib import contextmanager
-from functools import partial
 from     send2trash import send2trash
+from      functools import partial
 from        pathlib import Path
 from           time import time
 from             os import  sep
