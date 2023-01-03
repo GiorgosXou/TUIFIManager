@@ -5,7 +5,7 @@ from     contextlib import contextmanager
 from     send2trash import send2trash
 from      functools import partial
 from        pathlib import Path
-from         typing import Optional
+from         typing import Optional, Final
 from           time import time
 from             os import sep
 from           math import log10
@@ -18,6 +18,8 @@ import    unicurses
 import       shutil
 import       signal
 import           os
+
+__version__: Final[str] = "2.1.9"
 
 PADDING_LEFT   = 2
 PADDING_RIGHT  = 2
