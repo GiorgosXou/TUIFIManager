@@ -1,25 +1,26 @@
 #TODO: I NEED TO ADD GETTERS AND SETTERS FOR Y AND X BECAUSE THEY NEED unicurses.touchwin(self.parent.win)
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS)
 
-from     contextlib import contextmanager
-from     send2trash import send2trash
-from      functools import partial
-from        pathlib import Path
-from         typing import Optional
-from           time import time
-from             os import sep
-from           math import log10
-from       .TUIMenu import    *
-from       .TUIFile import    *
-from  .TUIFIProfile import    *
-from   .TUItilities import    *
-import   subprocess
-import    unicurses
-import       shutil
-import       signal
-import           os
+import os
+import shutil
+import signal
+import subprocess
 
+from contextlib import contextmanager
+from functools import partial
+from math import log10
+from os import sep
+from pathlib import Path
+from time import time
+from typing import Optional
 
+import unicurses
+from send2trash import send2trash
+
+from TUIFIManager.TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE, DEFAULT_WITH
+from TUIFIManager.TUIFile import TUIFile
+from TUIFIManager.TUIMenu import TUIMenu
+from TUIFIManager.TUItilities import Component, Label, END_MOUSE, BEGIN_MOUSE
 
 PADDING_LEFT   = 2
 PADDING_RIGHT  = 2
