@@ -839,7 +839,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         else: self.__handle_termux_touch_events(bstate, y, x)
 
         self.__x, self.__y = x,y
-        self.hover_mode = False 
+        self.hover_mode = False
         return True
 
 
@@ -909,74 +909,61 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.__count_selected == 1 and self.__clicked_file.is_selected:
             self.open(self.__clicked_file)
 
+    def __reset_index_of_clicked_file(self) -> None:
+        self.select(self.files[0])
+        self.__clicked_file = self.files[0]
+        self.__index_of_clicked_file = 0
+
+    def __change_index_of_clicked_file(self, index: int) -> None:
+        self.deselect()
+
+        self.__index_of_clicked_file = index
+        self.__clicked_file = self.files[index]
+        self.__mouse_btn1_pressed_file = self.__clicked_file
+        self.__pre_clicked_file = self.__clicked_file
+
+        self.scroll_to_file(self.__clicked_file, True)
+        self.__set_label_on_file_selection()
 
     def __perform_key_up(self):
-        if self.__index_of_clicked_file is not None:
-            for i in range(self.__index_of_clicked_file,0,-1):
-                if (self.files[i-1].y < self.files[self.__index_of_clicked_file].y) and (self.files[i-1].x <= self.files[self.__index_of_clicked_file].x):
-                    self.deselect()
-                    self.__index_of_clicked_file   = i -1
-                    self.__clicked_file            = self.files[i-1]
-                    self.__mouse_btn1_pressed_file = self.__clicked_file
-                    self.__pre_clicked_file        = self.__clicked_file
-                    self.scroll_to_file(self.__clicked_file, True)
-                    break
-                self.__set_label_on_file_selection()
-        else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-            self.select(self.files[0])
-            self.__clicked_file = self.files[0]
-            self.__index_of_clicked_file = 0
+        if self.__index_of_clicked_file is None:
+            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
+            return self.__reset_index_of_clicked_file()
 
+        for i in range(self.__index_of_clicked_file, 0, -1):
+            if (self.files[i - 1].y < self.files[self.__index_of_clicked_file].y) and (self.files[i - 1].x <= self.files[self.__index_of_clicked_file].x):
+                self.__change_index_of_clicked_file(i - 1)
+                break
 
     def __perform_key_down(self):
-        if self.__index_of_clicked_file is not None:
-            for i in range(self.__index_of_clicked_file,len(self.files)-1):
-                if (self.files[i+1].y > self.files[self.__index_of_clicked_file].y) and (self.files[i+1].x >= self.files[self.__index_of_clicked_file].x):
-                    self.deselect()
-                    self.__index_of_clicked_file   = i +1
-                    self.__clicked_file            = self.files[i+1]
-                    self.__mouse_btn1_pressed_file = self.__clicked_file
-                    self.__pre_clicked_file        = self.__clicked_file
-                    self.scroll_to_file(self.__clicked_file, True)
-                    break
-                self.__set_label_on_file_selection()
-        else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-            self.select(self.files[0])
-            self.__clicked_file = self.files[0]
-            self.__index_of_clicked_file = 0
+        if self.__index_of_clicked_file is None:
+            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
+            return self.__reset_index_of_clicked_file()
 
+        for i in range(self.__index_of_clicked_file, len(self.files) - 1):
+            if (self.files[i + 1].y > self.files[self.__index_of_clicked_file].y) and (self.files[i + 1].x >= self.files[self.__index_of_clicked_file].x):
+                self.__change_index_of_clicked_file(i + 1)
+                break
 
     def __perform_key_right(self):
-        if not self.__index_of_clicked_file == len(self.files) - 1:
-            if not self.__index_of_clicked_file == None:
-                self.deselect()
-                self.__index_of_clicked_file   = self.__index_of_clicked_file +1
-                self.__clicked_file            = self.files[self.__index_of_clicked_file]
-                self.__mouse_btn1_pressed_file = self.__clicked_file
-                self.__pre_clicked_file        = self.__clicked_file
-                self.scroll_to_file(self.__clicked_file, True)
-                self.__set_label_on_file_selection()
-            else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-                self.select(self.files[0])
-                self.__clicked_file = self.files[0]
-                self.__index_of_clicked_file = 0
+        if self.__index_of_clicked_file == len(self.files) - 1:
+            return
 
+        if self.__index_of_clicked_file is None:
+            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
+            return self.__reset_index_of_clicked_file()
+
+        self.__change_index_of_clicked_file(self.__index_of_clicked_file + 1)
 
     def __perform_key_left(self):
-        if self.__index_of_clicked_file != 0:
-            if self.__index_of_clicked_file is not None:
-                self.deselect()
-                self.__index_of_clicked_file   = self.__index_of_clicked_file -1
-                self.__clicked_file            = self.files[self.__index_of_clicked_file]
-                self.__mouse_btn1_pressed_file = self.__clicked_file
-                self.__pre_clicked_file        = self.__clicked_file
-                self.scroll_to_file(self.__clicked_file, True)
-                self.__set_label_on_file_selection()
-            else: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
-                self.select(self.files[0])
-                self.__clicked_file = self.files[0]
-                self.__index_of_clicked_file = 0
+        if self.__index_of_clicked_file == 0:
+            return
 
+        if self.__index_of_clicked_file is None:
+            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
+            return self.__reset_index_of_clicked_file()
+
+        self.__change_index_of_clicked_file(self.__index_of_clicked_file - 1)
 
     def __perform_key_btab(self):
         if self.__clicked_file and self.__clicked_file.name != '..':
@@ -988,10 +975,10 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             self.select(self.__clicked_file)
 
     def __handle_alt_down(self, event):
-        if 'kDN3' != unicurses.keyname(event): return False 
+        if 'kDN3' != unicurses.keyname(event): return False
         if self.menu.exists: self.menu.delete()
         else               : self.menu.create(self.__clicked_file.y,self.__clicked_file.x +1)
-        return True 
+        return True
 
 
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD  | UPDATE: WHAT HAVE I DONE, WHY SO MANY IF AND NOT JSUT A DIRCT WITH FUNCTIONS
