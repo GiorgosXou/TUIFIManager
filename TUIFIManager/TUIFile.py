@@ -1,7 +1,6 @@
 import unicurses
 
-from TUIFIManager import DEFAULT_PROFILE
-from TUIFIManager.TUIFIProfile import TUIFIProfile, LINK_SYMBOL, LINK_SYMBOL_COLOR
+from .TUIFIProfile import TUIFIProfile, LINK_SYMBOL, LINK_SYMBOL_COLOR, DEFAULT_PROFILE
 
 
 class TUIFile:
