@@ -6,7 +6,7 @@ from     send2trash import send2trash
 from      functools import partial
 from        pathlib import Path
 from           time import time
-from             os import  sep
+from             os import sep
 from           math import log10
 from       .TUIMenu import    *
 from       .TUIFile import    *
