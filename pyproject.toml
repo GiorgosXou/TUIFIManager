@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "TUIFIManager"
+version = "2.1.9"
+
+description = "A cross-platform terminal-based termux-oriented file manager."
+requires-python = ">=3.8"
+readme = "README.md"
+
+dependencies = [
+    "uni-curses >= 2.1.3",
+    "Send2Trash == 1.8.0",
+]
+
+license = {text = "General Public License v3.0"}
+classifiers = [
+    "Environment :: Terminals",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10"
+]
+
+keywords = [
+    "file-manager",
+    "terminal",
+    "tui",
+    "ncurses",
+    "pdcurses",
+    "uni-curses",
+    "termux",
+    "vim",
+    "vim-motions",
+    "cross-platform"
+]
+
+[project.scripts]
+tuifi = "TUIFIManager.__main__:main"
