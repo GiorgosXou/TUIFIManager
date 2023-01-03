@@ -26,9 +26,9 @@ PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
 STTY_EXISTS = shutil.which('stty')
-IS_WINDOWS = unicurses.OPERATING_SYSTEM == 'Windows'
-HOME_DIR = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
-IS_TERMUX = 'com.termux' in HOME_DIR
+IS_WINDOWS  = unicurses.OPERATING_SYSTEM == 'Windows'
+HOME_DIR    = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
+IS_TERMUX   = 'com.termux' in HOME_DIR
 
 UP   = -1
 DOWN =  1
