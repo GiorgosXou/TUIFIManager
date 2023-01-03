@@ -6,11 +6,16 @@
 # sys.path.append('/home/xou/.local/lib/python3.10/site-packages/')   # TESTING WITH DAP
 import sys
 import unicurses as uc
-from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE
+from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__
 
 
 def main():
     global stdscr
+
+    if "-v" in sys.argv or "--version" in sys.argv:
+        print(f"TUIFIManager v{__version__}")
+        return
+
     stdscr = uc.initscr()              # Global UniCurses Variable
     event  = -1
 
