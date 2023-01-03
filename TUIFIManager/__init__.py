@@ -911,6 +911,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.__pre_clicked_file = self.__clicked_file
 
         self.scroll_to_file(self.__clicked_file, True)
+        self.__set_label_on_file_selection()
 
     def __perform_key_up(self):
         if self.__index_of_clicked_file is None:
@@ -922,8 +923,6 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 self.__change_index_of_clicked_file(i - 1)
                 break
 
-            self.__set_label_on_file_selection()
-
     def __perform_key_down(self):
         if self.__index_of_clicked_file is None:
             # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
@@ -934,8 +933,6 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 self.__change_index_of_clicked_file(i + 1)
                 break
 
-            self.__set_label_on_file_selection()
-
     def __perform_key_right(self):
         if self.__index_of_clicked_file == len(self.files) - 1:
             return
@@ -945,7 +942,6 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             return self.__reset_index_of_clicked_file()
 
         self.__change_index_of_clicked_file(self.__index_of_clicked_file + 1)
-        self.__set_label_on_file_selection()
 
     def __perform_key_left(self):
         if self.__index_of_clicked_file == 0:
@@ -956,7 +952,6 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             return self.__reset_index_of_clicked_file()
 
         self.__change_index_of_clicked_file(self.__index_of_clicked_file - 1)
-        self.__set_label_on_file_selection()
 
     def __perform_key_btab(self):
         if self.__clicked_file and self.__clicked_file.name != '..':
