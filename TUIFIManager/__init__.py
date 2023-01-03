@@ -1,39 +1,37 @@
 #TODO: I NEED TO ADD GETTERS AND SETTERS FOR Y AND X BECAUSE THEY NEED unicurses.touchwin(self.parent.win)
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS)
 
-import os
-import shutil
-import signal
-import subprocess
-
-from contextlib import contextmanager
-from functools import partial
-from math import log10
-from os import sep
-from pathlib import Path
-from time import time
-from typing import Optional
-
-import unicurses
-from send2trash import send2trash
-
-from TUIFIManager.TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE, DEFAULT_WITH
-from TUIFIManager.TUIFile import TUIFile
-from TUIFIManager.TUIMenu import TUIMenu
-from TUIFIManager.TUItilities import Component, Label, END_MOUSE, BEGIN_MOUSE
+from     contextlib import contextmanager
+from     send2trash import send2trash
+from      functools import partial
+from        pathlib import Path
+from         typing import Optional
+from           time import time
+from             os import sep
+from           math import log10
+from       .TUIMenu import TUIMenu
+from       .TUIFile import TUIFile
+from   .TUItilities import Component    , Label, END_MOUSE, BEGIN_MOUSE
+from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH
+import   subprocess
+import    unicurses
+import       shutil
+import       signal
+import           os
 
 PADDING_LEFT   = 2
 PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
-STTY_EXISTS = shutil.which('stty')
-IS_WINDOWS  = unicurses.OPERATING_SYSTEM == 'Windows'
-HOME_DIR    = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
-IS_TERMUX   = 'com.termux' in HOME_DIR
+STTY_EXISTS    = shutil.which('stty')
+IS_WINDOWS     = unicurses.OPERATING_SYSTEM == 'Windows'
+HOME_DIR       = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
+CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
+IS_TERMUX      = 'com.termux' in HOME_DIR
 
-UP   = -1
-DOWN =  1
+UP             = -1
+DOWN           =  1
 
 
 
@@ -243,18 +241,18 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         finally:
             unicurses.doupdate()
 
+
     def __try_open_file_with(self, directory: str, open_with: Optional[str]) -> None:
         if not open_with:
             return self.__set_label_on_file_selection()
-
         print(END_MOUSE, end='\r')
         with self.suspend():
             proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
             proc.wait()
-
         print(BEGIN_MOUSE, end='\r')
         self.__set_label_on_file_selection()
         return
+
 
     def open(self, directory, suffixes=None, sort_by=None, _with=None):
         """
@@ -910,25 +908,25 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.__count_selected == 1 and self.__clicked_file.is_selected:
             self.open(self.__clicked_file)
 
+
     def __reset_index_of_clicked_file(self) -> None:
         self.select(self.files[0])
         self.__clicked_file = self.files[0]
         self.__index_of_clicked_file = 0
 
+
     def __change_index_of_clicked_file(self, index: int) -> None:
         self.deselect()
-
-        self.__index_of_clicked_file = index
-        self.__clicked_file = self.files[index]
+        self.__index_of_clicked_file   = index
+        self.__clicked_file            = self.files[index]
         self.__mouse_btn1_pressed_file = self.__clicked_file
-        self.__pre_clicked_file = self.__clicked_file
-
+        self.__pre_clicked_file        = self.__clicked_file
         self.scroll_to_file(self.__clicked_file, True)
         self.__set_label_on_file_selection()
 
+
     def __perform_key_up(self):
-        if self.__index_of_clicked_file is None:
-            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
+        if self.__index_of_clicked_file is None: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
             return self.__reset_index_of_clicked_file()
 
         for i in range(self.__index_of_clicked_file, 0, -1):
@@ -936,15 +934,16 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 self.__change_index_of_clicked_file(i - 1)
                 break
 
+
     def __perform_key_down(self):
-        if self.__index_of_clicked_file is None:
-            # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
+        if self.__index_of_clicked_file is None: # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
             return self.__reset_index_of_clicked_file()
 
         for i in range(self.__index_of_clicked_file, len(self.files) - 1):
             if (self.files[i + 1].y > self.files[self.__index_of_clicked_file].y) and (self.files[i + 1].x >= self.files[self.__index_of_clicked_file].x):
                 self.__change_index_of_clicked_file(i + 1)
                 break
+
 
     def __perform_key_right(self):
         if self.__index_of_clicked_file == len(self.files) - 1:
