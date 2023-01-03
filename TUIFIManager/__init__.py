@@ -2,13 +2,12 @@
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS)
 
 from     contextlib import contextmanager
-from functools import partial
-from typing import Optional
-
 from     send2trash import send2trash
+from      functools import partial
 from        pathlib import Path
+from         typing import Optional
 from           time import time
-from             os import  sep
+from             os import sep
 from           math import log10
 from       .TUIMenu import    *
 from       .TUIFile import    *
@@ -28,9 +27,9 @@ PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
 STTY_EXISTS = shutil.which('stty')
-IS_WINDOWS = unicurses.OPERATING_SYSTEM == 'Windows'
-HOME_DIR = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
-IS_TERMUX = 'com.termux' in HOME_DIR
+IS_WINDOWS  = unicurses.OPERATING_SYSTEM == 'Windows'
+HOME_DIR    = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
+IS_TERMUX   = 'com.termux' in HOME_DIR
 
 UP   = -1
 DOWN =  1
