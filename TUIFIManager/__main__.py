@@ -4,39 +4,41 @@
 # sys.path.insert(0, dirname(dirname(abspath(__file__))))  # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
 # sys.path.append('..')                                               # TESTING WITH DAP
 # sys.path.append('/home/xou/.local/lib/python3.10/site-packages/')   # TESTING WITH DAP
-from TUIFIManager import *
-from unicurses    import *
+import sys
+import unicurses
+
+from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE
 
 
 def main():
     global stdscr
-    stdscr = initscr()              # Global UniCurses Variable
+    stdscr = unicurses.initscr()              # Global UniCurses Variable
     event  = -1
 
-    start_color  ( )
-    cbreak       ( )
-    noecho       ( )
-    curs_set     (0)
-    mouseinterval(0)                 # Initializing Mouse and then Update/refresh() stdscr
-    mousemask    (ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
-    keypad       (stdscr, True )
-    nodelay      (stdscr, False)
+    unicurses.start_color  ( )
+    unicurses.cbreak       ( )
+    unicurses.noecho       ( )
+    unicurses.curs_set     (0)
+    unicurses.mouseinterval(0)                 # Initializing Mouse and then Update/refresh() stdscr
+    unicurses.mousemask    (unicurses.ALL_MOUSE_EVENTS | unicurses.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
+    unicurses.keypad       (stdscr, True )
+    unicurses.nodelay      (stdscr, False)
     print        (BEGIN_MOUSE)       # Initializing mouse movement | Don't move it above because it won't work on Windows
-    refresh      ( )
+    unicurses.refresh      ( )
     # Initializing TUIFIManager
-    HEIGHT,WIDTH       = getmaxyx(stdscr)
+    HEIGHT,WIDTH       = unicurses.getmaxyx(stdscr)
     starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
     fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), starting_directory,suffixes=['*'], is_focused=True)
     fileManager.refresh()
 
     while event != 27 or fileManager.escape_event_consumed: # Main loop exit at event/(ch)aracter 27 = ESC if not fileManager.escape_event_consumed
-        event = get_wch()
+        event = unicurses.get_wch()
         fileManager.handle_events(event)
         fileManager.refresh()
-        if event == KEY_RESIZE:
-            resize_term(0,0)
+        if event == unicurses.KEY_RESIZE:
+            unicurses.resize_term(0,0)
     print (END_MOUSE)
-    endwin()
+    unicurses.endwin()
 
 if __name__ == "__main__":
     main()
