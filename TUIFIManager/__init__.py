@@ -17,6 +17,8 @@ import   subprocess
 import    unicurses
 import       shutil
 import       signal
+import          ast
+import           re
 import           os
 
 __version__: Final[str] = "2.1.9"
@@ -92,6 +94,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.draw_files          = draw_files
         self.termux_touch_only   = termux_touch_only
         self.auto_find_on_typing = auto_find_on_typing # TODO: Add tuifi_auto_find_on_typing evn variable
+        self.auto_cmd_on_typing  = False
         self.menu                = TUIMenu(color_pair_offset=color_pair_offset)
 
         if directory:
@@ -100,6 +103,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             if draw_files:
                 self.draw()
 
+        self.load_commands      ()
         self.__set_normal_events()
         if stty_a('^C') or unicurses.OPERATING_SYSTEM == 'Windows': signal.signal(signal.SIGINT,self.copy) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
@@ -274,12 +278,13 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
             return self.__try_open_file_with(directory, open_with)
 
-        if self.vim_mode and self.escape_event_consumed: # SuS SuS SuS SuS SuS
+        if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol
             self.find()
         else:
             self.is_in_find_mode       = False
             self.escape_event_consumed = False
         self.__change_escape_event_consumed = False
+        self.is_in_command_mode      = False
         self.__temp_findname         = ''
         self.__clicked_file          = None
         self.__pre_clicked_file      = None
@@ -389,6 +394,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
             127                     : self.__open_previous_dir,
             263                     : self.__open_previous_dir,
             unicurses.KEY_RESIZE    : self.__handle_resize_event,
+            32                      : self.command              , # SPACEBAR
         }
 
     def toggle_vim_mode(self): # TODO: Use it in rename and find or something
@@ -398,13 +404,14 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         else:
             self.vim_mode = True
             self.auto_find_on_typing = False
+            self.auto_cmd_on_typing  = True
             self.events.update({ # TODO: Add s for select via keyboard
                 unicurses.CCHAR('k') : self.__perform_key_up             ,
                 unicurses.CCHAR('j') : self.__perform_key_down           ,
                 unicurses.CCHAR('h') : self.__perform_key_left           ,
                 unicurses.CCHAR('l') : self.__perform_key_right          ,
                 unicurses.CCHAR('r') : self.rename                       ,
-                unicurses.CCHAR('y') : self.copy                         ,
+                # unicurses.CCHAR('y') : self.copy                         ,
                 unicurses.CCHAR('c') : self.cut                          ,
                 unicurses.CCHAR('p') : self.paste                        ,
                 unicurses.CCHAR('o') : self.__perform_key_enter          ,
@@ -471,6 +478,13 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.__stack_files_for_action()
 
 
+    def __set_label_on_copy(self,size):
+        length = len(self.__temp__copied_files)
+        text   = f'{length} files [{size} bytes]' if length > 1 else f'{self.__temp__copied_files[0].name}'  
+        action = 'CUTED' if self.__is_cut else 'COPIED'
+        self.__set_label_text(f'[{action}]: {text}')
+
+
     def __stack_files_for_action(self):
         """
         this function is TEMPORARY and will be REMOVED,
@@ -487,11 +501,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 if f.is_selected:
                     self.__temp__copied_files.append(f)
                     size += os.path.getsize(self.directory + sep + f.name)
-
-        length = len(self.__temp__copied_files)
-        text   = f'{length} files [{size} bytes]' if length > 1 else f'{self.__clicked_file.name}'
-        action = 'CUTED' if self.__is_cut else 'COPIED'
-        self.__set_label_text(f'[{action}]: {text}')
+        self.__set_label_on_copy(size)
 
 
     def __duplicate(self):
@@ -629,6 +639,135 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     def find(self):
         self.__set_label_text('[INPUT]')
         self.is_in_find_mode = True
+        self.escape_event_consumed = True
+        self.__temp_findname = '' # just ot make sure although it might not be need it
+
+
+    def __refine_path(self, path):
+        path = HOME_DIR       + path[1:] if path.startswith('~') else path
+        path = self.directory + path[1:] if path.startswith('.') else path 
+        path = os.path.realpath(os.path.normpath(path))
+        return path
+
+
+    def __cmd_open(self, **args):
+        args['directory'] = self.__refine_path(args['directory'] )
+        self.open(**args)
+
+
+    def __cmd_stack(self, pattern):
+        self.__temp__copied_files = []
+        size = 0
+        if pattern:
+            for e in self.files:
+                match = re.search(pattern, e.name)
+                if match:
+                    self.__temp__copied_files.append(e)
+                    size += os.path.getsize(self.directory + sep + e.name)
+        else:
+            size = os.path.getsize(self.directory + sep + self.__clicked_file.name)
+            self.__temp__copied_files = [self.__clicked_file]
+        if len(self.__temp__copied_files): 
+            self.__set_label_on_copy(size)
+        else:
+            self.__set_label_text('FILES NOT FOUND')
+
+
+    def __cmd_copy(self, pattern=None):
+        self.__is_cut = False
+        self.__cmd_stack(pattern)
+
+
+    def __cmd_cut(self, pattern):
+        self.__is_cut = True
+        self.__cmd_stack(pattern)
+
+
+    def __cmd_delete(self, pattern):
+        pass
+
+
+    command_events = {}
+    command_types  = {
+        'delete' : __cmd_delete , 
+        'open'   : __cmd_open   , 
+        'copy'   : __cmd_copy   ,
+        'cut'    : __cmd_cut    ,
+        'find'   : find_file    ,
+    }
+    def load_commands(self, path=CONFIG_PATH):
+        os.makedirs(path, exist_ok=True)
+        conf_path = path + sep + 'cmds.conf'
+        if not os.path.isfile(conf_path): 
+            f = open(conf_path, 'w')
+            f.write(
+                "gt  | open | 'directory':'~/.config/tuifi'           | - tuifi -\n" +
+                "gh  | open | 'directory':'~/'                        | - Home -\n"  +
+                "yat | copy | 'pattern':'.+\.txt'                     |\n"           +
+                "yy  | copy | 'pattern':None                          |\n" 
+            )
+            f.close()
+        f = open(conf_path, 'r')
+        for line in f:
+            ln = line.strip()
+            if ln == '': continue
+            ln = line.split('|') #  command, args, type, comment | using "|" because this is an __illegal_filename_characters
+            self.command_events[ln[0].strip()] = (self.command_types[ln[1].strip()], ast.literal_eval('{'+ln[2].strip()+'}'), ln[3].strip())
+        f.close()
+
+
+    marker_stack = {}
+    def __perform_static_cmd_events(self, event):
+        if self.__temp_findname.startswith('m'):
+            self.__set_label_text('[MARKER]')
+            if len(self.__temp_findname) == 2:
+                marker = unicurses.RCCHAR(event)
+                self.__set_label_text(f'[MARKER] SET TO [{marker}]')
+                self.marker_stack[marker]           = self.directory
+                self.__temp_findname                = ''
+                self.__change_escape_event_consumed = True
+                self.is_in_command_mode             = False
+            return True
+        elif self.__temp_findname.startswith(('`',';')):
+            self.__set_label_text('[GOTO MARKER]')
+            if len(self.__temp_findname) == 2:
+                marker = unicurses.RCCHAR(event)
+                dir    = self.marker_stack.get(marker) 
+                if dir: 
+                    self.open(dir) # scroll to file maby too?
+                else: 
+                    self.__set_label_text('[MARKER] NOT FOUND')
+                    self.__change_escape_event_consumed = True
+                    self.is_in_command_mode             = False
+            return True
+        return False
+
+
+    is_in_command_mode = False
+    def handle_command_events(self, event):
+        self.__set_label_text('[COMMAND]')
+        if event == 27:
+            self.__change_escape_event_consumed = True
+            self.is_in_command_mode = False
+            self.__temp_findname    = ''
+            self.__set_label_text('[NORMAL]')
+        else:
+            self.__temp_findname += unicurses.RCCHAR(event)
+            self.__set_label_text(f'[COMMAND] {self.__temp_findname}')
+        if self.__perform_static_cmd_events(event): return True
+        cmd = self.command_events.get(self.__temp_findname)
+        if cmd:
+            self.__change_escape_event_consumed = True # it has to be before cmd call
+            cmd[0](self, **cmd[1])
+            self.__temp_findname    = ''
+            self.is_in_command_mode = False
+            if cmd[2]: self.__set_label_text(cmd[2])
+        return True
+
+
+    def command(self):
+        self.__set_label_text('[COMMAND]')
+        self.is_in_command_mode    = True
         self.escape_event_consumed = True
         self.__temp_findname = '' # just ot make sure although it might not be need it
 
@@ -886,8 +1025,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.__change_escape_event_consumed:
             self.__change_escape_event_consumed = False
             self.escape_event_consumed          = False
-        elif self.is_in_find_mode:
-            return self.handle_find_events(event)
+        elif self.is_in_find_mode   : return self.handle_find_events   (event)
+        elif self.is_in_command_mode: return self.handle_command_events(event)
         else:
             self.handle_rename_events(event)
             return True
@@ -978,11 +1117,14 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if self.__is_escape_consumed(event)                                            : return
         if self.__perform_menu_selected_action(self.menu.handle_keyboard_events(event)): return
 
-        if not self.events.get(event, self.__return)() : return # Is this too bad of a practice? let me know
+        if self.events.get(event, self.__return)() != True : return # Is this too bad of a practice? let me know
         if self.__handle_mouse_events          (event) : return
         if self.__handle_alt_down              (event) : return
         if self.__handle_termux_keyboard_events(event) : return
-        if self.auto_find_on_typing and event != 27: # this thing i think it will mess up alot with the customization so i'll itroduce a variable auto_find_on_typing
+        if self.auto_cmd_on_typing and event != 27:
+            self.command()
+            self.handle_events(event)
+        elif self.auto_find_on_typing and event != 27: # this thing i think it will mess up alot with the customization so i'll itroduce a variable auto_find_on_typing
             self.find() # to enable find mode and consume escape event
             self.handle_find_events(event)
 
