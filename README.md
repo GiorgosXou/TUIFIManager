@@ -90,7 +90,7 @@ To perform a command under the normal-mode, you first have to press the space-ba
 |`yat` | copy | 'pattern':'.+\.txt'                     ||
 |`yy` | copy | 'pattern':None                          ||
 
-There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using `\`` or `;`+that_character 
+There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character 
 
 
 
