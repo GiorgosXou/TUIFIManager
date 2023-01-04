@@ -8,12 +8,13 @@
 - - `is_on_termux_select_mode` to `is_on_select_mode`
 - ***Added:***
 - - Normal keys now work with `vim_mode` too
+- - Command-mode: Custom commands both for normal and vim mode
 - - Hover effect over files
 - ***Improved:***
 - - Performance
 - ***Extensions:***
 - - ***Added:***
-- - - `csv`, `xml`, `log`, `ico`, `yml`, `yaml`, `ini`, `ppt`, `pptx`, `license`
+- - - `csv`, `xml`, `log`, `ico`, `yml`, `yaml`, `ini`, `ppt`, `pptx`, `license`, `.gitattributes`, `cfg`
 
 # v.2.1.9
 - ***Fixed:***
