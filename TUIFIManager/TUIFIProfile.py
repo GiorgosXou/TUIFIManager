@@ -42,6 +42,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),2, DEFAULT_EDITOR),
 
+    '.gitattributes':TUIFIProfile((
+        '          \n'
+        ' ┏ATR┏▄ ┓ \n'
+        ' ┇█▓░┣┻▄┇ \n'
+        ' ┗━━ ▀  ┛ '
+    ),1, DEFAULT_EDITOR),
     '.gitignore':TUIFIProfile((
         '          \n'
         ' ┏━ ┏▄ ━┓ \n'
@@ -68,6 +74,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━┻┛ '
     ),2, DEFAULT_EDITOR),
 
+    '/cfg':TUIFIProfile((
+        ' ┏┏━━━━┓┓ \n'
+        ' ┇CONFIG┃ \n'
+        ' ┃┋┇┃┃┇┋┃ \n'
+        ' ┗━━━━━━┛ '
+    ),2, DEFAULT_EDITOR),
     '/conf':TUIFIProfile((
         ' ┏┏━━━━┓┓ \n'
         ' ┇CONFIG┃ \n'
