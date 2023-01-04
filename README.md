@@ -56,7 +56,8 @@ for more details look into the `__main__.py`
 * [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
 ### *Common Shortcuts\Keybindings*
-| Shortcuts   | vim_mode | Action                                        |
+In `vim_mode` both normal and vim shortcuts work 
+| Normal      | vim_mode | Action                                        |
 |----         | ---- |:----                                          |
 |`SHIFT + TAB`  |   |Moves selected file to the previous directory |
 |`KEY_BACKSPACE`| `J` |Opens\Goes to the previous directory          |
@@ -67,15 +68,31 @@ for more details look into the `__main__.py`
 |`DEL`          | `CTRL+d`  |Deletes the selected files                    |
 |`CTRL + F`     | `i`  |Find Files *(if not auto_find_on_typing)*     |
 |`CTRL + O`     | `O`  |Open whole directory in editor                |
-|`CTRL + C`     | `y`  |Copies the selected files                     |
+|`CTRL + C`     | `yy`  |Copies the selected files                     |
 |`CTRL + K`     |   |Copies the selected files                     |
 |`CTRL + X`     | `c`  |Cuts the selected files                       |
 |`CTRL + R`     | `r` |Rename selected file                          | 
 |`CTRL + N`     | `W` |Create new folder                             |
 |`CTRL + W`     | `w` |Create new file                               |
 |`ARROW KEYS`   | `l` `k` `j` `h`  |Navigates files                               |
-|`KEY_ENTER`    | `K` `o` |Opens files                                   |
+|`KEY_ENTER`    | `K`|Opens files                                   |
 |`ESCAPE`       |   |Exit                                          |
+
+
+### *Default & Custom - Commands*
+To perform a command under the normal-mode, you first have to press the space-bar and then type the command. Alternatively, use `vim_mode` or enable the `tuifi_auto_command_on_typing`-env variable *(notice: it disables `tuifi_auto_find_on_typing`)*. **The default commands can be seen below and can be found under the `~/.config/tuifi/cmds.conf` where you can add your custom ones too:**
+
+| Cmd | Type | Attributes | Label Comment|
+|---|---|---|---|
+|`gt` | open | 'directory':'~/.config/tuifi'           | - tuifi -|
+|`gh` | open | 'directory':'~/'                        | - Home -|
+|`owv` | open | 'directory':None,'\_with':'vim'         |Opened With Vim|
+|`yat` | copy | 'pattern':'.+\.txt'                     ||
+|`yy` | copy | 'pattern':None                          ||
+
+There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using `\`` or `;`+that_character 
+
+
 
 ### *TERMUX only Shortcuts\Keybindings*
 | Shortcut    | Action                                                                         |
@@ -92,20 +109,26 @@ for more details look into the `__main__.py`
 
 
 ## Customization 
-***How do I enable vim_mode ?***
+***How do I enable vim_mode?***
 > Set `tuifi_vim_mode` enviroment variable to `True`
 
 ***How do I map keys in vim_mode?***
 > This ain't possible right now althought you could play around with the content of `toggle_vim_mode` function under `__init__.py`
 
-***How do I set the default editor ?***
+***How do I set the default editor?***
 > Set `tuifi_default_editor` enviroment variable to `vim` or whatever you prefer
+
+***How do I disable the auto-find-mode?***
+> You can just set `tuifi_auto_find_on_typing` enviroment variable to `False`
+
+***How do I change the default configuration path?***
+> Set `tuifi_config_path` enviroment variable to whatever you prefer most
 
 ***How do I toggle hidden files/folders?***
 > Edit `__main__.py` and specify `suffixes=['*','.*']` for hidden files. [THIS NEEDS TO BE FIXED]
 
 ***How do I change the default colors?***
-> A bit complicated to explain here just make an issue and I will explain it there
+> [look here for more informations](https://github.com/GiorgosXou/TUIFIManager/issues/38)
 
 
 # Donation
