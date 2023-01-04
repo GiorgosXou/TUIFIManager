@@ -93,7 +93,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.suffixes            = suffixes
         self.draw_files          = draw_files
         self.termux_touch_only   = termux_touch_only
-        self.auto_find_on_typing = auto_find_on_typing # TODO: Add tuifi_auto_find_on_typing evn variable
+        self.auto_find_on_typing = os.getenv('tuifi_auto_find_on_typing', str(auto_find_on_typing)) == 'True' 
         self.auto_cmd_on_typing  = False
         self.menu                = TUIMenu(color_pair_offset=color_pair_offset)
 
