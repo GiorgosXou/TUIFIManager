@@ -21,7 +21,7 @@ import          ast
 import           re
 import           os
 
-__version__: Final[str] = "2.1.9"
+__version__: Final[str] = "2.3.2"
 
 PADDING_LEFT   = 2
 PADDING_RIGHT  = 2
@@ -411,10 +411,8 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 unicurses.CCHAR('h') : self.__perform_key_left           ,
                 unicurses.CCHAR('l') : self.__perform_key_right          ,
                 unicurses.CCHAR('r') : self.rename                       ,
-                # unicurses.CCHAR('y') : self.copy                         ,
                 unicurses.CCHAR('c') : self.cut                          ,
                 unicurses.CCHAR('p') : self.paste                        ,
-                unicurses.CCHAR('o') : self.__perform_key_enter          ,
                 unicurses.CCHAR('O') : self.__open_DEFAULT_WITH          ,
                 unicurses.CCHAR('K') : self.__perform_key_enter          ,
                 unicurses.CCHAR('J') : self.__open_previous_dir          ,
@@ -651,7 +649,10 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
 
 
     def __cmd_open(self, **args):
-        args['directory'] = self.__refine_path(args['directory'] )
+        if args['directory']: 
+            args['directory'] = self.__refine_path(args['directory'] )
+        else:
+            args['directory'] = self.__clicked_file
         self.open(**args)
 
 
@@ -701,10 +702,11 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         if not os.path.isfile(conf_path): 
             f = open(conf_path, 'w')
             f.write(
-                "gt  | open | 'directory':'~/.config/tuifi'           | - tuifi -\n" +
-                "gh  | open | 'directory':'~/'                        | - Home -\n"  +
-                "yat | copy | 'pattern':'.+\.txt'                     |\n"           +
-                "yy  | copy | 'pattern':None                          |\n" 
+                "gt  | open | 'directory':'~/.config/tuifi' | - tuifi -\n"       +
+                "gh  | open | 'directory':'~/'              | - Home -\n"        +
+                "owv | open | 'directory':None,'_with':'vim'|Opened With Vim\n"  +
+                "yat | copy | 'pattern':'.+\.txt'           |\n"                 +
+                "yy  | copy | 'pattern':None                |\n" 
             )
             f.close()
         f = open(conf_path, 'r')
