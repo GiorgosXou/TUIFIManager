@@ -665,7 +665,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
                 if match:
                     self.__temp__copied_files.append(e)
                     size += os.path.getsize(self.directory + sep + e.name)
-        else:
+        elif self.__clicked_file:
             size = os.path.getsize(self.directory + sep + self.__clicked_file.name)
             self.__temp__copied_files = [self.__clicked_file]
         if len(self.__temp__copied_files): 
