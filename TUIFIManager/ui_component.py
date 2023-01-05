@@ -1,12 +1,8 @@
-"""
-TUItilities is a set of TUI components in ALPHA version.
-"""
-import unicurses   as uc
-from   dataclasses import dataclass
+import unicurses as uc
+from dataclasses import dataclass
 
+from TUIFIManager.settings import MY_COLOR_PAIRS
 
-BEGIN_MOUSE = "\033[?1003h"
-END_MOUSE   = "\033[?1003l"
 
 @dataclass
 class Position:
@@ -19,6 +15,7 @@ class Position:
     miny :int = 0
     minx :int = 0
 
+
 @dataclass
 class Size:
     height    :int # visible
@@ -30,6 +27,7 @@ class Size:
     minheight :int = 0
     minwidth  :int = 0
 
+
 @dataclass
 class Anchor:
     top    : bool
@@ -37,25 +35,16 @@ class Anchor:
     left   : bool
     right  : bool
 
+
 class Parent:
+
     def __init__(self,win):
         self.win = win
         self.lines, self.columns = uc.getmaxyx(self.win)
 
 
-MY_COLOR_PAIRS = (
-    (uc.COLOR_WHITE  ,uc.COLOR_BLACK  ),
-    (uc.COLOR_YELLOW ,uc.COLOR_BLACK  ),
-    (uc.COLOR_RED    ,uc.COLOR_BLACK  ),
-    (uc.COLOR_BLUE   ,uc.COLOR_BLACK  ),
-    (uc.COLOR_GREEN  ,uc.COLOR_BLACK  ),
-    (uc.COLOR_BLACK  ,uc.COLOR_WHITE  ),
-    (uc.COLOR_BLUE   ,uc.COLOR_WHITE  ),
-    (uc.COLOR_CYAN   ,uc.COLOR_BLACK  ),
-    (uc.COLOR_BLACK  ,uc.COLOR_YELLOW ),
-)
+class Component:
 
-class Component():
     def __init__(self, win, y, x, height, width, anchor, is_focused=False, color_pair_offset=0, iheight=None, iwidth=None ) -> None:
         self.pad               = uc.newpad(height, width)
         self.parent            = Parent(win or uc.stdscr)
@@ -67,7 +56,6 @@ class Component():
         for i in range(1, 10):                                            # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
             if uc.pair_content(i+color_pair_offset) in ((0,0),(7,0)):     # if it exists in some way | also TODO: https://github.com/GiorgosXou/TUIFIManager/issues/48
                 uc.init_pair(i+color_pair_offset, *MY_COLOR_PAIRS[i-1] )
-
 
     def refresh(self, redraw_parent=False):
         if redraw_parent:
@@ -112,7 +100,6 @@ class Component():
     @height.setter
     def height(self, height): self.size.height = height; self.refresh(redraw_parent=True)
 
-
     def get_mouse(self):
         id, x, y, z, bstate = uc.getmouse()
         in_range = (
@@ -120,7 +107,6 @@ class Component():
             and self.y <= y < self.y + self.height
         )
         return (in_range, id, x, y, z, bstate )
-
 
     def handle_resize(self, redraw_parent=True): # TODO: max min sizes
         new_lines, new_columns = uc.getmaxyx(self.parent.win)
@@ -146,10 +132,8 @@ class Component():
         if redraw_parent:
             uc.touchwin(self.parent.win)
 
-
     def handle_events(self, event, redraw_parent=True):
         if event == uc.KEY_RESIZE: self.handle_resize(redraw_parent)
-
 
 
 class Label(Component):
@@ -161,7 +145,6 @@ class Label(Component):
         super().__init__(win, y, x, height, width, anchor, color_pair_offset)
         self.text       = text
 
-
     @property
     def text(self): return self.__text
 
@@ -171,11 +154,9 @@ class Label(Component):
         uc.mvwaddstr(self.pad,0,0, ' '*self.width, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style )
         uc.mvwaddstr(self.pad,0,0, text, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style )
 
-
     def handle_resize(self, redraw_parent=True):
         super().handle_resize(redraw_parent)
         self.text = self.__text
-
 
 
 # THIS IS ONLY FOR TESTING PURPOSES

@@ -10,6 +10,7 @@ import unicurses
 
 # I had 0 time so the code is a bit messed up
 
+
 class TUIMenu:
 
     x    , y      = 0 , 0
@@ -43,7 +44,6 @@ class TUIMenu:
         self.height = len(self.items)*2 + 1
         self.color_pair_offset = color_pair_offset
 
-
     def create(self, atY=None, atX=None):
         if atX is not None: self.x = atX
         if atY is not None: self.y = atY
@@ -71,7 +71,6 @@ class TUIMenu:
         self.exists = True
         self.refresh()
 
-
     def delete(self):
         if self.exists:
             unicurses.delwin(self.pad)
@@ -80,7 +79,6 @@ class TUIMenu:
             unicurses.redrawwin(self.parent) # SuS? kinda same as touchwin?
             # unicurses.wrefresh(self.parent)
 
-
     def refresh(self):
         if self.exists:
             # unicurses.wrefresh(self.parent)
@@ -88,10 +86,8 @@ class TUIMenu:
             # unicurses.wrefresh(self.pad)
             unicurses.prefresh(self.pad, 0, 0, self.y, self.x, self.y + self.height -1, self.x + self.width -1)
 
-
     def __getItem(self,i):
         return self.items[i].split('│')[0].strip()
-
 
     __it = -1
     def handle_keyboard_events(self, event):
@@ -121,7 +117,6 @@ class TUIMenu:
                 return True
         return False
 
-
     __x = __y = 0
     def handle_mouse_events(self, id, x, y, z, bstate):
         performed = False
@@ -143,5 +138,3 @@ class TUIMenu:
             self.__x, self.__y = x,y
             return 'exists'
         return performed
-
-
