@@ -79,6 +79,16 @@ In `vim_mode` both normal and vim shortcuts work
 |`ESCAPE`       |   |Exit                                          |
 
 
+### *TERMUX only Shortcuts\Keybindings*
+| Shortcut    | Action                                                                         |
+|----         |:----                                                                           |
+|`CTRL + DOWN`| Goes in&out of select-mode while also automatically copies the selected file(s)|
+|`CTRL + LEFT`| Goes out of select-mode while also cuts the seleccted file(s)                  |
+|`CTRL + END` | Goes out of select-mode while also deleting the selected file(s)               |
+|`CTRL + UP`  | Same as `CTRL + V`, Pastes the Copied or Cuted files                           |
+|`END`        | Deletes selected files                                                         |
+
+
 ### *Default & Custom - Commands*
 To perform a command under the normal-mode, you first have to press the space-bar and then type the command. Alternatively, use `vim_mode` or enable the `tuifi_auto_command_on_typing`-env variable *(notice: it disables `tuifi_auto_find_on_typing`)*. **The default commands can be seen below and can be found under the `~/.config/tuifi/cmds.conf` where you can add your custom ones too:**
 
@@ -91,17 +101,6 @@ To perform a command under the normal-mode, you first have to press the space-ba
 |`yy` | copy | 'pattern':None                          ||
 
 There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character 
-
-
-
-### *TERMUX only Shortcuts\Keybindings*
-| Shortcut    | Action                                                                         |
-|----         |:----                                                                           |
-|`CTRL + DOWN`| Goes in&out of select-mode while also automatically copies the selected file(s)|
-|`CTRL + LEFT`| Goes out of select-mode while also cuts the seleccted file(s)                  |
-|`CTRL + END` | Goes out of select-mode while also deleting the selected file(s)               |
-|`CTRL + UP`  | Same as `CTRL + V`, Pastes the Copied or Cuted files                           |
-|`END`        | Deletes selected files                                                         |
 
 
 # Documentation
