@@ -52,6 +52,7 @@ class TUIMenu:
         parent_height = unicurses.getmaxy(self.parent)
         if self.x + self.width  > parent_width : self.x -= self.width
         if self.y + self.height > parent_height: self.y -= self.height
+        if self.y < 0 : self.y = 0
 
         if self.exists:
             unicurses.delwin(self.pad)
