@@ -65,8 +65,9 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     sort_by    ([type], optional): [Not implemented yet]. Defaults to None.
     has_label  (bool  , optional): Creates a Label which displays informations about files
     draw_files (bool  , optional): "draws" files the moment of initialization (must unicurses.prefresh to show). Defaults to True.
-    termux_touch_only   (bool, optional): if true: full touch, no mouse support else: full mouse half touch support. Defaults to True.
-    auto_find_on_typing (bool, optional): if true: when starting to type, automatically search else only if CTRL_F
+    termux_touch_only      (bool, optional): if true: full touch, no mouse support else: full mouse half touch support. Defaults to True.
+    auto_find_on_typing    (bool, optional): if true: when starting to type, automatically search else only if CTRL_F
+    auto_command_on_typing (bool, optional): if true: when starting to type, automatically performs a command else only if space key is pressed
     vim_mode   (bool  , optional): If True: uses vim like keys to navigate. Defaults to False.
     color_pair_offset   (int,  optional): Initializes\\Uses color-pairs from the offset an on | `unicurses.COLOR_PAIR(color_pair...+i)`
     is_focused (bool , optional): disables events
