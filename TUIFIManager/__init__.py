@@ -33,7 +33,6 @@ DOWN           =  1
 
 CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
 STTY_EXISTS    = shutil.which('stty')
-Z_EXISTS       = shutil.which('z')
 
 
 def stty_a(key=None):  # whatever [...]
@@ -718,6 +717,10 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         f.close()
 
 
+    def __execute_cmd(self, cmd):
+        return subprocess.Popen(cmd.split(), shell=IS_WINDOWS, stdout=subprocess.PIPE)[0]
+
+
     marker_stack = {}
     def __perform_static_cmd_events(self, event):
         if self.__temp_findname.startswith('m'):
@@ -742,6 +745,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                     self.__change_escape_event_consumed = True
                     self.is_in_command_mode             = False
             return True
+        # elif Z_EXISTS and self.__temp_findname.startswith('z'): # TODO: I've wanted to call z command but it says something about permissions and stopped trying
+            
         return False
 
 
