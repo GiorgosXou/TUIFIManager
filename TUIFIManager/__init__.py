@@ -32,7 +32,8 @@ UP             = -1
 DOWN           =  1
 
 CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
-STTY_EXISTS    = os.which('stty')
+STTY_EXISTS    = shutil.which('stty')
+Z_EXISTS       = shutil.which('z')
 
 
 def stty_a(key=None):  # whatever [...]
