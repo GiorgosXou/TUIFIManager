@@ -3,7 +3,6 @@ TUItilities is a set of TUI components and terminal utilities in ALPHA version (
 """
 import   unicurses as uc
 from   dataclasses import dataclass
-from       termios import TIOCSTI
 from         fcntl import ioctl 
 from         pipes import quote
 from            os import getenv, getcwd
@@ -28,6 +27,7 @@ class Cd: # https://stackoverflow.com/a/16694919/11465149
         return quote(s)
 
     def put_text_back_into_terminal_input_buffer(self, text):
+        from termios import TIOCSTI
         for c in text: ioctl(1, TIOCSTI, c)
 
     def cd(self, dest): # change_parent_process_directory
