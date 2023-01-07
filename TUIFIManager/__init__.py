@@ -11,7 +11,7 @@ from             os import sep
 from           math import log10
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
-from   .TUItilities import Component    , Label, END_MOUSE, BEGIN_MOUSE
+from   .TUItilities import Component, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, STTY_EXISTS, IS_WINDOWS, HOME_DIR, IS_TERMUX   
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH
 import   subprocess
 import    unicurses
@@ -28,14 +28,10 @@ PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
-STTY_EXISTS    = shutil.which('stty')
-IS_WINDOWS     = unicurses.OPERATING_SYSTEM == 'Windows'
-HOME_DIR       = os.getenv('UserProfile') if IS_WINDOWS else os.getenv('HOME')
-CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
-IS_TERMUX      = 'com.termux' in HOME_DIR
-
 UP             = -1
 DOWN           =  1
+
+CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
 
 
 
@@ -53,7 +49,7 @@ def stty_a(key=None):  # whatever [...]
 
 
 
-class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager class where i will manage all the anchor, resizing and positional stuff for future components (something like Visual-Studio's c#/vb's Winform's behaviour)
+class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager class where i will manage all the anchor, resizing and positional stuff for future components (something like Visual-Studio's c#/vb's Winform's behaviour)
     """
     parent     (       win      ): Parent windows in which the Filemanager-pad is hosted.
     pad        ( Window pointer ): The window/Pad where the manager is hosted.
@@ -71,6 +67,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     vim_mode   (bool  , optional): If True: uses vim like keys to navigate. Defaults to False.
     color_pair_offset   (int,  optional): Initializes\\Uses color-pairs from the offset an on | `unicurses.COLOR_PAIR(color_pair...+i)`
     is_focused (bool , optional): disables events
+    cd         (bool , optional): cd or not to the current directory on exit (Doesn't support windows yet)
     """
 
     files              = []
@@ -96,6 +93,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.termux_touch_only   = termux_touch_only
         self.auto_find_on_typing = os.getenv('tuifi_auto_find_on_typing'   , str(auto_find_on_typing)) == 'True' 
         self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
+        self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
         self.menu                = TUIMenu(color_pair_offset=color_pair_offset)
 
         if directory:
