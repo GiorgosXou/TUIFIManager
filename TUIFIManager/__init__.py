@@ -357,6 +357,14 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.position.iy += y
 
 
+    def exit_to_self_directory(self):
+        if not IS_WINDOWS and not self.directory == os.getcwd():
+            self.cd(self.directory)
+        print(END_MOUSE)
+        unicurses.endwin()
+        exit()
+
+
     is_on_select_mode          = False
     __mouse_btn1_pressed_file  = None
     __pre_clicked_file         = None
@@ -385,6 +393,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.CTRL('N')     : partial(self.create_new, 'folder'),
             unicurses.CTRL('F')     : self.find  ,
             unicurses.CTRL('O')     : self.__open_DEFAULT_WITH, # https://stackoverflow.com/a/33966657/11465149
+            unicurses.CTRL('E')     : self.exit_to_self_directory,
             unicurses.KEY_HOME      : partial(self.open, HOME_DIR),
             unicurses.KEY_ENTER     : self.__perform_key_enter  ,
             10                      : self.__perform_key_enter  ,
@@ -421,6 +430,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 unicurses.CCHAR('W') : partial(self.create_new, 'folder'),
                 unicurses.CCHAR('i') : self.find                         ,
                 unicurses.CCHAR('O') : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
+                unicurses.CCHAR('e')     : self.exit_to_self_directory,
                 unicurses.CTRL ('D') : self.delete                       ,
             }) # TODO Map  events
 
