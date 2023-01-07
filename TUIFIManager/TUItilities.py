@@ -2,7 +2,6 @@
 TUItilities is a set of TUI components and terminal utilities in ALPHA version (They will be exported to a new package).
 """
 import   unicurses as uc
-from        shutil import which  
 from   dataclasses import dataclass
 from            os import chdir, system, getenv
 
@@ -13,7 +12,6 @@ from            os import chdir, system, getenv
 BEGIN_MOUSE = "\033[?1003h"
 END_MOUSE   = "\033[?1003l"
 
-STTY_EXISTS    = which('stty')
 IS_WINDOWS     = uc.OPERATING_SYSTEM == 'Windows'
 HOME_DIR       = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
 SHELL          = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
