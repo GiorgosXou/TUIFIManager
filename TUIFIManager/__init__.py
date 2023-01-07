@@ -80,7 +80,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
     vim_mode           = False
     info_label         = None
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=None, sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, vim_mode=False, color_pair_offset=0, is_focused=False):
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=None, sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=True):
         if suffixes is None:
             suffixes = ['*']
 
@@ -94,7 +94,7 @@ class TUIFIManager(Component):  # TODO: I need to create a TUIWindowManager clas
         self.draw_files          = draw_files
         self.termux_touch_only   = termux_touch_only
         self.auto_find_on_typing = os.getenv('tuifi_auto_find_on_typing'   , str(auto_find_on_typing)) == 'True' 
-        self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', 'False')                  == 'True' 
+        self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
         self.menu                = TUIMenu(color_pair_offset=color_pair_offset)
 
         if directory:
