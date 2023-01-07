@@ -12,7 +12,16 @@ from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__
 ESCAPE_KEY = 27
 
 
+
+def parse_terminal_arguments():
+    if "-v" in sys.argv or "--version" in sys.argv:
+        print(f"TUIFIManager v.{__version__} | Powered by UNI-CURSES")
+        exit()
+
+
 def main():
+    parse_terminal_arguments()
+
     global stdscr
     stdscr = uc.initscr()              # Global UniCurses Variable
     event  = -1
@@ -45,9 +54,6 @@ def main():
 
 
 if __name__ == "__main__":
-    if "-v" in sys.argv or "--version" in sys.argv:
-        print(f"TUIFIManager v.{__version__}")
-        exit()
     main()
 
 
