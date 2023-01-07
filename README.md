@@ -37,23 +37,24 @@ for more details look into the `__main__.py`
 
 ## Features & Shortcuts  
 ### *Current:*
-* Supports most of the common mouse events so far
-* It is somewhat fully customizable?
-* Can be used as a component
-* Uses only ~30MB of RAM
-* It is pretty snappy <!-- Kinda lol -->
-* Supports [Termux](https://github.com/termux) 
-* Cross Platform 
-* and more
+- Supports most of the common mouse events so far
+- It is somewhat fully customizable?
+- Can be used as a component
+- Uses only ~30MB of RAM
+- It is pretty snappy <!-- Kinda lol -->
+- Supports [Termux](https://github.com/termux) 
+- Cross Platform 
+- and more
 
 ### *Desired:*
-* Undo\Redo
-* tool-tips
-* Scroll bar
-* Multiple tabs
-* Better performance
-* Effect on cutted Files
-* [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
+- Undo\Redo
+- tool-tips
+- Scroll bar
+- Sixel support
+- Multiple tabs
+- Better performance
+- Effect on cutted Files
+- [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
 ### *Common Shortcuts\Keybindings*
 In `vim_mode` both normal and vim shortcuts work 
