@@ -78,7 +78,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     vim_mode           = False
     info_label         = None
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=None, sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=True):
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=None, sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=IS_TERMUX):
         if suffixes is None:
             suffixes = ['*']
 
