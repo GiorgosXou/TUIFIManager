@@ -112,7 +112,7 @@ There are also some "static" ones like the `m`+character which marks the current
 ***How do I enable vim_mode?***
 > Set `tuifi_vim_mode` enviroment variable to `True`
 
-***How do I change the default keys *(besides commands)*?***
+***How do I change the default keys (besides commands)?***
 > This is not possible right now althought you could play around with the content of `toggle_vim_mode` function under `__init__.py`
 
 ***How do I set the default editor?***
