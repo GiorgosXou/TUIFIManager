@@ -3,6 +3,11 @@
 - - [`-v` `--version`](https://github.com/GiorgosXou/TUIFIManager/issues/65)
 - ***Added:***
 - - ability to `cd` on exit | `tuifi_cd_on_exit`-env
+- ***Extensions:***
+- - ***Added:***
+- - - `qml`
+- - ***Improved:***
+- - - `go`, `cs`
 
 ------------------------
 # v.2.1.9
