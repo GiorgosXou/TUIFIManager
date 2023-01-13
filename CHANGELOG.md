@@ -1,6 +1,7 @@
 # v.DEVELOPMENT
 - ***Fixed:***
 - - [`-v` `--version`](https://github.com/GiorgosXou/TUIFIManager/issues/65)
+- - Mouse movement when in command mode
 - ***Added:***
 - - ability to `cd` on exit | `tuifi_cd_on_exit`-env
 - ***Extensions:***
