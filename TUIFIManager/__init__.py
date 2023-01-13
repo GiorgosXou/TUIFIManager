@@ -768,6 +768,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.is_in_command_mode = False
             self.__temp_findname    = ''
             self.__set_label_text('[NORMAL]')
+        elif event == unicurses.KEY_MOUSE:
+            return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
             self.__set_label_text(f'[COMMAND] {self.__temp_findname}')
