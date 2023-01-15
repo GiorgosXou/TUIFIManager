@@ -13,7 +13,7 @@ ESCAPE_KEY = 27
 
 
 
-def parse_terminal_arguments():
+def parse_terminal_arguments(): # TODO: -s --suffixes to be passed to TUIFIManager
     if "-v" in sys.argv or "--version" in sys.argv:
         print(f"TUIFIManager v.{__version__} | Powered by UNI-CURSES")
         exit()
@@ -40,7 +40,7 @@ def main():
     # Initializing TUIFIManager
     HEIGHT,WIDTH       = uc.getmaxyx(stdscr)
     starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
-    fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), starting_directory,suffixes=['*'], is_focused=True)
+    fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), starting_directory,suffixes=[], is_focused=True)
     fileManager.refresh()
 
     while event != ESCAPE_KEY or fileManager.escape_event_consumed: # Main loop 
