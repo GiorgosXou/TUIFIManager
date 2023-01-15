@@ -2,7 +2,7 @@
 - ***Changed:***
 - - The way `suffixes` are represented
 - ***Fixed:***
-- - suffixes
+- - [suffixes and search](https://github.com/GiorgosXou/TUIFIManager/issues/15)
 - - [`-v` `--version`](https://github.com/GiorgosXou/TUIFIManager/issues/65)
 - - Yank\Custom-copy-shortcut issue
 - - Mouse movement when in command mode
