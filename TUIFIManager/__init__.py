@@ -683,6 +683,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             size = os.path.getsize(self.directory + sep + self.__clicked_file.name)
             self.__temp__copied_files = [self.__clicked_file]
         if len(self.__temp__copied_files): 
+            self.__temp_dir_of_copied_files = self.directory
             self.__set_label_on_copy(size)
         else:
             self.__set_label_text('FILES NOT FOUND')
