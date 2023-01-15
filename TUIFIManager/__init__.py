@@ -68,6 +68,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     color_pair_offset   (int,  optional): Initializes\\Uses color-pairs from the offset an on | `unicurses.COLOR_PAIR(color_pair...+i)`
     is_focused (bool , optional): disables events
     cd         (bool , optional): cd or not to the current directory on exit (Doesn't support windows yet)
+    show_hidden(bool , optional): Show hidden files (you can toggle them by using CTRL+H or use tuifi_show_hidden)
     """
 
     files              = []
@@ -78,10 +79,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     vim_mode           = False
     info_label         = None
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=None, sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=False):
-        if suffixes is None:
-            suffixes = ['*']
-
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=False, show_hidden=True):
         if has_label:
             height -= 1
             self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), '', color_pair_offset, win)
@@ -93,6 +91,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.termux_touch_only   = termux_touch_only
         self.auto_find_on_typing = os.getenv('tuifi_auto_find_on_typing'   , str(auto_find_on_typing)) == 'True' 
         self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
+        self.show_hidden         = os.getenv('tuifi_show_hidden'           , str(    show_hidden    )) == 'True' 
         self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
         self.menu                = TUIMenu(color_pair_offset=color_pair_offset)
 
@@ -384,6 +383,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.KEY_BTAB      : self.__perform_key_btab,
             unicurses.KEY_DC        : self.delete,
             unicurses.KEY_F(5)      : self.reload,
+            unicurses.CTRL('T')     : self.toggle_hidden_files,
             unicurses.CTRL('R')     : self.rename,
             unicurses.CTRL('C')     : self.copy  ,
             unicurses.CTRL('K')     : self.copy  ,
@@ -433,6 +433,11 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 unicurses.CCHAR('e')     : self.exit_to_self_directory,
                 unicurses.CTRL ('D') : self.delete                       ,
             }) # TODO Map  events
+
+
+    def toggle_hidden_files(self):
+        self.show_hidden = not self.show_hidden
+        self.reload()
 
 
     def __set_label_text(self, text):
