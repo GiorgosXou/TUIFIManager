@@ -142,10 +142,10 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),2, DEFAULT_EDITOR),
     '/js':TUIFIProfile((
-        '  ▃▃▃ ▃▃▃ \n'
-        'JS▔█▔ █▃▃ \n'
-        ' ▃ █  ▔▔█ \n'
-        ' ▀▀▀  ▀▀▀ '
+        ' ┌━━━━━━┐ \n'
+        ' │▀█▀▒▀▀│ \n'
+        ' │▃█ ▃▃▓│ \n'
+        ' ╰━━━━━━╯ '
     ),2, DEFAULT_EDITOR),
     '/html':TUIFIProfile((
         ' ┌━━━━━━┐ \n'
