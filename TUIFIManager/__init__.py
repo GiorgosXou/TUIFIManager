@@ -57,7 +57,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     y          (int   , optional): y-axis position of pad. Defaults to 0.
     x          (int   , optional): x-axis position of pad. Defaults to 0.
     directory  (str   , optional): Initital directory. Defaults to HOME_DIR which is $HOME or $UserProfile
-    suffixes   (list  , optional): "Path expansion rules (file patterns to be found). Defaults to ['*'].
+    suffixes   (list  , optional): "Path expansion rules (file extensions to be found, eg. ['.txt', '.sh', ...]). Defaults to everything.
     sort_by    ([type], optional): [Not implemented yet]. Defaults to None.
     has_label  (bool  , optional): Creates a Label which displays informations about files
     draw_files (bool  , optional): "draws" files the moment of initialization (must unicurses.prefresh to show). Defaults to True.
@@ -125,8 +125,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     def get_profile(self, file_directory, new=False):
         if os.path.isdir(file_directory):
             temp_profile = TUIFIProfiles.get(':empty_folder')
-            for suffix in self.suffixes:
-                if list(Path(file_directory + sep).glob(suffix)):
+            for suffix in ['/', *self.suffixes] if self.suffixes else ['']: # TODO: Make sure there's no Potential Windows issue? 
+                if list(Path(file_directory + sep).glob('*'+suffix)):
                     temp_profile = TUIFIProfiles.get(':folder')
                     break
         else:
@@ -136,44 +136,79 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return temp_profile
 
 
-    def load_files(self, directory, suffixes=None, sort_by=None):  # DON'T load and then don't show :P
+    __max_h = 0
+    __count = 0
+    ___y    = PADDING_TOP
+    ___x    = PADDING_LEFT
+
+    def __reset_coordinates(self):
+        self.__max_h = 0
+        self.__count = 0
+        self.___y    = PADDING_TOP
+        self.___x    = PADDING_LEFT
+
+
+    def __set_coordinates(self, file, resize=False):
+        tempX = (PADDING_LEFT + file.profile.width + PADDING_RIGHT)
+        if self.___x > self.width-tempX + PADDING_RIGHT - self.x :
+            self.___x  = PADDING_LEFT
+            self.___y += self.__max_h + PADDING_TOP + PADDING_BOTTOM  # ... +1 because the next has to be below :P
+            self.__count = 0
+            self.__max_h = 0
+
+        file.y = self.___y
+        file.x = self.___x
+        self.___x  += tempX
+        self.__count += 1
+
+        h = file.profile.height + file.name_height #len(f.chunkStr(f.name, f.profile.width).split('\n')) #total hight i might merge them  but nvm for now, i messed the up anyways
+        if h > self.__max_h:
+            self.__max_h = h
+            if not resize: return
+            if self.__count != 0:
+                self.maxpLines = self.___y + self.__max_h + PADDING_TOP + PADDING_BOTTOM  + self.y
+            else:
+                self.maxpLines = self.___y + self.y
+            if self.maxpLines < self.height:
+                self.maxpLines = self.height
+            unicurses.wresize(self.pad, self.maxpLines, self.width)
+
+
+    def __is_valid_file(self, name):
+        if not self.show_hidden and name.startswith('.'): return False
+        if self.is_in_find_mode:
+            return self.__temp_find_filename in name
+        if self.suffixes and os.path.isfile(self.directory + sep + name):
+            for s in self.suffixes:
+                if name.endswith(s): return True
+            return False
+        return True
+
+
+    def __load_file(self, name):
+        is_link      = os.path.islink(self.directory + sep + name)
+        filename     = name
+        file_        = TUIFile(filename, self.___y, self.___x, self.get_profile(self.directory + sep + name), is_link=is_link)
+        self.files.append(file_)
+        self.__set_coordinates(file_)
+
+
+    def load_files(self, directory, suffixes=[], sort_by=None):  # DON'T load and then don't show :P
         directory = os.path.realpath(os.path.normpath(directory))
         if not os.path.isdir(directory):
             raise FileNotFoundError(f'DirectoryNotFound: "{directory}"')
-        if suffixes is None:
+        if not suffixes:
             suffixes = self.suffixes
 
         self.directory = directory
         self.files = []
-        glob_files = [directory + sep + '..']
-        for suffix in suffixes:
-            glob_files.extend(Path(directory + sep).glob(suffix))
+        self.__reset_coordinates()
+        self.__load_file('..')
+        for f in os.listdir(directory):
+            if not self.__is_valid_file(f): continue
+            self.__load_file(f)
 
-        max_h, pCOLS, count, y, x = 0, self.width, 0, PADDING_TOP, PADDING_LEFT
-        for f in glob_files:
-            f            = str(f)
-            is_link      = os.path.islink(f)
-            filename     = f.split(sep)[-1]
-            file_        = TUIFile(filename, y, x, self.get_profile(f), is_link=is_link)
-            tempX        = (PADDING_LEFT + file_.profile.width + PADDING_RIGHT)
-            self.files.append(file_)
-
-            if x > pCOLS-tempX + PADDING_RIGHT - self.x :
-                x  = PADDING_LEFT
-                y += max_h + PADDING_TOP + PADDING_BOTTOM
-                count = 0
-                max_h = 0
-
-            file_.y = y
-            file_.x = x
-            x      += tempX
-            count  += 1
-
-            h = file_.profile.height + file_.name_height
-            if h > max_h:
-                max_h = h
-
-        self.maxpLines = y + self.y if count == 0 else y + max_h + PADDING_TOP + PADDING_BOTTOM + self.y
+        self.maxpLines = self.___y + self.y if self.__count == 0 else self.___y + self.__max_h + PADDING_TOP + PADDING_BOTTOM + self.y
         if not self.is_in_find_mode: self.__set_label_text(f'[{len(self.files)-1:04}] {directory}') # just because i know that len is stored as variable,  that's why i don;t count them in for loop
         return self.files
 
@@ -186,31 +221,9 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         """
         unicurses.werase(self.pad)
 
-        max_h, pCOLS, count, y, x = 0, self.width, 0, PADDING_TOP, PADDING_LEFT
+        self.__reset_coordinates()
         for f in self.files:
-            tempX = (PADDING_LEFT + f.profile.width + PADDING_RIGHT)
-            if x > pCOLS-tempX + PADDING_RIGHT - self.x :
-                x  = PADDING_LEFT
-                y += max_h + PADDING_TOP + PADDING_BOTTOM  # ... +1 because the next has to be below :P
-                count = 0
-                max_h = 0
-
-            f.y = y
-            f.x = x
-            x  += tempX
-            count += 1
-
-            h = f.profile.height + f.name_height #len(f.chunkStr(f.name, f.profile.width).split('\n')) #total hight i might merge them  but nvm for now, i messed the up anyways
-            if h > max_h:
-                max_h = h
-                if count != 0:
-                    self.maxpLines = y + max_h + PADDING_TOP + PADDING_BOTTOM  + self.y
-                else:
-                    self.maxpLines = y + self.y
-                if self.maxpLines < self.height:
-                    self.maxpLines = self.height
-                unicurses.wresize(self.pad, self.maxpLines, self.width)
-
+            self.__set_coordinates(f, resize=True)
             f.draw(self.pad,redraw_icon=True, color_pair_offset=self.color_pair_offset)
 
         #unicurses.wresize(self.pad, self.maxpLines, self.width) # because it works doesn't also mean that i should do it like that
@@ -258,7 +271,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return
 
 
-    def open(self, directory, suffixes=None, sort_by=None, _with=None):
+    def open(self, directory, suffixes=[], sort_by=None, _with=None):
         """
         `open()` is `load_files()` + `draw()`
         """
@@ -284,6 +297,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__change_escape_event_consumed = False
         self.is_in_command_mode      = False
         self.__temp_findname         = ''
+        self.__temp_find_filename    = '' # Ahh..
         self.__clicked_file          = None
         self.__pre_clicked_file      = None
         self.__index_of_clicked_file = None
@@ -642,9 +656,10 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return True
 
 
+    __temp_find_filename = ''
     def find_file(self, filename): # meh, slightly computationally expensive but easier to implement, whatever at least it does it's job lol
-        suffs = [suf.replace('*', f'*{filename}*') for suf in self.suffixes]
-        self.load_files(self.directory, suffs)
+        self.__temp_find_filename = filename
+        self.load_files(self.directory)
         self.draw()
 
 
@@ -704,7 +719,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     command_events = {}
-    command_types  = {
+    command_types  = { # TODO: maybe an open with sufixes?
         'delete' : __cmd_delete , 
         'open'   : __cmd_open   , 
         'copy'   : __cmd_copy   ,
