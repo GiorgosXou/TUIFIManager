@@ -1,9 +1,16 @@
 # v.DEVELOPMENT
+- ***Changed:***
+- - The way `suffixes` are represented
 - ***Fixed:***
+- - suffixes
 - - [`-v` `--version`](https://github.com/GiorgosXou/TUIFIManager/issues/65)
+- - Yank\Custom-copy-shortcut issue
 - - Mouse movement when in command mode
 - ***Added:***
+- - `show_hidden`, `CTRL+T` and `tuifi_show_hidden`-env
 - - ability to `cd` on exit | `tuifi_cd_on_exit`-env
+- ***Improved:***
+- - Find mode
 - ***Extensions:***
 - - ***Added:***
 - - - `qml`
