@@ -5,7 +5,7 @@ from __future__ import annotations
 # sys.path.insert(0, dirname(dirname(abspath(__file__))))             # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
 # sys.path.append('..')                                               # TESTING WITH DAP
 # sys.path.append('/home/xou/.local/lib/python3.10/site-packages/')   # TESTING WITH DAP
-import sys
+import argparse
 import unicurses as uc
 from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__
 
@@ -14,13 +14,15 @@ ESCAPE_KEY = 27
 
 
 def parse_terminal_arguments(): # TODO: -s --suffixes to be passed to TUIFIManager
-    if "-v" in sys.argv or "--version" in sys.argv:
-        print(f"TUIFIManager v.{__version__} | Powered by UNI-CURSES")
-        exit()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('directory', nargs='?', default='.')
+    parser.add_argument('-s', '--suffixes', default=[], nargs='+', required=False)
+    parser.add_argument('-v', '--version', action='version', version=f'TUIFIManager v.{__version__} | Powered by UNI-CURSES')
+    return vars(parser.parse_args())
 
 
 def main():
-    parse_terminal_arguments()
+    args = parse_terminal_arguments()
 
     global stdscr
     stdscr = uc.initscr()              # Global UniCurses Variable
@@ -39,8 +41,7 @@ def main():
 
     # Initializing TUIFIManager
     HEIGHT,WIDTH       = uc.getmaxyx(stdscr)
-    starting_directory = sys.argv[1] if len(sys.argv) > 1 else '.'
-    fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), starting_directory,suffixes=[], is_focused=True)
+    fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), **args, is_focused=True)
     fileManager.refresh()
 
     while event != ESCAPE_KEY or fileManager.escape_event_consumed: # Main loop 
