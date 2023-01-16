@@ -7,10 +7,12 @@
 - - Yank\Custom-copy-shortcut issue
 - - Mouse movement when in command mode
 - ***Added:***
+- - `-s` `--suffixes`
 - - `show_hidden`, `CTRL+T` and `tuifi_show_hidden`-env
 - - ability to `cd` on exit | `tuifi_cd_on_exit`-env
 - ***Improved:***
 - - Find mode
+- - Context menu
 - ***Extensions:***
 - - ***Added:***
 - - - `qml`
