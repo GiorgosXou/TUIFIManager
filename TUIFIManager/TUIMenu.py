@@ -10,7 +10,7 @@ import unicurses
 
 # I had 0 time so the code is a bit messed up
 
-class TUIMenu:
+class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selected (not here)
 
     x    , y      = 0 , 0
     width, height = 20, 15
@@ -23,7 +23,7 @@ class TUIMenu:
               'Reload     │ KEY_F5',
               'New File   │ CTRL+W',
               'New Folder │ CTRL+N',
-              'Properties '
+              'Properties │'
     ]
     events = {
         'KEY_UP'          : unicurses.KEY_UP          ,
@@ -40,7 +40,7 @@ class TUIMenu:
         self.exists = False
         if items:self.items = items
         self.width  = len(max(self.items, key=len)) + 4
-        self.height = len(self.items)*2 + 1
+        self.height = len(self.items) + 2
         self.color_pair_offset = color_pair_offset
 
 
@@ -64,9 +64,8 @@ class TUIMenu:
         for item in self.items:
             unicurses.mvwaddwstr(self.pad, i, 0, f'│ {item}', unicurses.A_BOLD)
             unicurses.mvwaddwstr(self.pad,i,self.width-1,'│', unicurses.A_BOLD)
-            unicurses.mvwaddwstr(self.pad,i+1,0,'├' + ('─'*(self.width-2)) + '┤')
-            i+=2
-        unicurses.mvwaddwstr(self.pad,i-1,0,'╰' + ('─'*(self.width-2)) + '╯')
+            i+=1
+        unicurses.mvwaddwstr(self.pad,i,0,'╰' + ('─'*(self.width-2)) + '╯')
 
         self.exists = True
         self.refresh()
@@ -75,7 +74,7 @@ class TUIMenu:
     def delete(self):
         if self.exists:
             unicurses.delwin(self.pad)
-            self.__it   = -1
+            self.__it   = 0
             self.exists = False
             unicurses.redrawwin(self.parent) # SuS? kinda same as touchwin?
             # unicurses.wrefresh(self.parent)
@@ -93,27 +92,27 @@ class TUIMenu:
         return self.items[i].split('│')[0].strip()
 
 
-    __it = -1
+    __it = 0
     def handle_keyboard_events(self, event):
         if self.exists and event != self.events.get('KEY_MOUSE'):
             if event == self.events.get('KEY_DOWN'):
-                if self.__it == len(self.items) -1:
+                if self.__it == len(self.items):
                     self.delete()
                     return True
+                unicurses.mvwchgat(self.pad, self.__it   , 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
+                unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
                 self.__it +=1
-                unicurses.mvwchgat(self.pad, self.__it *2 -1, 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
-                unicurses.mvwchgat(self.pad, self.__it *2 +1, 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
                 return True
             elif event == self.events.get('KEY_UP'):
-                if self.__it <= 0:
+                if self.__it <= 1:
                     self.delete()
                     return True
                 self.__it -=1
-                unicurses.mvwchgat(self.pad, self.__it *2 +3, 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
-                unicurses.mvwchgat(self.pad, self.__it *2 +1, 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
+                unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
+                unicurses.mvwchgat(self.pad, self.__it , 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
                 return True
             elif event in self.events.get('KEY_ENTER'):
-                i = self.__it
+                i = self.__it -1 
                 self.delete()
                 return self.__getItem(i)
             else:
@@ -127,14 +126,17 @@ class TUIMenu:
         performed = False
         if self.exists: # mevent == self.events.get('KEY_MOUSE')  #id, x, y, z, bstate = unicurses.getmouse()
             if self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height:
-                relative_y = y - self.y +1 # really Sus the +1 but nvm
+                relative_y = y - self.y -1
+                if self.__y != y and self.height -2 > relative_y >= 0:
+                    unicurses.mvwchgat(self.pad, y-self.y , 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
+                    unicurses.mvwchgat(self.pad, self.__y-self.y,1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
+                # unicurses.mvwchgat(self.pad, self.__x , 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
                 if bstate & self.events.get('BUTTON1_RELEASED'):
                     if self.__x != x or self.__y != y : return 'exists'
-                    item_position = len(self.items)
-                    if (relative_y % 2) == 0:
+                    if  self.height -2 > relative_y >= 0:
                         # exit()
                         self.delete()
-                        return self.__getItem(relative_y//2 -1)
+                        return self.__getItem(relative_y)
                     performed=True
                 if bstate & self.events.get('BUTTON1_PRESSED'):
                     performed=True
