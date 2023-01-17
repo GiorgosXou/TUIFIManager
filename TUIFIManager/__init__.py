@@ -33,6 +33,7 @@ DOWN           =  1
 
 CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
 STTY_EXISTS    = shutil.which('stty')
+INIT_DIRECTORY = os.getcwd()
 
 
 def stty_a(key=None):  # whatever [...]
@@ -205,7 +206,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.files = []
         self.__reset_coordinates()
         self.__load_file('..')
-        for f in os.listdir(directory):
+        os.chdir(directory)
+        for f in sorted(os.listdir(), key=None): # key=os.path.getctime): # os.listdir(directory):
             if not self.__is_valid_file(f): continue
             self.__load_file(f)
 
@@ -372,7 +374,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def exit_to_self_directory(self):
-        if not IS_WINDOWS and not self.directory == os.getcwd():
+        if not IS_WINDOWS and not self.directory == INIT_DIRECTORY:
             self.cd(self.directory)
         print(END_MOUSE)
         unicurses.endwin()
