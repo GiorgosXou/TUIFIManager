@@ -147,6 +147,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │▃█ ▃▃▓│ \n'
         ' ╰━━━━━━╯ '
     ),2, DEFAULT_EDITOR),
+    '/ts':TUIFIProfile((
+        ' ┌━━━━━━┐ \n'
+        ' │▀█▀▒▀▀│ \n'
+        ' │ █ ▃▃▓│ \n'
+        ' ╰━━━━━━╯ '
+    ),2, DEFAULT_EDITOR),
     '/html':TUIFIProfile((
         ' ┌━━━━━━┐ \n'
         ' ├┤HTML├┤ \n'
