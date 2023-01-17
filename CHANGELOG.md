@@ -8,8 +8,9 @@
 - - Mouse movement when in command mode
 - ***Added:***
 - - `-s` `--suffixes`
-- - `show_hidden`, `CTRL+T` and `tuifi_show_hidden`-env
-- - ability to `cd` on exit | `tuifi_cd_on_exit`-env
+- - Ability to open multiple selected files
+- - Ability to `cd` on exit | `tuifi_cd_on_exit`-env
+- - Ability to toggle hidden files `CTRL+T` and `tuifi_show_hidden`-env, `show_hidden` 
 - ***Improved:***
 - - Find mode
 - - Context menu
@@ -17,7 +18,7 @@
 - - ***Added:***
 - - - `qml`
 - - ***Improved:***
-- - - `go`, `cs`, `js`
+- - - `go`, `cs`, `js`, `ts`
 
 ------------------------
 # v.2.1.9
