@@ -391,33 +391,33 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     events = {}
     def __set_normal_events(self):
         self.events = {
-            unicurses.KEY_UP        : self.__perform_key_up   ,
-            unicurses.KEY_DOWN      : self.__perform_key_down ,
-            unicurses.KEY_LEFT      : self.__perform_key_left ,
-            unicurses.KEY_RIGHT     : self.__perform_key_right,
-            unicurses.KEY_BTAB      : self.__perform_key_btab,
-            unicurses.KEY_DC        : self.delete,
-            unicurses.KEY_F(5)      : self.reload,
-            unicurses.CTRL('T')     : self.toggle_hidden_files,
-            unicurses.CTRL('R')     : self.rename,
-            unicurses.CTRL('C')     : self.copy  ,
-            unicurses.CTRL('K')     : self.copy  ,
-            unicurses.CTRL('X')     : self.cut   ,
-            unicurses.CTRL('V')     : self.paste ,
+            unicurses.KEY_UP        : self.__perform_key_up             ,
+            unicurses.KEY_DOWN      : self.__perform_key_down           ,
+            unicurses.KEY_LEFT      : self.__perform_key_left           ,
+            unicurses.KEY_RIGHT     : self.__perform_key_right          ,
+            unicurses.KEY_BTAB      : self.__perform_key_btab           ,
+            unicurses.KEY_DC        : self.delete                       ,
+            unicurses.KEY_F(5)      : self.reload                       ,
+            unicurses.CTRL('T')     : self.toggle_hidden_files          ,
+            unicurses.CTRL('R')     : self.rename                       ,
+            unicurses.CTRL('C')     : self.copy                         ,
+            unicurses.CTRL('K')     : self.copy                         ,
+            unicurses.CTRL('X')     : self.cut                          ,
+            unicurses.CTRL('V')     : self.paste                        ,
             unicurses.CTRL('W')     : partial(self.create_new, 'file'  ),
             unicurses.CTRL('N')     : partial(self.create_new, 'folder'),
-            unicurses.CTRL('F')     : self.find  ,
-            unicurses.CTRL('O')     : self.__open_DEFAULT_WITH, # https://stackoverflow.com/a/33966657/11465149
-            unicurses.CTRL('E')     : self.exit_to_self_directory,
-            unicurses.KEY_HOME      : partial(self.open, HOME_DIR),
-            unicurses.KEY_ENTER     : self.__perform_key_enter  ,
-            10                      : self.__perform_key_enter  ,
-            unicurses.KEY_BACKSPACE : self.__open_previous_dir,
-            8                       : self.__open_previous_dir,
-            127                     : self.__open_previous_dir,
-            263                     : self.__open_previous_dir,
-            unicurses.KEY_RESIZE    : self.__handle_resize_event,
-            32                      : self.command              , # SPACEBAR
+            unicurses.CTRL('F')     : self.find                         ,
+            unicurses.CTRL('O')     : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
+            unicurses.CTRL('E')     : self.exit_to_self_directory       ,
+            unicurses.KEY_HOME      : partial(self.open, HOME_DIR)      ,
+            unicurses.KEY_ENTER     : self.__perform_key_enter          ,
+            10                      : self.__perform_key_enter          ,
+            unicurses.KEY_BACKSPACE : self.__open_previous_dir          ,
+            8                       : self.__open_previous_dir          ,
+            127                     : self.__open_previous_dir          ,
+            263                     : self.__open_previous_dir          ,
+            unicurses.KEY_RESIZE    : self.__handle_resize_event        ,
+            32                      : self.command                      , # SPACEBAR
         }
 
     def toggle_vim_mode(self): # TODO: Use it in rename and find or something
@@ -445,7 +445,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 unicurses.CCHAR('W') : partial(self.create_new, 'folder'),
                 unicurses.CCHAR('i') : self.find                         ,
                 unicurses.CCHAR('O') : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
-                unicurses.CCHAR('e')     : self.exit_to_self_directory,
+                unicurses.CCHAR('e') : self.exit_to_self_directory       ,
                 unicurses.CTRL ('D') : self.delete                       ,
             }) # TODO Map  events
 
