@@ -79,7 +79,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     vim_mode           = False
     info_label         = None
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=False, show_hidden=True):
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=False, show_hidden=False):
         if has_label:
             height -= 1
             self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), '', color_pair_offset, win)
