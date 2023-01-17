@@ -12,7 +12,7 @@ from           math import log10
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
 from   .TUItilities import Component, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX   
-from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH
+from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER
 import   subprocess
 import    unicurses
 import       shutil
@@ -262,12 +262,27 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.doupdate()
 
 
-    def __try_open_file_with(self, directory: str, open_with: Optional[str]) -> None:
+    def __try_open_with(self, directory: str, open_with: Optional[str], multiple=False) -> None:
         if not open_with:
             return self.__set_label_on_file_selection()
+
+        dirs = []
+        if multiple: # puke-able shit lol xD, sorry for that
+            for f in self.files: # TODO: Save selected to a temp list becuase this is really costy! (decisions..) 
+                if f.is_selected: 
+                    if f.profile.open_with != DEFAULT_OPENER:
+                        dirs.append(self.directory+sep+f.name)
+                        open_with = DEFAULT_WITH
+                    else:
+                        self.__try_open_with(self.directory+sep+f.name, f.profile.open_with )
+        else:
+            dirs = [directory]
+
+        if not dirs: return # Although not needed just in case for other DEFAULT_OPENERs
+
         print(END_MOUSE, end='\r')
         with self.suspend():
-            proc = subprocess.Popen([open_with, directory], shell=IS_WINDOWS)
+            proc = subprocess.Popen([open_with, *dirs], shell=IS_WINDOWS)
             proc.wait()
         print(BEGIN_MOUSE, end='\r')
         self.__set_label_on_file_selection()
@@ -284,13 +299,14 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         if isinstance(directory, TUIFile):
             directory = self.directory + sep + directory.name
 
-        if _with:
-            return self.__try_open_file_with(directory, _with)
+        if _with: 
+            return self.__try_open_with(directory, _with)
 
-        if not os.path.isdir(directory):
+        multiple = self.__count_selected > 1
+        if not os.path.isdir(directory) or multiple:
             prof = f'/{os.path.splitext(directory)[1][1:]}'
             open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
-            return self.__try_open_file_with(directory, open_with)
+            return self.__try_open_with(directory, open_with, multiple)
 
         if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol
             self.find()
