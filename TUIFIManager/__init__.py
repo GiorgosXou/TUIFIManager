@@ -136,10 +136,11 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return temp_profile
 
 
-    __max_h = 0
-    __count = 0
-    ___y    = PADDING_TOP
-    ___x    = PADDING_LEFT
+    # Let's not remove those yet, just in case
+    # __max_h = 0
+    # __count = 0
+    # ___y    = PADDING_TOP
+    # ___x    = PADDING_LEFT
 
     def __reset_coordinates(self):
         self.__max_h = 0
