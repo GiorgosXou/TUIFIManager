@@ -1105,8 +1105,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __perform_key_enter(self):
-        if self.__count_selected == 1 and self.__clicked_file.is_selected:
-            self.open(self.__clicked_file)
+        # if self.__count_selected == 1 and self.__clicked_file.is_selected:
+        self.open(self.__clicked_file)
 
 
     def __reset_index_of_clicked_file(self) -> None:
