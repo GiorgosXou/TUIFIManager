@@ -6,7 +6,7 @@
     <a href="https://github.com/GiorgosXou/TUIFIManager/pulse">
       <img src="https://img.shields.io/github/last-commit/GiorgosXou/TUIFIManager?color=%4dc71f&label=Last%20Commit&logo=github&style=flat-square"/>
     </a>
-    <a href="https://github.com/GiorgosXou/TUIFIManager/blob/master/LICENSE.md">
+    <a href="https://github.com/GiorgosXou/TUIFIManager/blob/master/LICENSE">
       <img src="https://img.shields.io/github/license/GiorgosXou/TUIFIManager?label=License&logo=GNU&style=flat-square"/>
 	</a>
 </p>
@@ -77,6 +77,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + W`     | `w` |Create new file                               |
 |`ARROW KEYS`   | `l` `k` `j` `h`  |Navigates files                               |
 |`KEY_ENTER`    | `K`|Opens files                                   |
+|`CTRL + E`     | `e` |Exit with `cd`                                  |
 |`ESCAPE`       |   |Exit                                          |
 
 
@@ -125,7 +126,7 @@ There are also some "static" ones like the `m`+character which marks the current
 > Set `tuifi_config_path` enviroment variable to whatever you prefer most
 
 ***How do I toggle hidden files/folders?***
-> Edit `__main__.py` and specify `suffixes=['*','.*']` for hidden files. [THIS NEEDS TO BE FIXED]
+> You can either `CTRL + T` or set `tuifi_show_hidden` enviroment variable to `True`
 
 ***How do I change the default colors?***
 > [look here for more informations](https://github.com/GiorgosXou/TUIFIManager/issues/38)
