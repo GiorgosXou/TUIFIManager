@@ -21,7 +21,7 @@ import          ast
 import           re
 import           os
 
-__version__: Final[str] = "2.3.4"
+__version__: Final[str] = "3.0.0"
 
 PADDING_LEFT   = 2
 PADDING_RIGHT  = 2

@@ -1,24 +1,4 @@
 # v.DEVELOPMENT
-- ***Changed:***
-- - The way `suffixes` are represented
-- ***Fixed:***
-- - [suffixes and search](https://github.com/GiorgosXou/TUIFIManager/issues/15)
-- - [`-v` `--version`](https://github.com/GiorgosXou/TUIFIManager/issues/65)
-- - Yank\Custom-copy-shortcut issue
-- - Mouse movement when in command mode
-- ***Added:***
-- - `-s` `--suffixes`
-- - Ability to open multiple selected files
-- - Ability to `cd` on exit | `tuifi_cd_on_exit`-env
-- - Ability to toggle hidden files `CTRL+T` and `tuifi_show_hidden`-env, `show_hidden` 
-- ***Improved:***
-- - Find mode
-- - Context menu
-- ***Extensions:***
-- - ***Added:***
-- - - `qml`
-- - ***Improved:***
-- - - `go`, `cs`, `js`, `ts`, `rs`
 
 ------------------------
 # v.2.1.9
