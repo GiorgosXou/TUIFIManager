@@ -253,8 +253,8 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━╯ ' 
     ),4, DEFAULT_EDITOR),
     '/rs':TUIFIProfile((
-        ' ▅▅▅▅▄▃▂  \n'
-        '  █▄▃▃▟▛  \n'
+        ' ▄▄▄▄▄▃▂  \n'
+        ' ▔█▄▃▃▟▛  \n'
         ' ▃█▃ ▀▆▄▅ \n'
         ' ▔▔▔   ▔  '
     ),3, DEFAULT_EDITOR),
