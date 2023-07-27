@@ -1176,6 +1176,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         if self.__is_escape_consumed(event)                                            : return
         if self.__perform_menu_selected_action(self.menu.handle_keyboard_events(event)): return
 
+        if event in (577,576) :return # https://github.com/GiorgosXou/TUIFIManager/issues/81
         if self.events.get(event, self.__return)() != True : return # Is this too bad of a practice? let me know
         if self.__handle_mouse_events          (event) : return
         if self.__handle_alt_down              (event) : return
