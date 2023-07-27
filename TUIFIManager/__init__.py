@@ -291,6 +291,12 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return
 
 
+    def __open_multiple(self, directory, suffixes=[], sort_by=None, _with=None): # TODO: check if selected files are folders and open them in new tabs
+        prof = f'/{os.path.splitext(directory)[1][1:]}'
+        open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
+        return self.__try_open_with(directory, open_with, True)
+
+
     def open(self, directory, suffixes=[], sort_by=None, _with=None):
         """
         `open()` is `load_files()` + `draw()`
@@ -304,11 +310,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         if _with: 
             return self.__try_open_with(directory, _with)
 
-        multiple = self.__count_selected > 1
-        if not os.path.isdir(directory) or multiple:
-            prof = f'/{os.path.splitext(directory)[1][1:]}'
-            open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
-            return self.__try_open_with(directory, open_with, multiple)
+        # if there is at least one file that it is not a directory OR multiple selected files that they are whatever, then: ... (Now it makes sense why `not isdir`)
+        if not os.path.isdir(directory) or self.__count_selected > 1 : return self.__open_multiple(directory, suffixes, sort_by, _with)
 
         if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol
             self.find()
