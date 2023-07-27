@@ -241,10 +241,12 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def reload(self,draw_files=True):
-        self.position.iy             = 0
-        self.__clicked_file          = None
-        self.__index_of_clicked_file = None
-        self.__pre_hov               = None           
+        self.position.iy                = 0
+        self.__mouse_btn1_pressed_file  = None
+        self.__pre_clicked_file         = None
+        self.__clicked_file             = None
+        self.__index_of_clicked_file    = None
+        self.__pre_hov                  = None           
         self.load_files(self.directory)
         if draw_files:
             self.draw()
