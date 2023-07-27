@@ -701,6 +701,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     def __cmd_open(self, **args):
         if args['directory']: 
             args['directory'] = self.__refine_path(args['directory'] )
+            if os.path.isdir(args['directory']): self.__count_selected = 0
         else:
             args['directory'] = self.__clicked_file
         self.open(**args)
