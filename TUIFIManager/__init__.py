@@ -178,7 +178,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def __is_valid_file(self, name):
         if not self.show_hidden and name.startswith('.'): return False
-        if self.is_in_find_mode:
+        if self.is_in_find_mode or self.__keep_search_results:
             return self.__temp_find_filename in name
         if self.suffixes and os.path.isfile(self.directory + sep + name):
             for s in self.suffixes:
@@ -240,7 +240,12 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return self.files
 
 
-    def reload(self,draw_files=True):
+    __keep_search_results = False # really bad practice but whatever lol (and i can't take advantage of is_in_find_mode because of error when moving files that ...)
+    def reload(self,draw_files=True, keep_search_results=False):
+        if not keep_search_results:
+            self.__temp_find_filename = ''
+        else:
+            self.__keep_search_results = True
         self.position.iy                = 0
         self.__mouse_btn1_pressed_file  = None
         self.__pre_clicked_file         = None
@@ -248,6 +253,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__index_of_clicked_file    = None
         self.__pre_hov                  = None           
         self.load_files(self.directory)
+        self.__keep_search_results      = False
         if draw_files:
             self.draw()
 
@@ -591,7 +597,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         if len(self.__temp__copied_files) == 0 or not os.path.exists(self.__temp_dir_of_copied_files): return # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
         if self.__temp_dir_of_copied_files != self.directory: self.__copy_cut ()
         else                                                : self.__duplicate()
-        self.reload()
+        self.reload(keep_search_results=True)
 
 
     def delete(self):
@@ -603,7 +609,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             if self.__clicked_file.name != '..':
                 self.__delete_file(self.__clicked_file)
                 temp_i = self.__index_of_clicked_file - 1
-                self.reload()
+                self.reload(keep_search_results=True)
                 self.__index_of_clicked_file = temp_i
                 self.__clicked_file          = self.files[temp_i]
                 self.__pre_clicked_file      = None # hmm.. sus?
@@ -618,7 +624,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 if f.is_selected:
                     self.__delete_file(f)
                     if self.__count_selected == 0:
-                        self.reload()
+                        self.reload(keep_search_results=True)
                         self.__index_of_clicked_file = temp_i
                         self.__clicked_file          = self.files[temp_i]
                         self.__pre_clicked_file      = None # hmm.. sus
@@ -1024,7 +1030,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                             if f.is_selected:
                                 shutil.move(self.directory + sep + f.name, self.directory + sep + self.__clicked_file.name + sep + f.name)
                         self.__pre_clicked_file = None
-                        self.reload()
+                        self.reload(keep_search_results=True)
 
                 self.__start_time = time()
             elif (bstate & unicurses.BUTTON1_PRESSED) or (bstate & unicurses.BUTTON3_PRESSED):
