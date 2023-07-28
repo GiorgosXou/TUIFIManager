@@ -691,7 +691,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__set_label_text('[INPUT]')
         self.is_in_find_mode = True
         self.escape_event_consumed = True
-        self.__temp_findname = '' # just ot make sure although it might not be need it
+        self.__temp_findname = '' # just to make sure although it might not be need it
 
 
     def __refine_path(self, path):
