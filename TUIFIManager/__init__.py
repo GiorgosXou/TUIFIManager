@@ -671,7 +671,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__index_of_clicked_file        = i
             self.__clicked_file                 = self.files[i]
             return False
-        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME, 577,576): # Ignore this shit :P
+        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME, 577,576, unicurses.KEY_DC): # Ignore this shit :P
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
