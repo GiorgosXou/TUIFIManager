@@ -671,7 +671,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__index_of_clicked_file        = i
             self.__clicked_file                 = self.files[i]
             return False
-        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME): # Ignore this shit :P
+        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME, 577,576): # Ignore this shit :P
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
@@ -820,7 +820,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.is_in_command_mode = False
             self.__temp_findname    = ''
             self.__set_label_text('[NORMAL]')
-        elif event == unicurses.KEY_MOUSE:
+        elif event in (unicurses.KEY_MOUSE, 577,576):
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
@@ -865,8 +865,6 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             if self.__temp_i != 0: self.__temp_i -= 1
         elif event == unicurses.KEY_RIGHT:
             if self.__temp_i != len(self.__temp_name): self.__temp_i += 1
-        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters or event == unicurses.KEY_MOUSE:
-            return
         elif event in (27, unicurses.KEY_ENTER, 10):
             new_path_name                       = self.directory + sep + self.__temp_name
             self.__temp_i                       = 0
@@ -879,6 +877,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.scroll_to_file(self.__clicked_file, True, True)
             else:
                 self.__temp_name = self.__clicked_file.name
+        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters or event in (unicurses.KEY_MOUSE, 577,576):
+            return
         elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
             if self.__temp_i != 0:
                 self.__temp_i   -= 1
