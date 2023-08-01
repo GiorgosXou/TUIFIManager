@@ -28,8 +28,13 @@ PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
-UP             = -1
-DOWN           =  1
+SCROLL_SENSITIVITY      = int(os.getenv('tuifi_scroll_sensitivity'     , 1))
+CTRL_SCROLL_SENSITIVITY = int(os.getenv('tuifi_ctrl_scroll_sensitivity', 7))
+
+UP             = -      SCROLL_SENSITIVITY
+DOWN           =        SCROLL_SENSITIVITY
+CTRL_UP        = - CTRL_SCROLL_SENSITIVITY
+CTRL_DOWN      =   CTRL_SCROLL_SENSITIVITY
 
 CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
 STTY_EXISTS    = shutil.which('stty')
@@ -393,9 +398,11 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def scroll_pad(self, y):
-        if self.position.iy == 0 and y < 0:
+        if self.position.iy <= 0 and y < 0:
+            self.position.iy = 0
             return
         if self.position.iy >= unicurses.getmaxy(self.pad) - self.height  and y > 0:
+            self.position.iy = unicurses.getmaxy(self.pad) - self.height
             return
         self.position.iy += y
 
@@ -1003,8 +1010,8 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         if self.__perform_menu_selected_action(self.menu.handle_mouse_events(id, x, y, z, bstate)): return True
         if self.__x != x or self.__y != y: self.hover_mode = True #hover mode
 
-        if   not self.hover_mode and (bstate & unicurses.BUTTON4_PRESSED): self.scroll_pad(UP  )
-        elif not self.hover_mode and (bstate & unicurses.BUTTON5_PRESSED): self.scroll_pad(DOWN)
+        if   not self.hover_mode and (bstate & unicurses.BUTTON4_PRESSED): self.scroll_pad(UP   if not bstate & unicurses.BUTTON_CTRL else CTRL_UP  )
+        elif not self.hover_mode and (bstate & unicurses.BUTTON5_PRESSED): self.scroll_pad(DOWN if not bstate & unicurses.BUTTON_CTRL else CTRL_DOWN)
         elif not IS_TERMUX or not self.termux_touch_only: # because there are some times that long like presses might be translated to BUTTON1_PRESSED instead of CLICK
             self.__handle_hover_mode(y,x)
             if (bstate & unicurses.BUTTON1_RELEASED) or (bstate & unicurses.BUTTON3_RELEASED) or (unicurses.OPERATING_SYSTEM == 'Windows' and bstate & unicurses.BUTTON1_DOUBLE_CLICKED): # unicurses.OPERATING_SYSTEM == 'Windows' because issues with ncurses
