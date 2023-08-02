@@ -1,6 +1,10 @@
 import unicurses
-
 from .TUIFIProfile import TUIFIProfile, LINK_SYMBOL, LINK_SYMBOL_COLOR, DEFAULT_PROFILE
+from os import getenv
+
+
+VISIBLE_FILENAME_LINES  = int(getenv('tuifi_visible_filename_lines', 4))
+
 
 
 class TUIFile:
@@ -14,7 +18,7 @@ class TUIFile:
 
     def chunk_str(self, text, n):
         base = '\n'.join(text[i:i+n] for i in range(0, len(text), n))
-        self.name_height = base.count('\n') + 1
+        self.name_height = base.count('\n') + 1 if base.count('\n') + 1 < VISIBLE_FILENAME_LINES  else VISIBLE_FILENAME_LINES
         return base
 
 
@@ -38,11 +42,18 @@ class TUIFile:
         """
         DON'T USE IT
         """
+        offXY = (VISIBLE_FILENAME_LINES * self.profile.width)
+        if VISIBLE_FILENAME_LINES and chgatXY >= offXY:
+            prename = prename[chgatXY - offXY +1:]
+            name = name[chgatXY - offXY +1:]
+            chgatXY = 0 + offXY -1
+
         y = chgatXY // self.profile.width
         x = chgatXY - y * (self.profile.width)
-        for offY, ln in enumerate(self.chunk_str(f'{prename} ', self.profile.width).split('\n'), self.profile.height):
+
+        for offY, ln in enumerate(self.chunk_str(f'{prename} ', self.profile.width).split('\n')[:VISIBLE_FILENAME_LINES], self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ' ' * len(ln)) # A_BOLD | 
-        for offY, ln in enumerate(self.chunk_str(name,self.profile.width).split('\n'), self.profile.height):
+        for offY, ln in enumerate(self.chunk_str(name,self.profile.width).split('\n')[:VISIBLE_FILENAME_LINES], self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) | attr) # A_BOLD | 
         unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6 + color_pair_offset)
 
@@ -50,7 +61,7 @@ class TUIFile:
     def __draw_file(self, atpad, color_pair_offset=0):
         for offY, ln in enumerate((self.profile.text + '\n').split('\n')):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.profile.color_map + color_pair_offset) ) 
-        for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n'), offY):
+        for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n')[:VISIBLE_FILENAME_LINES], offY):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color + color_pair_offset) )                  
 
         if self.is_link: # no idea why but mvwadd_wch misbehaves ...
@@ -66,7 +77,7 @@ class TUIFile:
             effect    = unicurses.A_NORMAL
             color_map = self.name_color
 
-        for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n'), self.profile.height):
+        for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n')[:VISIBLE_FILENAME_LINES], self.profile.height):
             unicurses.mvwchgat(atpad,offY + self.y, self.x, len(ln), effect, color_map)
         # unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6 + color_pair_offset)
 
