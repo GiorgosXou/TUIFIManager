@@ -184,7 +184,10 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
     def __is_valid_file(self, name):
         if not self.show_hidden and name.startswith('.'): return False
         if self.is_in_find_mode or self.__keep_search_results:
-            return self.__temp_find_filename in name
+            if self.__temp_find_filename.islower():
+                return self.__temp_find_filename in name.lower()
+            else:
+                return self.__temp_find_filename in name
         if self.suffixes and os.path.isfile(self.directory + sep + name):
             for s in self.suffixes:
                 if name.endswith(s): return True
