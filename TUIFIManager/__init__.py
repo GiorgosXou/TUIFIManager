@@ -1006,7 +1006,9 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
 
-    def __handle_mouse_events(self, event):
+    __index_of_alt_clicked_file     = None
+    __index_of_pressed_file         = None
+    def __handle_mouse_events(self, event): # I know it's a messy code ... lol
         if event != unicurses.KEY_MOUSE: return False
         in_range, id, x, y, z, bstate = self.get_mouse()
         if not IS_WINDOWS and not in_range: return True # TODO: https://github.com/GiorgosXou/TUIFIManager/issues/49
@@ -1024,7 +1026,10 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 sumed_time    = time() - self.__start_time - self.__delay1 # yeah whatever
                 if self.__clicked_file: self.__set_label_on_file_selection() # Hell, pain on my eyes, lol
 
-                if self.__mouse_btn1_pressed_file == self.__clicked_file and not bstate & unicurses.BUTTON_CTRL:
+                if not (bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT) or self.__count_selected == 1: # `not bstate & unicurses.BUTTON_ALT` because `__count_selected` is not trustworthy, in fact it is not at all
+                    self.__index_of_alt_clicked_file = self.__index_of_clicked_file
+
+                if self.__mouse_btn1_pressed_file == self.__clicked_file and not (bstate & unicurses.BUTTON_CTRL or bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT):
                     if not ((bstate & unicurses.BUTTON3_RELEASED) and self.__count_selected > 1 and self.__clicked_file and self.__clicked_file.is_selected):
                         self.menu.delete()
                         self.deselect()
@@ -1045,13 +1050,23 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.__start_time = time()
             elif (bstate & unicurses.BUTTON1_PRESSED) or (bstate & unicurses.BUTTON3_PRESSED):
                 self.__delay1 = time()
-                self.__mouse_btn1_pressed_file = self.get_tuifile_by_coordinates(y, x)
+                self.__index_of_pressed_file, self.__mouse_btn1_pressed_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
 
-                if not bstate & unicurses.BUTTON_CTRL and self.__pre_clicked_file and self.__pre_clicked_file.is_selected and  self.__count_selected == 1:#and summ > self.double_click_DELAY:
-                    self.deselect(self.__pre_clicked_file)
-                    self.menu.delete()
+                if not bstate & unicurses.BUTTON_CTRL and self.__pre_clicked_file and self.__pre_clicked_file.is_selected:#and summ > self.double_click_DELAY:
+                    if self.__count_selected == 1:
+                        self.deselect(self.__pre_clicked_file)
+                        self.menu.delete()
+                if bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT: 
+                        self.deselect()
+
                 if self.__mouse_btn1_pressed_file and self.__mouse_btn1_pressed_file.name != '..':
                     if not self.__mouse_btn1_pressed_file.is_selected and not (bstate & unicurses.BUTTON3_PRESSED):
+                        if (bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT) and self.__index_of_alt_clicked_file:
+                            start = min(self.__index_of_alt_clicked_file, self.__index_of_pressed_file)
+                            end   = max(self.__index_of_alt_clicked_file, self.__index_of_pressed_file)
+                            for f in self.files[start:end+1]: # __index_of_alt_clicked_file acts as the index of the pre-clicked file | that "+1" it's so weird....
+                                self.select(f)
+                            # self.select(self.files[end])
                         self.select(self.__mouse_btn1_pressed_file)
                     elif bstate & unicurses.BUTTON_CTRL :#and summ > self.double_click_DELAY:
                         self.deselect(self.__mouse_btn1_pressed_file)
