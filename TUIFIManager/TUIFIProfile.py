@@ -613,10 +613,10 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 
 
     '/psd':TUIFIProfile((
-        ' ╭▃▃▃ ▃▃╮ \n'
-        ' │█▂█ █▃┃ \n'
-        ' │█   ▃█┃ \n'
-        ' ┕━PSD━━┛ '
+        ' ┏▃▃▃▃▃▃┓ \n'
+        ' ┃█▂█▒▃▃┃ \n'
+        ' ┃█  ▃▃▒┃ \n'
+        ' ┗━━━━━━┛ '
     ),4, DEFAULT_OPENER),
 
     '/mdf':TUIFIProfile((
