@@ -260,6 +260,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__clicked_file             = None
         self.__index_of_clicked_file    = None
         self.__pre_hov                  = None           
+        self.__count_selected           = 0
         self.load_files(self.directory)
         self.__keep_search_results      = False
         if draw_files:
