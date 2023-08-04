@@ -306,6 +306,40 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃┇▒█┃▒▒│ \n'
         ' ┗━━━━━━╯ '
     ),3, DEFAULT_OPENER),
+
+
+    '/stl':TUIFIProfile((
+        ' ╭─╭┰─╮─╮ \n'
+        ' │╭╰┸─╯╮│ \n'
+        ' │╰.STL╯│ \n'
+        ' ╰━━━━━━╯ '
+    ),4, DEFAULT_OPENER),
+    '/gcode':TUIFIProfile((
+        ' ╭─╭─┰╮─┒ \n'
+        ' │[╰┬┸╯]┇ \n'
+        ' │GCODE:┃ \n'
+        ' ╰━━━━━━┛ '
+    ),1, DEFAULT_OPENER),
+    '/fcstd':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┃░█▀▀/:┃ \n'
+        ' ┃░█▀CAD┇ \n'
+        ' ┗━━━━━━┛ '
+    ),3, DEFAULT_EDITOR),
+    '/fcstd1':TUIFIProfile((
+        ' ╭────━━┓ \n'
+        ' │░█▀▀ER┃ \n'
+        ' │░█▀STO┇ \n'
+        ' ╰━━━━━━┛ '
+    ),1, DEFAULT_EDITOR),
+
+
+    '/lock':TUIFIProfile((
+        ' ┏┏━━━━┓┓ \n'
+        ' ┣┗LOCK┛┫ \n'
+        ' ┃┋┇[]┇┋┃ \n'
+        ' ┗━━━━━━┛ '
+    ),2, DEFAULT_EDITOR),
     '/bin':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
         ' │OIIOIO│ \n'
