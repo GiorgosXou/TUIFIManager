@@ -4,7 +4,7 @@ from __future__ import annotations
 # from os.path import dirname, abspath                                # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
 # sys.path.insert(0, dirname(dirname(abspath(__file__))))             # TESTING: UNCOMMENT TO USE LOCAL PACKAGE (./__init__.py) | https://stackoverflow.com/a/25888670/11465149
 # sys.path.append('..')                                               # TESTING WITH DAP
-# sys.path.append('/home/xou/.local/lib/python3.10/site-packages/')   # TESTING WITH DAP
+# sys.path.append('/home/xou/.local/lib/python3.11/site-packages/')   # TESTING WITH DAP | REMINDER: python3.XX
 import argparse
 import unicurses as uc
 from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__
