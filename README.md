@@ -111,25 +111,25 @@ There are also some "static" ones like the `m`+character which marks the current
 
 
 # 💭 Customization 
-***How do I enable vim_mode?***
+*How do I enable vim_mode?*
 > Set `tuifi_vim_mode` enviroment variable to `True`
 
-***How do I change the default keys (besides commands)?***
+*How do I change the default keys (besides commands)?*
 > This is not possible right now althought you could play around with the content of `toggle_vim_mode` function under `__init__.py`
 
-***How do I set the default editor?***
+*How do I set the default editor?*
 > Set `tuifi_default_editor` enviroment variable to `vim` or whatever you prefer
 
-***How do I disable the auto-find-mode?***
+*How do I disable the auto-find-mode?*
 > You can just set `tuifi_auto_find_on_typing` enviroment variable to `False`
 
-***How do I change the default configuration path?***
+*How do I change the default configuration path?*
 > Set `tuifi_config_path` enviroment variable to whatever you prefer most
 
-***How do I toggle hidden files/folders?***
+*How do I toggle hidden files/folders?*
 > You can either `CTRL + T` or set `tuifi_show_hidden` enviroment variable to `True`
 
-***How do I change the default colors?***
+*How do I change the default colors?*
 > [look here for more informations](https://github.com/GiorgosXou/TUIFIManager/issues/38)
 
 
