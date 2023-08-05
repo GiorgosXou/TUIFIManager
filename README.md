@@ -15,7 +15,7 @@
 A cross-platform terminal-based termux-oriented file manager *(and component)*, meant to be used with a [Uni-Curses](https://github.com/unicurses/unicurses) project or as is. This project is mainly an attempt to get more attention to the [Uni-Curses](https://github.com/unicurses/unicurses) project.
 
 
-## ⚙️ Installation
+# ⚙️ Installation
 ```terminal
 sudo pip3 install tuifimanager --upgrade
 ```
@@ -25,7 +25,7 @@ pip3 install TUIFIManager --upgrade
 or just ^^^ if it works for you. *(eg. on termux?)*
 
 
-## 💥 Usage
+# 💥 Usage
 Run `tuifi` in your terminal to use it as is or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
 ```python
 from TUIFIManager import *
@@ -35,7 +35,7 @@ for more details look into the `__main__.py`
 <img src="./Peek.gif">
 <sub>FONT: Cartograph CF</sub>
 
-## 📦 Features 
+# 📦 Features 
 ### • 📌 *Current:*
 - Supports most of the common mouse events so far
 - It is somewhat fully customizable?
@@ -56,7 +56,7 @@ for more details look into the `__main__.py`
 - Effect on cutted Files
 - [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
-## ⌨️ Shortcuts\Keybindings
+# ⌨️ Shortcuts\Keybindings
 In `vim_mode` both normal and vim shortcuts work 
 | Normal      | vim_mode | Action                                        |
 |----         | ---- |:----                                          |
@@ -92,7 +92,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`END`        | Deletes selected files                                                         |
 
 
-## 👨‍💻 Commands
+# 👨‍💻 Commands
 **(Default & Custom Comands)** - To perform a command under the normal-mode, you first have to press the space-bar and then type the command. Alternatively, use `vim_mode` or enable the `tuifi_auto_command_on_typing` env-variable *(notice: it disables `tuifi_auto_find_on_typing`)*. **The default commands can be seen below and can be found under the `~/.config/tuifi/cmds.conf` where you can add your custom ones too:**
 
 | Cmd | Type | Attributes | Label Comment|
@@ -106,11 +106,11 @@ In `vim_mode` both normal and vim shortcuts work
 There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character 
 
 
-## 📜 Documentation
+# 📜 Documentation
 <sub>Work in progress 🛠️🏗 ...</sub>
 
 
-## 💭 Customization 
+# 💭 Customization 
 ***How do I enable vim_mode?***
 > Set `tuifi_vim_mode` enviroment variable to `True`
 
