@@ -392,7 +392,6 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def select(self, tuifile):
-        if not tuifile        :return
         if tuifile.is_selected:return
         self.__count_selected +=1
         #for y in range(tuifile.y, tuifile.y + tuifile.profile.height):
