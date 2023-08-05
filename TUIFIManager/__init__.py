@@ -453,7 +453,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.KEY_ENTER     : self.__perform_key_enter          ,
             10                      : self.__perform_key_enter          ,
             unicurses.KEY_BACKSPACE : self.__open_previous_dir          ,
-            8                       : self.__open_previous_dir          ,
+            8                       : self.__open_previous_dir          , # https://superuser.com/questions/212874/why-is-backspace-often-represented-with-h | TODO: I might remove it 
             127                     : self.__open_previous_dir          ,
             263                     : self.__open_previous_dir          ,
             unicurses.KEY_RESIZE    : self.__handle_resize_event        ,
