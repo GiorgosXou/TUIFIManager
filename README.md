@@ -106,7 +106,7 @@ In `vim_mode` both normal and vim shortcuts work
 There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character 
 
 
-# 📜 Documentation
+## 📜 Documentation
 <sub>Work in progress 🛠️🏗 ...</sub>
 
 
