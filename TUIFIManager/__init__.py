@@ -400,6 +400,12 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         tuifile.draw(self.pad, color_pair_offset=self.color_pair_offset)
 
 
+    def select_all_files(self):
+        for f in self.files[1:]:
+            self.select(f)
+        self.__set_label_text(f'[{self.__count_selected}] Files selected')
+
+
     def scroll_pad(self, y):
         if self.position.iy <= 0 and y < 0:
             self.position.iy = 0
@@ -437,6 +443,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.KEY_BTAB      : self.__perform_key_btab           ,
             unicurses.KEY_DC        : self.delete                       ,
             unicurses.KEY_F(5)      : self.reload                       ,
+            unicurses.CTRL('A')     : self.select_all_files             ,
             unicurses.CTRL('T')     : self.toggle_hidden_files          ,
             unicurses.CTRL('R')     : self.rename                       ,
             unicurses.CTRL('C')     : self.copy                         ,
