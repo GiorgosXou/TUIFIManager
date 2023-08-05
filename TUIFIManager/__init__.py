@@ -829,6 +829,17 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return False
 
 
+    def call_command(self,command):
+        cmd = self.command_events.get(command)
+        if not cmd: return False
+        self.__change_escape_event_consumed = True # it has to be before cmd call
+        cmd[0](self, **cmd[1])
+        self.__temp_findname    = ''
+        self.is_in_command_mode = False
+        if cmd[2]: self.__set_label_text(cmd[2])
+        return True
+
+
     is_in_command_mode = False
     def handle_command_events(self, event):
         self.__set_label_text('[COMMAND]')
@@ -843,13 +854,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__temp_findname += unicurses.RCCHAR(event)
             self.__set_label_text(f'[COMMAND] {self.__temp_findname}')
         if self.__perform_static_cmd_events(event): return True
-        cmd = self.command_events.get(self.__temp_findname)
-        if cmd:
-            self.__change_escape_event_consumed = True # it has to be before cmd call
-            cmd[0](self, **cmd[1])
-            self.__temp_findname    = ''
-            self.is_in_command_mode = False
-            if cmd[2]: self.__set_label_text(cmd[2])
+        self.call_command(self.__temp_findname)
         return True
 
 
