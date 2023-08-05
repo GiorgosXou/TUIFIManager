@@ -1027,8 +1027,10 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 sumed_time    = time() - self.__start_time - self.__delay1 # yeah whatever
                 if self.__clicked_file: self.__set_label_on_file_selection() # Hell, pain on my eyes, lol
 
-                if not (bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT) or self.__count_selected == 1: # `not bstate & unicurses.BUTTON_ALT` because `__count_selected` is not trustworthy, in fact it is not at all
+                if self.__count_selected == 1: # for BUTTON_ALT\BUTTON_SHIFT selection
                     self.__index_of_alt_clicked_file = self.__index_of_clicked_file
+                elif self.__clicked_file and not self.__clicked_file.name == '..':
+                    self.__set_label_text(f'[{self.__count_selected}] Files selected')
 
                 if self.__mouse_btn1_pressed_file == self.__clicked_file and not (bstate & unicurses.BUTTON_CTRL or bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT):
                     if not ((bstate & unicurses.BUTTON3_RELEASED) and self.__count_selected > 1 and self.__clicked_file and self.__clicked_file.is_selected):
