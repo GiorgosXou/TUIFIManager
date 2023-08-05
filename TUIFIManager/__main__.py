@@ -66,6 +66,5 @@ if __name__ == "__main__":
 
 # TODO:
 """
-- Scroll sensitivity
 - TERMUX start from bottom (because most mobile screens are too big)
 """
