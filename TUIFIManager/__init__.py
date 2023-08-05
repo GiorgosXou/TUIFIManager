@@ -385,16 +385,16 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                     f.is_selected = False
                     f.draw(self.pad, color_pair_offset=self.color_pair_offset)
             self.__count_selected = 0 # i can just -= 1 and break it if 0 :P
-        else:
+        elif tuifile.is_selected:
             tuifile.is_selected = False
             tuifile.draw(self.pad, color_pair_offset=self.color_pair_offset)
             self.__count_selected -=1
 
 
     def select(self, tuifile):
+        if not tuifile        :return
+        if tuifile.is_selected:return
         self.__count_selected +=1
-        if not tuifile:
-            return
         #for y in range(tuifile.y, tuifile.y + tuifile.profile.height):
         #    mvwchgat(self.pad,y, tuifile.x, tuifile.profile.width,A_REVERSE,7)
         tuifile.is_selected = True
