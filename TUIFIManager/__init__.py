@@ -688,7 +688,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__index_of_clicked_file        = i
             self.__clicked_file                 = self.files[i]
             return False
-        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME, 577,576, unicurses.KEY_DC): # Ignore this shit :P
+        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME , unicurses.KEY_DC) or unicurses.keyname(event) in ('kxOUT','kxIN'): # Ignore this shit :P
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
@@ -837,7 +837,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.is_in_command_mode = False
             self.__temp_findname    = ''
             self.__set_label_text('[NORMAL]')
-        elif event in (unicurses.KEY_MOUSE, 577,576):
+        elif event == unicurses.KEY_MOUSE or unicurses.keyname(event) in ('kxOUT','kxIN'):
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
@@ -894,7 +894,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.scroll_to_file(self.__clicked_file, True, True)
             else:
                 self.__temp_name = self.__clicked_file.name
-        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters or event in (unicurses.KEY_MOUSE, 577,576):
+        elif unicurses.RCCHAR(event) in self.__illegal_filename_characters or event == unicurses.KEY_MOUSE or unicurses.keyname(event) in ('kxOUT','kxIN'):
             return
         elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
             if self.__temp_i != 0:
