@@ -56,7 +56,7 @@ for more details look into the `__main__.py`
 - Effect on cutted Files
 - [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
-# ⌨️ Shortcuts\Keybindings
+# ⌨️ Keybindings
 In `vim_mode` both normal and vim shortcuts work 
 | Normal      | vim_mode | Action                                        |
 |----         | ---- |:----                                          |
