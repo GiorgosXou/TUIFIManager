@@ -15,7 +15,7 @@
 A cross-platform terminal-based termux-oriented file manager *(and component)*, meant to be used with a [Uni-Curses](https://github.com/unicurses/unicurses) project or as is. This project is mainly an attempt to get more attention to the [Uni-Curses](https://github.com/unicurses/unicurses) project.
 
 
-## Installation
+## ⚙️ Installation
 ```terminal
 sudo pip3 install tuifimanager --upgrade
 ```
@@ -25,7 +25,7 @@ pip3 install TUIFIManager --upgrade
 or just ^^^ if it works for you. *(eg. on termux?)*
 
 
-## Usage
+## 💥 Usage
 Run `tuifi` in your terminal to use it as is or import it in one of your [Uni-Curses](https://github.com/unicurses/unicurses) project as a component like:
 ```python
 from TUIFIManager import *
@@ -35,8 +35,8 @@ for more details look into the `__main__.py`
 <img src="./Peek.gif">
 <sub>FONT: Cartograph CF</sub>
 
-## Features & Shortcuts  
-### *Current:*
+## 📦 Features 
+### • 📌 *Current:*
 - Supports most of the common mouse events so far
 - It is somewhat fully customizable?
 - Can be used as a component
@@ -46,7 +46,7 @@ for more details look into the `__main__.py`
 - Cross Platform 
 - and more
 
-### *Desired:*
+### • 🔮 *Desired:*
 - Undo\Redo
 - tool-tips
 - Scroll bar
@@ -56,7 +56,7 @@ for more details look into the `__main__.py`
 - Effect on cutted Files
 - [Drop files into GUI apps](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
-### *Common Shortcuts\Keybindings*
+## ⌨️ Shortcuts\Keybindings
 In `vim_mode` both normal and vim shortcuts work 
 | Normal      | vim_mode | Action                                        |
 |----         | ---- |:----                                          |
@@ -73,6 +73,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + K`     |   |Copies the selected files                     |
 |`CTRL + X`     | `c`  |Cuts the selected files                       |
 |`CTRL + R`     | `r` |Rename selected file                          | 
+|`CTRL + T`     | | Toggle hidden files|
 |`CTRL + N`     | `W` |Create new folder                             |
 |`CTRL + W`     | `w` |Create new file                               |
 |`ARROW KEYS`   | `l` `k` `j` `h`  |Navigates files                               |
@@ -81,7 +82,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`ESCAPE`       |   |Exit                                          |
 
 
-### *TERMUX only Shortcuts\Keybindings*
+***TERMUX only Shortcuts\Keybindings***
 | Shortcut    | Action                                                                         |
 |----         |:----                                                                           |
 |`CTRL + DOWN`| Goes in&out of select-mode while also automatically copies the selected file(s)|
@@ -91,8 +92,8 @@ In `vim_mode` both normal and vim shortcuts work
 |`END`        | Deletes selected files                                                         |
 
 
-### *Default & Custom - Commands*
-To perform a command under the normal-mode, you first have to press the space-bar and then type the command. Alternatively, use `vim_mode` or enable the `tuifi_auto_command_on_typing`-env variable *(notice: it disables `tuifi_auto_find_on_typing`)*. **The default commands can be seen below and can be found under the `~/.config/tuifi/cmds.conf` where you can add your custom ones too:**
+## 👨‍💻 Commands
+**(Default & Custom Comands)** - To perform a command under the normal-mode, you first have to press the space-bar and then type the command. Alternatively, use `vim_mode` or enable the `tuifi_auto_command_on_typing` env-variable *(notice: it disables `tuifi_auto_find_on_typing`)*. **The default commands can be seen below and can be found under the `~/.config/tuifi/cmds.conf` where you can add your custom ones too:**
 
 | Cmd | Type | Attributes | Label Comment|
 |---|---|---|---|
@@ -105,11 +106,11 @@ To perform a command under the normal-mode, you first have to press the space-ba
 There are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character 
 
 
-# Documentation
+# 📜 Documentation
 <sub>Work in progress 🛠️🏗 ...</sub>
 
 
-## Customization 
+## 💭 Customization 
 ***How do I enable vim_mode?***
 > Set `tuifi_vim_mode` enviroment variable to `True`
 
@@ -132,7 +133,7 @@ There are also some "static" ones like the `m`+character which marks the current
 > [look here for more informations](https://github.com/GiorgosXou/TUIFIManager/issues/38)
 
 
-# Donation
+# 💗 Donation
 I do really need money to survive, I have no job, living in a basement, making things for free, because I love to.
 - [***Paypal Address***](https://www.paypal.com/donate/?hosted_button_id=QNQN23M55EJVS)
 - ***Monero Address:*** `897ehhSQJQpGF7tYDhQM51jiX7nnHmzuYAW4q8JGwJxu8JKXvaK6AivCzatuJxnifjZ2qy98ks2g2PhmTaYCMMta2Ga2LJx`
@@ -142,14 +143,14 @@ I do really need money to survive, I have no job, living in a basement, making t
 </div>
 
 
-# Special thanks to
+# 🫶 Special thanks to
 - [Bryan Lunduke for this article](https://lunduke.substack.com/p/tuifi-manager-a-file-manager-in-the)
 - [Brodie Robertson for this video](https://youtu.be/9laxdMKTZLA)
 - [r/linux community for their comments](https://www.reddit.com/r/linux/comments/zzf5rx)
 - [r/cyberDeck community for their comments](https://www.reddit.com/r/cyberDeck/comments/zttur0)
 - [r/commandline community for their comments](https://www.reddit.com/r/commandline/comments/zt30v9)
 
-# Help
+# 🕳️ Help
 Any Idea with this issue https://github.com/unicurses/unicurses/issues/21 ?
 
 
