@@ -88,8 +88,40 @@ MY_COLOR_PAIRS = (
     (uc.COLOR_BLACK  ,uc.COLOR_YELLOW ),
 )
 
+
+
+@dataclass
+class Border:
+    left                : int = uc.ACS_VLINE
+    right               : int = uc.ACS_VLINE
+    top                 : int = uc.ACS_HLINE
+    bottom              : int = uc.ACS_HLINE
+    top_left_corner     : int = uc.ACS_ULCORNER
+    top_right_corner    : int = uc.ACS_URCORNER
+    bottom_left_corner  : int = uc.ACS_LLCORNER
+    bottom_right_corner : int = uc.ACS_LRCORNER
+
+    def __post_init__(self):
+        self.left                = uc.CCHAR(self.left               )
+        self.right               = uc.CCHAR(self.right              )
+        self.top                 = uc.CCHAR(self.top                )
+        self.bottom              = uc.CCHAR(self.bottom             )
+        self.top_left_corner     = uc.CCHAR(self.top_left_corner    )
+        self.top_right_corner    = uc.CCHAR(self.top_right_corner   )
+        self.bottom_left_corner  = uc.CCHAR(self.bottom_left_corner )
+        self.bottom_right_corner = uc.CCHAR(self.bottom_right_corner)
+
+    def clear(self, win): uc.wborder(win, uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '))
+    def draw (self, win): uc.wborder(win, self.left, self.right, self.top, self.bottom, self.top_left_corner, self.top_right_corner, self.bottom_left_corner, self.bottom_right_corner)
+
+    def update(self, win):
+        self.clear(win)
+        self.draw (win)
+
+
+
 class Component():
-    def __init__(self, win, y, x, height, width, anchor, is_focused=False, color_pair_offset=0, iheight=None, iwidth=None ) -> None:
+    def __init__(self, win, y, x, height, width, anchor, is_focused=False, color_pair_offset=0, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
         self.pad               = uc.newpad(height, width)
         self.parent            = Parent(win or uc.stdscr)
         self.position          = Position (y, x)
@@ -97,6 +129,9 @@ class Component():
         self.anchor            = Anchor   (*anchor)
         self.is_focused        = is_focused
         self.color_pair_offset = color_pair_offset
+        self.warp              = warp
+        self.border            = border # TODO: to check
+        if border: self.border.draw(self.pad)
         for i in range(1, 10):                                            # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
             if uc.pair_content(i+color_pair_offset) in ((0,0),(7,0)):     # if it exists in some way | also TODO: https://github.com/GiorgosXou/TUIFIManager/issues/48
                 uc.init_pair(i+color_pair_offset, *MY_COLOR_PAIRS[i-1] )
@@ -105,7 +140,7 @@ class Component():
     def refresh(self, redraw_parent=False):
         if redraw_parent:
             uc.touchwin(self.parent.win) # Do i need this? YES
-        uc.wrefresh(self.parent.win) # Do i need this? YES
+        uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
         uc.prefresh(self.pad, self.position.iy, self.position.ix, self.position.y, self.position.x, self.position.y + self.size.height -1, self.position.x + self.size.width -1)
 
 
@@ -145,6 +180,17 @@ class Component():
     @height.setter
     def height(self, height): self.size.height = height; self.refresh(redraw_parent=True)
 
+    @property
+    def iwidth(self): return self.size.iwidth
+
+    @iwidth.setter
+    def iwidth(self, iwidth): self.size.iwidth = iwidth; uc.wresize(self.pad, self.iheight, iwidth); self.refresh(redraw_parent=True)
+
+    @property
+    def iheight(self): return self.size.iheight
+
+    @iheight.setter
+    def iheight(self, iheight): self.size.iheight = iheight; uc.wresize(self.pad, iheight, self.iwidth); self.refresh(redraw_parent=True)
 
     def get_mouse(self):
         id, x, y, z, bstate = uc.getmouse()
@@ -155,20 +201,27 @@ class Component():
         return (in_range, id, x, y, z, bstate )
 
 
-    def handle_resize(self, redraw_parent=True): # TODO: max min sizes
+    def handle_resize(self, redraw_parent=True, redraw_border=True): # TODO: max min sizes
+        if self.border and redraw_border: self.border.clear(self.pad)
         new_lines, new_columns = uc.getmaxyx(self.parent.win)
         if self.anchor.bottom:
             if self.anchor.top:
-                self.size.height += (new_lines - self.parent.lines)
-                uc.wresize(self.pad, self.height, self.width)
+                delta = (new_lines - self.parent.lines)
+                self.size.height  += delta
+                if self.warp or self.size.height > self.size.iheight: # That means that it won't contract the inside width unless you do so
+                    self.size.iheight += delta
+                    uc.wresize(self.pad, self.iheight, self.iwidth)
             else:
                 deltaY           = (new_lines - self.parent.lines)
                 self.position.y  += deltaY
                 # self.size.height += deltaY
         if self.anchor.right:
             if self.anchor.left:
-                self.size.width += (new_columns - self.parent.columns)
-                uc.wresize(self.pad, self.height, self.width)
+                delta = (new_columns - self.parent.columns)
+                self.size.width  += delta
+                if self.warp or self.size.width > self.size.iwidth:
+                    self.size.iwidth += delta
+                    uc.wresize(self.pad, self.iheight, self.iwidth)
             else:
                 deltaX           = (new_columns - self.parent.columns)
                 self.position.x += deltaX
@@ -178,6 +231,11 @@ class Component():
         self.parent.columns = new_columns
         if redraw_parent:
             uc.touchwin(self.parent.win)
+        if self.border and redraw_border: self.border.draw(self.pad)
+
+
+    def add_component(self, obj):
+        self.components.append(obj)
 
 
     def handle_events(self, event, redraw_parent=True):
