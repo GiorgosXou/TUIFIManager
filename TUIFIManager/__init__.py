@@ -1224,7 +1224,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__change_index_of_clicked_file(self.__index_of_clicked_file - 1)
 
 
-    def __perform_key_btab(self):
+    def __perform_key_btab(self): # TODO: Multiple files shifttab if needed
         if self.__clicked_file and self.__clicked_file.name != '..':
             shutil.move(self.directory + sep + self.__clicked_file.name, self.directory + sep + '..' + sep + self.__clicked_file.name)
             temp_i = self.__index_of_clicked_file - 1
