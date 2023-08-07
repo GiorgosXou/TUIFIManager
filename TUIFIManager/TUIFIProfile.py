@@ -141,6 +141,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃ █▄▄▄ ┃ \n'
         ' ┗━━━━━━┛ '
     ),2, DEFAULT_EDITOR),
+    '/toml':TUIFIProfile((
+        ' - TOML - \n'
+        ' ▓▀┏━━┓▀▓ \n' 
+        ' ▓  ┇┃  ▓ \n'
+        ' ▀▀  ┛ ▀▀ '
+    ),3, DEFAULT_EDITOR),
     '/js':TUIFIProfile((
         ' ┌━━━━━━┐ \n'
         ' │▀█▀▒▀▀│ \n'
@@ -269,7 +275,13 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' █▃█▒█▃█▒ \n'
         ' █▒.101█▒ \n'
         '          '
-        ),1, DEFAULT_EDITOR),
+    ),1, DEFAULT_EDITOR),
+    '/pyw':TUIFIProfile((
+        ' ▃▃▃ ▃ ▃. \n'
+        ' █▃█▒█▃█▒ \n'
+        ' █▒.wW.█▒ \n'
+        '          '
+    ),1, DEFAULT_EDITOR),
     '/txt':TUIFIProfile((
         ' ┏━━┓┓┓┓┓ \n'
         ' ┃┏┇┃☵☲┃┇ \n'
@@ -430,9 +442,23 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),2, DEFAULT_OPENER),
 
 
+    '/torrent':TUIFIProfile((
+        ' ╭──────╮ \n'
+        ' │TORENT│ \n'
+        ' │░▓██▓░│ \n'
+        ' ╰━━━━━━╯ '
+    ),5, DEFAULT_OPENER),
+
+
     '/mp4':TUIFIProfile((
         ' ┏┳┳┳┳┳┳┓ \n'
         ' ┇MP4∴∵◖┇ \n'
+        ' ┇_░▃_▓▆┇ \n'
+        ' ┗┻┻┻┻┻┻┛ '
+    ),2, DEFAULT_OPENER),
+    '/mkv':TUIFIProfile((
+        ' ┏┳┳┳┳┳┳┓ \n'
+        ' ┇MKV∴∵◖┇ \n'
         ' ┇_░▃_▓▆┇ \n'
         ' ┗┻┻┻┻┻┻┛ '
     ),2, DEFAULT_OPENER),
@@ -506,6 +532,8 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇EXE━┻━┫ \n'
         ' ╰━━┻━━━┛ '
     ),1, DEFAULT_OPENER),
+
+
     '/jpg':TUIFIProfile((
         ' ┏━━━JPG╮ \n'
         ' ┇*.∴:∵◖┃ \n'
@@ -620,11 +648,19 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),4, DEFAULT_OPENER),
 
     '/mdf':TUIFIProfile((
-        ' ╭━━━━━━╮ \n'
-        ' ┃┇DB╭▒█┫ \n'
-        ' ┠┇██┻▓▒┃ \n'
-        ' ┗━━━╯━━╯ '
-    ),2, DEFAULT_OPENER),
+        ' ┏━━━━━━  \n'
+        ' ┃MDF┏▄ ┇ \n'
+        ' ┇█▓░┣┻▄┇ \n'
+        ' ┗━━ ▀  ┛ '
+    ),8, DEFAULT_EDITOR),
+    '/db':TUIFIProfile((
+        ' ┏━━┳━━━  \n'
+        ' ┃DB┃┏▄ ┇ \n'
+        ' ┇█▓░┣┻▄┇ \n'
+        ' ┗━━ ▀  ┛ '
+    ),8, DEFAULT_EDITOR),
+
+
     '/tuifi':TUIFIProfile((
         '             \                                      [            \n'
         '              @                 ⟡                  ╢             \n'
