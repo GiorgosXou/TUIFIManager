@@ -17,6 +17,7 @@ import   subprocess
 import    unicurses
 import       shutil
 import       signal
+import         json
 import          ast
 import           re
 import           os
@@ -107,11 +108,15 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             if draw_files:
                 self.draw()
 
+        self.load_markers       ()
         self.load_commands      ()
         self.__set_normal_events()
         if stty_a('^C') or unicurses.OPERATING_SYSTEM == 'Windows': signal.signal(signal.SIGINT,self.copy) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
 
+
+    def __del__(self):
+        self.save_markers()
 
 
     def draw(self):
@@ -649,6 +654,19 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                         break
 
 
+    def load_markers(self, path=CONFIG_PATH):
+        path = path + sep + 'MARKERS'
+        if not os.path.isfile(path) : return
+        with open(path, 'r') as file:
+            self.markers = json.load(file)
+
+
+    def save_markers(self, path=CONFIG_PATH):
+        self.markers['`'] = self.directory
+        with open(path + sep + 'MARKERS','w') as fp:
+            fp.write(json.dumps(self.markers))
+
+
     def clear_find_results(self):
         self.is_in_find_mode                = False
         self.__change_escape_event_consumed = True
@@ -800,14 +818,14 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return subprocess.Popen(cmd.split(), shell=IS_WINDOWS, stdout=subprocess.PIPE)[0]
 
 
-    marker_stack = {}
+    markers = {}
     def __perform_static_cmd_events(self, event):
         if self.__temp_findname.startswith('m'):
             self.__set_label_text('[MARKER]')
             if len(self.__temp_findname) == 2:
                 marker = unicurses.RCCHAR(event)
                 self.__set_label_text(f'[MARKER] SET TO [{marker}]')
-                self.marker_stack[marker]           = self.directory
+                self.markers[marker]                = self.directory
                 self.__temp_findname                = ''
                 self.__change_escape_event_consumed = True
                 self.is_in_command_mode             = False
@@ -816,7 +834,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__set_label_text('[GOTO MARKER]')
             if len(self.__temp_findname) == 2:
                 marker = unicurses.RCCHAR(event)
-                dir    = self.marker_stack.get(marker) 
+                dir    = self.markers.get(marker) 
                 if dir: 
                     self.open(dir) # scroll to file maby too?
                 else: 
@@ -1245,7 +1263,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
 """
-- 2023-07-29 03:09:22 AM TODO: ctrl+i or o for navigation to last edited or exited place | Icons | Tabs | Undo redo | Sort | click-drag select multiple | windows unicurses recompile dlls
+- 2023-07-29 03:09:22 AM TODO: ctrl+i or o for navigation to last edited or exited place | Icons | Tabs | Undo redo | Sort | click-drag select multiple | windows unicurses recompile dlls | prevent errors by checking permissions
 - 2022-12-19 01:15:32 AM REMINDER: THE REASON WHY I USED self.position.iy INSTEAD OF self.iy IS BECAUSE CHANGING IT THAT WAY DOESN'T REDRAW THE WINDOW
 - 2022-12-21 08:23:25 PM REMINDER: What if i rename .. folder?
 """
