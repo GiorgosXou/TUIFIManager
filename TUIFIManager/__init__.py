@@ -157,7 +157,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def __set_coordinates(self, file, resize=False):
         tempX = (PADDING_LEFT + file.profile.width + PADDING_RIGHT)
-        if self.___x > self.width-tempX + PADDING_RIGHT - self.x :
+        if self.___x > self.width + self.x - tempX + PADDING_RIGHT - self.x :
             self.___x  = PADDING_LEFT
             self.___y += self.__max_h + PADDING_TOP + PADDING_BOTTOM  # ... +1 because the next has to be below :P
             self.__count = 0
