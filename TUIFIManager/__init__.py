@@ -7,7 +7,7 @@ from      functools import partial
 from        pathlib import Path
 from         typing import Optional, Final
 from           time import time
-from             os import sep
+from             os import sep, access, W_OK
 from           math import log10
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
@@ -539,11 +539,19 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             self.position.iy += temp_sum_of_Y__y_and_height_of_tuifile - (temp_sum_of_visible_H_and_Y )
 
 
+    def has_write_access(self, path):
+        if not access(path, W_OK):
+            self.__set_label_text('[ERROR] NO WRITE PERMISSION')
+            return False
+        return True
+
+
     __is_cut = False
     def cut(self):
         """
         Cut-copies the selected files | Not fully implemented yet
         """
+        if not self.has_write_access(self.directory): return
         self.__is_cut = True  # TODO: DON'T FORGET TO CHANGE TERMUX CUT WHEN NEW VERSION[...]
         self.__stack_files_for_action()
 
@@ -616,6 +624,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         """
         Pastes the already selected and copied/cutted files.
         """
+        if not self.has_write_access(self.directory): return
         if len(self.__temp__copied_files) == 0 or not os.path.exists(self.__temp_dir_of_copied_files): return # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
         if self.__temp_dir_of_copied_files != self.directory: self.__copy_cut ()
         else                                                : self.__duplicate()
@@ -626,6 +635,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         """
         Deletes the selected file(s). | Not fully implemented yet
         """
+        if not self.has_write_access(self.directory): return
         if self.__count_selected == 1 and self.__clicked_file :
             # checking under __delete_file too but nvm cause i have no time right now
             if self.__clicked_file.name != '..':
@@ -941,6 +951,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def create_new(self,_type='folder'): # temporary implementation but nvm
+        if not self.has_write_access(self.directory): return
         i, j = '', 0
         exists = os.path.isdir if _type == 'folder' else os.path.isfile
 
@@ -1072,7 +1083,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                     if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
                         self.open(self.__clicked_file)
                 elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file: #and not self.__clicked_file.is_selected:
-                    if os.path.isdir(self.directory + sep + self.__clicked_file.name):
+                    if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and  self.has_write_access(self.directory + sep + self.__clicked_file.name):
                         for f in self.files:
                             if f.is_selected:
                                 shutil.move(self.directory + sep + f.name, self.directory + sep + self.__clicked_file.name + sep + f.name)
@@ -1225,7 +1236,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __perform_key_btab(self): # TODO: Multiple files shifttab if needed
-        if self.__clicked_file and self.__clicked_file.name != '..':
+        if self.__clicked_file and self.__clicked_file.name != '..' and self.has_write_access(self.directory) and self.has_write_access(self.directory + sep + '..'):
             shutil.move(self.directory + sep + self.__clicked_file.name, self.directory + sep + '..' + sep + self.__clicked_file.name)
             temp_i = self.__index_of_clicked_file - 1
             self.reload()
