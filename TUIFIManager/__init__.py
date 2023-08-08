@@ -1274,7 +1274,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
 """
-- 2023-07-29 03:09:22 AM TODO: ctrl+i or o for navigation to last edited or exited place | Icons | Tabs | Undo redo | Sort | click-drag select multiple | windows unicurses recompile dlls | prevent errors by checking permissions
+- 2023-07-29 03:09:22 AM TODO: ctrl+i or o for navigation to last edited or exited place | Icons | Tabs | Undo redo | Sort | click-drag select multiple | windows unicurses recompile dlls | prevent errors by checking permissions | zz midle word
 - 2022-12-19 01:15:32 AM REMINDER: THE REASON WHY I USED self.position.iy INSTEAD OF self.iy IS BECAUSE CHANGING IT THAT WAY DOESN'T REDRAW THE WINDOW
 - 2022-12-21 08:23:25 PM REMINDER: What if i rename .. folder?
 """
