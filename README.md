@@ -69,6 +69,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`DEL`          | `CTRL+d`  |Deletes the selected files                    |
 |`CTRL + F`     | `i`  |Find Files *(if not auto_find_on_typing)*     |
 |`CTRL + O`     | `O`  |Open whole directory in editor                |
+|`CTRL + A`     |  |Select all files in current folder|
 |`CTRL + C`     | `yy`  |Copies the selected files                     |
 |`CTRL + K`     |   |Copies the selected files                     |
 |`CTRL + X`     | `c`  |Cuts the selected files                       |
@@ -81,6 +82,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + E`     | `e` |Exit with `cd`                                  |
 |`ESCAPE`       |   |Exit                                          |
 
+**(*TIP:** 🐁 use `ALT + CLICK` for multiple mouse selection if `SHIFT` not working)*
 
 ***TERMUX only Shortcuts\Keybindings***
 | Shortcut    | Action                                                                         |
@@ -122,6 +124,12 @@ There are also some "static" ones like the `m`+character which marks the current
 
 *How do I disable the auto-find-mode?*
 > You can just set `tuifi_auto_find_on_typing` enviroment variable to `False`
+
+*How do I change the scroll sensitivity?*
+> You can set either or both `tuifi_scroll_sensitivity`, `tuifi_ctrl_scroll_sensitivity` enviromental variables, to the disered number of characters per scroll action *(they default to 1 and 7)*
+
+How do I change the number of visible lines of filenames that are visible?
+> You can set how mnay lines you want using `tuifi_visible_filename_lines` *(Defaults to 4)*
 
 *How do I change the default configuration path?*
 > Set `tuifi_config_path` enviroment variable to whatever you prefer most
