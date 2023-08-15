@@ -50,7 +50,7 @@ for more details look into the `__main__.py`
 - Undo\Redo
 - tool-tips
 - Scroll bar
-- Sixel support
+- [Sixel support](https://github.com/GiorgosXou/TUIFIManager/issues/86)
 - Multiple tabs
 - Better performance
 - Effect on cutted Files
