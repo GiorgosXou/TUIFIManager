@@ -311,6 +311,24 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         return
 
 
+    def __reset_open(self):
+        if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol
+            self.find()
+        else:
+            self.is_in_find_mode       = False
+            self.escape_event_consumed = False
+        self.__change_escape_event_consumed = False
+        self.is_in_command_mode      = False
+        self.__temp_findname         = ''
+        self.__temp_find_filename    = '' # Ahh..
+        self.__clicked_file          = None
+        self.__pre_clicked_file      = None
+        self.__index_of_clicked_file = None
+        self.__pre_hov               = None
+        self.__count_selected        = 0
+        self.position.iy             = 0
+
+
     def open(self, directory, suffixes=[], sort_by=None, _with=None):
         """
         `open()` is `load_files()` + `draw()`
@@ -330,21 +348,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
             return self.__try_open_with(directory, open_with, multiple) # TODO: check if the multiple selected files are folders and open them in new tabs
 
-        if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol
-            self.find()
-        else:
-            self.is_in_find_mode       = False
-            self.escape_event_consumed = False
-        self.__change_escape_event_consumed = False
-        self.is_in_command_mode      = False
-        self.__temp_findname         = ''
-        self.__temp_find_filename    = '' # Ahh..
-        self.__clicked_file          = None
-        self.__pre_clicked_file      = None
-        self.__index_of_clicked_file = None
-        self.__pre_hov               = None
-        self.__count_selected        = 0
-        self.position.iy             = 0
+        self.__reset_open()
         self.load_files(directory, suffixes, sort_by)
         self.draw()
         return self.files
