@@ -9,6 +9,7 @@ from         typing import Optional, Final
 from           time import time
 from             os import sep, access, W_OK
 from           math import log10
+from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
 from   .TUItilities import Component, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX   
@@ -119,14 +120,24 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.save_markers()
 
 
+    def __handle_focus_on_previour_dir(self, f, i):
+        if self.__is_opening_previous_dir and f.name == self.basename:
+            if not IS_TERMUX or not self.termux_touch_only:
+                self.__index_of_clicked_file = i
+                self.__clicked_file = f
+            self.scroll_to_file(f, not IS_TERMUX or not self.termux_touch_only)
+            self.__is_opening_previous_dir = False
+
+
     def draw(self):
         unicurses.werase(self.pad)
         #self.refresh()
         if self.maxpLines < self.height:
             self.maxpLines = self.height
         unicurses.wresize(self.pad, self.maxpLines, self.width)
-        for f in self.files:
+        for i,f in enumerate(self.files):
             f.draw(self.pad, color_pair_offset=self.color_pair_offset)
+            self.__handle_focus_on_previour_dir(f,i)
 
 
     #def get_TUIFIProfile_by_key(self, key): # https://stackoverflow.com/a/2974082/11465149
@@ -142,7 +153,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                     break
         else:
             file_extension = os.path.splitext(file_directory)[1]
-            file_extension = f'/{file_extension[1:]}' if file_extension else os.path.basename(file_directory)
+            file_extension = f'/{file_extension[1:]}' if file_extension else basename(file_directory)
             temp_profile   = TUIFIProfiles.get(file_extension.lower(),DEFAULT_PROFILE) # ..[-1] = extension
         return temp_profile
 
@@ -208,6 +219,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__set_coordinates(file_)
 
 
+    basename = ''
     def load_files(self, directory, suffixes=[], sort_by=None):  # DON'T load and then don't show :P
         directory = os.path.realpath(os.path.normpath(directory))
         if not os.path.isdir(directory):
@@ -215,6 +227,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         if not suffixes:
             suffixes = self.suffixes
 
+        self.basename = basename(self.directory)
         self.directory = directory
         self.files = []
         self.__reset_coordinates()
@@ -329,6 +342,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.position.iy             = 0
 
 
+    __is_opening_previous_dir = False
     def open(self, directory, suffixes=[], sort_by=None, _with=None):
         """
         `open()` is `load_files()` + `draw()`
@@ -338,6 +352,9 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
         if isinstance(directory, TUIFile):
             directory = self.directory + sep + directory.name
+
+        if basename(directory) == '..':
+            self.__is_opening_previous_dir = True
 
         if _with: 
             return self.__try_open_with(directory, _with)
