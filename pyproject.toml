@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TUIFIManager"
-version = "3.3.4"
+version = "3.3.5"
 
 description = "A cross-platform terminal-based termux-oriented file manager."
 requires-python = ">=3.8"
