@@ -751,6 +751,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
     __temp_find_filename = ''
     def find_file(self, filename): # meh, slightly computationally expensive but easier to implement, whatever at least it does it's job lol
+        self.__count_selected = 0
         self.__temp_find_filename = filename
         self.load_files(self.directory)
         self.draw()
