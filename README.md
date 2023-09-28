@@ -152,6 +152,7 @@ I do really need money to survive, I have no job, living in a basement, making t
 
 
 # 🫶 Special thanks to
+- [@KORBEN for this article](https://korben.info/gestionnaire-fichiers-terminal-tuifimanager-multiplateforme-leger-personnalisable.html)
 - [Bryan Lunduke for this article](https://lunduke.substack.com/p/tuifi-manager-a-file-manager-in-the)
 - [Brodie Robertson for this video](https://youtu.be/9laxdMKTZLA)
 - [r/linux community for their comments](https://www.reddit.com/r/linux/comments/zzf5rx)
