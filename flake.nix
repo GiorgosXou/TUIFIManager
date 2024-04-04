@@ -1,10 +1,12 @@
 {
+  description = "cross-platform terminal-based termux-oriented file manager.";
+
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, utils } @inputs:
+  outputs = { self, nixpkgs, utils }:
     utils.lib.eachDefaultSystem (system:
       with import nixpkgs { inherit system; }; {
         devShells.default = mkShell {
