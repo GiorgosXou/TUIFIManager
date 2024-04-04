@@ -34,5 +34,32 @@
           };
 
           formatter = pkgs.nixpkgs-fmt;
+          packages = rec {
+            default = tuifi-manager;
+            tuifi-manager = with pkgs.python3.pkgs; buildPythonApplication {
+              pname = "tuifi-manager";
+              version = "master";
+              format = "pyproject";
+              src = ./.;
+
+              nativeBuildInputs = [
+                setuptools
+                setuptools-scm
+              ];
+
+              propagatedBuildInputs = [
+                send2trash
+                unicurses
+              ];
+
+              pythonImportsCheck = [ "TUIFIManager" ];
+              postPatch = ''
+                substituteInPlace pyproject.toml \
+                  --replace "Send2Trash == 1.8.0" "Send2Trash >= 1.8.0"
+              '';
+
+              meta.mainProgram = "tuifi";
+            };
+          };
         });
 }
