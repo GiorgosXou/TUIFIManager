@@ -6,60 +6,69 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+  }:
     flake-utils.lib.eachSystem [
       "aarch64-darwin"
       "aarch64-linux"
       "x86_64-darwin"
       "x86_64-linux"
     ]
-      (system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          devShells.default = pkgs.mkShell {
-            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.ncurses ];
-            packages =
-              let
-                py-env = pkgs.python310.withPackages (p: [
-                  p.send2trash
-                  p.unicurses
-                ]);
-              in
-              [
-                py-env
-                pkgs.gnumake
-              ];
+    (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      devShells.default = let
+        py-env = pkgs.python310.withPackages (p: [
+          p.send2trash
+          p.unicurses
+        ]);
+      in
+        pkgs.mkShell {
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.ncurses];
+          packages = [
+            py-env
+            py-env.pkgs.venvShellHook
+            pkgs.gnumake
+          ];
+
+          venvDir = "venv";
+          postVenvCreation = ''
+            pip install -r requirements.txt
+            pip install -e .
+          '';
+        };
+
+      formatter = pkgs.alejandra;
+      packages = rec {
+        default = tuifi-manager;
+        tuifi-manager = with pkgs.python3.pkgs;
+          buildPythonApplication {
+            pname = "tuifi-manager";
+            version = "master";
+            format = "pyproject";
+            src = ./.;
+
+            nativeBuildInputs = [
+              setuptools
+              setuptools-scm
+            ];
+
+            propagatedBuildInputs = [
+              send2trash
+              unicurses
+            ];
+
+            pythonImportsCheck = ["TUIFIManager"];
+            postPatch = ''
+              substituteInPlace pyproject.toml \
+                --replace "Send2Trash == 1.8.0" "Send2Trash >= 1.8.0"
+            '';
+
+            meta.mainProgram = "tuifi";
           };
-
-          formatter = pkgs.nixpkgs-fmt;
-          packages = rec {
-            default = tuifi-manager;
-            tuifi-manager = with pkgs.python3.pkgs; buildPythonApplication {
-              pname = "tuifi-manager";
-              version = "master";
-              format = "pyproject";
-              src = ./.;
-
-              nativeBuildInputs = [
-                setuptools
-                setuptools-scm
-              ];
-
-              propagatedBuildInputs = [
-                send2trash
-                unicurses
-              ];
-
-              pythonImportsCheck = [ "TUIFIManager" ];
-              postPatch = ''
-                substituteInPlace pyproject.toml \
-                  --replace "Send2Trash == 1.8.0" "Send2Trash >= 1.8.0"
-              '';
-
-              meta.mainProgram = "tuifi";
-            };
-          };
-        });
+      };
+    });
 }
