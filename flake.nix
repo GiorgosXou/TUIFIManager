@@ -56,11 +56,6 @@
             ];
 
             pythonImportsCheck = ["TUIFIManager"];
-            postPatch = ''
-              substituteInPlace pyproject.toml \
-                --replace "Send2Trash == 1.8.0" "Send2Trash >= 1.8.0"
-            '';
-
             meta.mainProgram = "tuifi";
           };
       };
