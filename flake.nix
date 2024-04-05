@@ -38,12 +38,16 @@
       formatter = pkgs.alejandra;
       packages = rec {
         default = tuifi-manager;
-        tuifi-manager = with pkgs.python3.pkgs;
+        tuifi-manager = let
+          pyproject = builtins.readFile ./pyproject.toml;
+          version = (builtins.fromTOML pyproject).project.version;
+        in with pkgs.python3.pkgs;
           buildPythonApplication {
             pname = "tuifi-manager";
-            version = "master";
-            format = "pyproject";
+            inherit version;
+
             src = ./.;
+            format = "pyproject";
 
             nativeBuildInputs = [
               setuptools
