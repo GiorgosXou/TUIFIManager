@@ -38,31 +38,31 @@
       formatter = pkgs.alejandra;
       packages = rec {
         default = tuifi-manager;
-        tuifi-manager = with pkgs.python3.pkgs;
-          buildPythonApplication {
-            pname = "tuifi-manager";
-            version = "master";
-            format = "pyproject";
-            src = ./.;
+        tuifi-manager = let
+          pyproject = builtins.readFile ./pyproject.toml;
+          version = (builtins.fromTOML pyproject).project.version;
+        in
+          with pkgs.python3.pkgs;
+            buildPythonApplication {
+              pname = "tuifi-manager";
+              inherit version;
 
-            nativeBuildInputs = [
-              setuptools
-              setuptools-scm
-            ];
+              src = ./.;
+              format = "pyproject";
 
-            propagatedBuildInputs = [
-              send2trash
-              unicurses
-            ];
+              nativeBuildInputs = [
+                setuptools
+                setuptools-scm
+              ];
 
-            pythonImportsCheck = ["TUIFIManager"];
-            postPatch = ''
-              substituteInPlace pyproject.toml \
-                --replace "Send2Trash == 1.8.0" "Send2Trash >= 1.8.0"
-            '';
+              propagatedBuildInputs = [
+                send2trash
+                unicurses
+              ];
 
-            meta.mainProgram = "tuifi";
-          };
+              pythonImportsCheck = ["TUIFIManager"];
+              meta.mainProgram = "tuifi";
+            };
       };
     });
 }
