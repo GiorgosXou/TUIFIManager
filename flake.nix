@@ -41,27 +41,28 @@
         tuifi-manager = let
           pyproject = builtins.readFile ./pyproject.toml;
           version = (builtins.fromTOML pyproject).project.version;
-        in with pkgs.python3.pkgs;
-          buildPythonApplication {
-            pname = "tuifi-manager";
-            inherit version;
+        in
+          with pkgs.python3.pkgs;
+            buildPythonApplication {
+              pname = "tuifi-manager";
+              inherit version;
 
-            src = ./.;
-            format = "pyproject";
+              src = ./.;
+              format = "pyproject";
 
-            nativeBuildInputs = [
-              setuptools
-              setuptools-scm
-            ];
+              nativeBuildInputs = [
+                setuptools
+                setuptools-scm
+              ];
 
-            propagatedBuildInputs = [
-              send2trash
-              unicurses
-            ];
+              propagatedBuildInputs = [
+                send2trash
+                unicurses
+              ];
 
-            pythonImportsCheck = ["TUIFIManager"];
-            meta.mainProgram = "tuifi";
-          };
+              pythonImportsCheck = ["TUIFIManager"];
+              meta.mainProgram = "tuifi";
+            };
       };
     });
 }
