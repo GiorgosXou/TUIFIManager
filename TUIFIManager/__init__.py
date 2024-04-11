@@ -125,6 +125,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             if not IS_TERMUX or not self.termux_touch_only:
                 self.__index_of_clicked_file = i
                 self.__clicked_file = f
+                self.__pre_clicked_file = f # https://github.com/GiorgosXou/TUIFIManager/issues/96
             self.scroll_to_file(f, not IS_TERMUX or not self.termux_touch_only)
             self.__is_opening_previous_dir = False
 
