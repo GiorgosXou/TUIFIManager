@@ -203,11 +203,11 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         '          '
     ),4, DEFAULT_EDITOR),
     '/apk':TUIFIProfile((
-        ' ▃  ▃▃ ▃ ▃\n'
-        '█▃█ ██ █▃▀\n'
-        '█ █ █  █ █\n'
-        '          '
-    ),5, DEFAULT_OPENER),
+        ' ┏▅▅▅▅▅▅┓ \n'    # ' ▃  ▃▃ ▃ ▃\n'
+        ' ┇┏┓┏┓┒┒┇ \n'    # '█▃█ ██ █▃▀\n'
+        ' ┃┣┫┣┛┣┓┃ \n'    # '█ █ █  █ █\n'
+        ' ┗━━━━━━┛ '      # '          '
+    ),5, DEFAULT_EDITOR),
     '/vim':TUIFIProfile((
         ' ┏━━━━━┳┓ \n'
         ' ┃VI━━━┫┇ \n'
@@ -338,9 +338,9 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),2, DEFAULT_EDITOR),
     '/pdf':TUIFIProfile((
         ' ╭━━━━╮━╮ \n'
-        ' ┃PDF┃==│ \n'
-        ' ┃┇▒█┃▒▒│ \n'
-        ' ┗━━━━━━╯ '
+        ' │PDF┃==│ \n'
+        ' │┇▒▓┃▒▒│ \n'
+        ' ╰━━━━━━╯ '
     ),3, DEFAULT_OPENER),
 
 
@@ -415,46 +415,46 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 
 
     '/rar':TUIFIProfile((
-        ' ▃▃RAR▃▃╮ \n'
+        ' ▃▃RAR▃▃┓ \n'
         ' ▒▒░ ░▒▒┃ \n'
         ' ▓▓░ ░▓▓┃ \n'
-        ' ▀▀░ ░▀▀┘ '
+        ' ▀▀───▀▀┛ '
     ),2, DEFAULT_OPENER),
     '/zip':TUIFIProfile((
-        ' ▃▃▃░░▃▃▃ \n'
-        ' ▒▒▒░░▒▒▒ \n'
-        ' ▓▓▓░░▓▓▓ \n'
-        ' ZIP░░▀▀▀ '
+        ' ▃▃▃┃┓▃▃▃ \n'
+        ' ▒▒▒┃┃▒▒▒ \n'
+        ' ▓▓▓┃┃▓▓▓ \n'
+        ' ZIP┗┃▀▀▀ '
     ),2, DEFAULT_OPENER),
     '/tar':TUIFIProfile((
-        ' ▃▃▃░░▃▃▃ \n'
-        ' ▒▒▒░░▒▒▒ \n'
-        ' ▓▓▓░░▓▓▓ \n'
-        ' TAR░░▀▀▀ '
+        ' ▃▃▃┏┓▃▃▃ \n'
+        ' ▒▒▒┣┫▒▒▒ \n'
+        ' ▓▓▓┣┫▓▓▓ \n'
+        ' TAR┗┛▀▀▀ '
     ),2, DEFAULT_OPENER),
     '/gz':TUIFIProfile((
-        ' ▃▃▃░░▃▃▃ \n'
-        ' ▒▒▒░░▒▒▒ \n'
-        ' ▓▓▓░░▓▓▓ \n'
-        ' GZ▀░░▀▀▀ '
+        ' ▃▃▃┏┓▃▃▃ \n'
+        ' ▒▒▒┃┃▒▒▒ \n'
+        ' ▓▓▓┃┃▓▓▓ \n'
+        ' GZ▀┗┛▀▀▀ '
     ),2, DEFAULT_OPENER),
     '/xz':TUIFIProfile((
-        ' ▃▃▃░░▃▃▃ \n'
-        ' ▒▒▒░░▒▒▒ \n'
-        ' ▓▓▓░░▓▓▓ \n'
-        ' XZ▀░░▀▀▀ '
+        ' ▃▃▃┏┓▃▃▃ \n'
+        ' ▒▒▒┃┃▒▒▒ \n'
+        ' ▓▓▓┃┃▓▓▓ \n'
+        ' XZ▀┗┛▀▀▀ '
     ),2, DEFAULT_OPENER),
     '/bz2':TUIFIProfile((
-        ' ▃▃▃░░▃▃▃ \n'
-        ' ▒▒▒░░▒▒▒ \n'
-        ' ▓▓▓░░▓▓▓ \n'
-        ' BZ2░░▀▀▀ '
+        ' ▃▃▃┏┓▃▃▃ \n'
+        ' ▒▒▒┃┃▒▒▒ \n'
+        ' ▓▓▓┃┃▓▓▓ \n'
+        ' BZ2┗┛▀▀▀ '
     ),2, DEFAULT_OPENER),
     '/zst':TUIFIProfile((
-        ' ▃▃▃░░▃▃▃ \n'
-        ' ▒▒▒░░▒▒▒ \n'
-        ' ▓▓▓░░▓▓▓ \n'
-        ' ZST░░▀▀▀ '
+        ' ▃▃▃┏┓▃▃▃ \n'
+        ' ▒▒▒┃┃▒▒▒ \n'
+        ' ▓▓▓┃┃▓▓▓ \n'
+        ' ZST┗┛▀▀▀ '
     ),2, DEFAULT_OPENER),
 
 
@@ -567,27 +567,27 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 
 
     '/jpg':TUIFIProfile((
-        ' ┏━━━JPG╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━━JPG╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/png':TUIFIProfile((
-        ' ┏━━━PNG╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━━PNG╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/ico':TUIFIProfile((
-        ' ┏━━━ICO╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━━ICO╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/jpeg':TUIFIProfile((
-        ' ┏━━JPEG╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━JPEG╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/bmp':TUIFIProfile((
@@ -597,45 +597,45 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/webp':TUIFIProfile((
-        ' ┏━━WEBP╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━WEBP╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/tiff':TUIFIProfile((
-        ' ┏━━TIFF╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━TIFF╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/tif':TUIFIProfile((
-        ' ┏━━TIFF╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━TIFF╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/tga':TUIFIProfile((
-        ' ┏━TARGA╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━TARGA╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/heif':TUIFIProfile((
-        ' ┏━━HEIF╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━HEIF╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/heifs':TUIFIProfile((
-        ' ┏━━HEIF╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━HEIF╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
     '/heic':TUIFIProfile((
-        ' ┏━━HEIC╮ \n'
-        ' ┇*.∴:∵◖┃ \n'
-        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┍━━HEIC╮ \n'
+        ' │*.∴:∵◖┃ \n'
+        ' ┝┓░▃┏▓▆┇ \n'
         ' ╰━━━━━━┛ '
     ),2, DEFAULT_OPENER),
 
@@ -673,9 +673,9 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 
 
     '/psd':TUIFIProfile((
-        ' ┏▃▃▃▃▃▃┓ \n'
-        ' ┃█▂█▒▃▃┃ \n'
-        ' ┃█  ▃▃▒┃ \n'
+        ' ┏━━━━━━┓ \n'
+        ' ┇PHSHOP┃ \n'
+        ' ┣┓░▃┏▓▆┇ \n'
         ' ┗━━━━━━┛ '
     ),4, DEFAULT_OPENER),
 
@@ -689,13 +689,13 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     '/mdf':TUIFIProfile((
         ' ┏━━━━━━  \n'
         ' ┃MDF┏▄ ┇ \n'
-        ' ┇█▓░┣┻▄┇ \n'
+        ' ┇█▓░┣┻▄┃ \n'
         ' ┗━━ ▀  ┛ '
     ),8, DEFAULT_EDITOR),
     '/db':TUIFIProfile((
         ' ┏━━┳━━━  \n'
-        ' ┃DB┃┏▄ ┇ \n'
-        ' ┇█▓░┣┻▄┇ \n'
+        ' ┃DB┇┏▄ ┇ \n'
+        ' ┇▓░ ┣┻▄┃ \n'
         ' ┗━━ ▀  ┛ '
     ),8, DEFAULT_EDITOR),
 
