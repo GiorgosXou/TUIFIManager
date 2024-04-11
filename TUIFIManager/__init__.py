@@ -42,6 +42,14 @@ CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuif
 STTY_EXISTS    = shutil.which('stty')
 INIT_DIRECTORY = os.getcwd()
 
+IS_DRAG_N_DROP = os.getenv('tuifi_synth_dnd') == 'True'
+if IS_DRAG_N_DROP: 
+    from   .TUISynthXDND  import SyntheticXDND
+    from   PySide6.QtCore import QUrl
+    import requests
+    import mimetypes
+    import base64
+
 
 def stty_a(key=None):  # whatever [...]
     if not STTY_EXISTS:
@@ -113,6 +121,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__set_normal_events()
         if stty_a('^C') or unicurses.OPERATING_SYSTEM == 'Windows': signal.signal(signal.SIGINT,self.copy) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
+        if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files)
 
 
     def __del__(self):
@@ -437,6 +446,111 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         for f in self.files[1:]:
             self.select(f)
         self.__set_label_text(f'[{self.__count_selected}] Files selected')
+
+
+    if IS_DRAG_N_DROP:
+        headers = { # just in case
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36', 
+            'X-Requested-With': 'XMLHttpRequest'
+        } 
+        def save(self, path, filename, data):
+            try:
+                path = os.path.join(path, filename)
+                f = open(path, 'wb')
+                f.write(data)
+                f.close()
+                # block from create_new()
+                self.deselect()
+                self.__clicked_file = TUIFile(filename, profile=self.get_profile(path))
+                self.__pre_clicked_file = self.__clicked_file
+                self.files.insert(self.__index_of_clicked_file if self.__index_of_clicked_file else 1 ,self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
+                self.resort()
+                self.scroll_to_file(self.__clicked_file,True,True)
+                self.__set_label_text(f'SAVED: "{filename}"')
+                return True
+            except Exception as e:
+                self.__set_label_text(f"FAILED TO SAVE: { str(e) }")
+                return False
+
+
+        def get_available_filename(self,name):
+            tmp_name = name
+            i = 0
+            while os.path.isfile(self.directory + sep + tmp_name):
+                tmp_name = f'{i}_{name}'
+                i += 1
+            return tmp_name
+
+
+
+        def download(self, url, out_path): # downloading github images from comments or posts seems to have issues ... those https://private-user-images...
+            self.__set_label_text(f'DOWNLOADING: {url}')
+            try:
+                # self.__set_label_text(f'Downloading file ...')
+                r = requests.get(url, headers=self.headers) # , stream=True
+                # if r.headers.get('filename'):pass
+                filename = ''
+                extension = mimetypes.guess_extension(r.headers.get('content-type', '').split(';')[0]) # .split(';') is needed because there might be more after  https://stackoverflow.com/a/59575973/11465149
+                content = r.headers.get('Content-Disposition')
+                if content and not content.find('filename=') == -1:
+                    filename = content.split('filename=')[1].split(';')[0]
+                    if filename[0] in ('"', "'"):
+                        filename = filename[1:-1]
+                    if filename.strip() == '': # This happened with an image dropped from my stackoverflow profile (not the small ones)
+                        filename = 'download'
+                    if extension and filename.find('.') == -1: # hidden filenames without extension might be an issue\get-ignored :P
+                        filename = filename + extension
+                else:
+                    filename = basename(url).split("?")[0].split(".",1)
+                    if extension:
+                        filename = filename[0] + extension
+                    elif len(filename)>1:
+                        filename = filename[0] + "." + filename[1]
+                    else:
+                        filename = "download"
+
+                #TODO: if duplicate display a msg replace or something | or if duplicate check hashes and if the same ignore else ask?
+                filename = self.get_available_filename(filename)
+
+                return self.save(out_path, filename, r.content)
+            except Exception as e:
+                self.__set_label_text(f"FAILD TO DOWNLOAD: { str(e) }")
+                return False
+
+
+
+        def __get_selected_files(self): # I know it's not optimized at all, but ... anyways for now... I have a life too :P
+            if self.__count_selected > 1: # don't simplify the condition cause it doesn't count __pre_clicked_file as selected until it becomes clicked (if i remember well pre_clicked means pressed but not released)
+                f_list = []
+                for f in self.files:
+                    if f.is_selected:
+                        f_list.append(QUrl.fromLocalFile(self.directory + sep + f.name))
+                return f_list
+            elif self.__pre_clicked_file:
+                return [QUrl.fromLocalFile(self.directory + sep + self.__pre_clicked_file.name)]
+
+
+        def handle_gui_to_tui_dropped_file(self, file_url, type): #TODO: Custom user actions on link patterns: eg. clone git, save at folder xy, etc.
+            self.__set_label_text(f'DROPPED: {file_url}')
+            if type == 1:
+                pass #TODO: handle files
+            elif type == 0:
+                self.download(file_url, self.directory + sep)
+            elif file_url.startswith('data:') and not file_url.find('base64') == -1:
+                extension = mimetypes.guess_extension(file_url.split(';')[0].split(':')[1])
+                filename = self.get_available_filename('download'+extension)
+                self.save(self.directory, filename, base64.b64decode(file_url[file_url.find('4')+1:])) # 4 is from base64
+
+                # r = requests.get(file_url) # , stream=True
+                # r.headers.get('filename')
+                # unicurses.mvwaddwstr(self.pad,0,0,f'is downloadable: {r.headers}')
+
+                # from urllib.request import urlopen 
+                # response = urlopen(file_url)
+                # filename = response.headers.get_filename()
+                # self.__set_label_text(f'{filename} <-----')
+                
+
 
 
     def scroll_pad(self, y):
