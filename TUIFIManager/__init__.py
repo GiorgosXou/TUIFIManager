@@ -326,11 +326,11 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __reset_open(self):
-        if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol
-            self.find()
-        else:
-            self.is_in_find_mode       = False
-            self.escape_event_consumed = False
+        # if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol | 2024-04-05 08:48:24 PM this was for keeping search/find/input mode after opening a folder but i didn't like it and removed it
+        #     self.find()
+        # else:
+        self.is_in_find_mode       = False # else content
+        self.escape_event_consumed = False # else content
         self.__change_escape_event_consumed = False
         self.is_in_command_mode      = False
         self.__temp_findname         = ''
