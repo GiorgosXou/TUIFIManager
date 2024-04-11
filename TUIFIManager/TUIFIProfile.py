@@ -135,6 +135,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃━ ┗┛+┓┃ \n'
         ' ╰┻━━┻┻┻┛ '
     ),4, DEFAULT_EDITOR),
+    '/o':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┇ █▀▀█ ┃ \n'
+        ' ┃ █▄▄█ ┃ \n'
+        ' ┗━━━━━━┛ '
+    ),1, DEFAULT_OPENER),
     '/h':TUIFIProfile((
         ' ┏━━━━━━┓ \n'
         ' ┇ █▂▂█ ┃ \n'
@@ -293,6 +299,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' █▃█▒█▃█▒ \n'
         ' █▒.wW.█▒ \n'
         '          '
+    ),1, DEFAULT_EDITOR),
+    '/tex':TUIFIProfile((
+        ' ┏┏┏┏━━━┓ \n'
+        ' ┃┃┏┓┳┏━┃ \n'
+        ' ┃┇┣┫┃EX┃ \n'
+        ' ┗━━━━━━┛ '
     ),1, DEFAULT_EDITOR),
     '/txt':TUIFIProfile((
         ' ┏━━┓┓┓┓┓ \n'
@@ -460,6 +472,14 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │░▓██▓░│ \n'
         ' ╰━━━━━━╯ '
     ),5, DEFAULT_OPENER),
+
+
+    '/desktop':TUIFIProfile((
+        ' ╭──────╮ \n'
+        ' │.:||[]│ \n'
+        ' │[][][]│ \n'
+        ' ╰━━━━━━╯ '
+    ),1, DEFAULT_OPENER),
 
 
     '/mp4':TUIFIProfile((
@@ -659,6 +679,13 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),4, DEFAULT_OPENER),
 
+
+    '/sqlite3':TUIFIProfile((
+        ' ┏━━━━━━  \n'
+        ' ┃SQL┏▄ ┇ \n'
+        ' ┇█▓░┣┻▄┃ \n'
+        ' ┗━━ ▀  ┛ '
+    ),8, DEFAULT_EDITOR),
     '/mdf':TUIFIProfile((
         ' ┏━━━━━━  \n'
         ' ┃MDF┏▄ ┇ \n'
