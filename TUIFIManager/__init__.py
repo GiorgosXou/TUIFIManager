@@ -401,9 +401,12 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def deselect(self,tuifile=None):
-        if not tuifile and self.__count_selected == 1:
-            tuifile = self.__clicked_file
         if not tuifile:
+            if self.__count_selected == 1:
+                tuifile = self.__clicked_file
+            elif self.__count_selected == 0:
+                return
+        if not tuifile: # If after above condtion is still not tuifile:
             for f in self.files:
                 if f.is_selected:
                     f.is_selected = False
