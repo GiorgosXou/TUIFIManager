@@ -133,7 +133,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             if not IS_TERMUX or not self.termux_touch_only:
                 self.__index_of_clicked_file = i
                 self.__clicked_file = f
-                self.__pre_clicked_file = f # https://github.com/GiorgosXou/TUIFIManager/issues/96
+                self.__pre_pressed_file = f # https://github.com/GiorgosXou/TUIFIManager/issues/96
             self.scroll_to_file(f, not IS_TERMUX or not self.termux_touch_only)
             self.__is_opening_previous_dir = False
 
@@ -290,7 +290,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__keep_search_results = True
         self.position.iy                = 0
         self.__mouse_btn1_pressed_file  = None
-        self.__pre_clicked_file         = None
+        self.__pre_pressed_file         = None
         self.__clicked_file             = None
         self.__index_of_clicked_file    = None
         self.__pre_hov                  = None           
@@ -351,7 +351,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__temp_findname         = ''
         self.__temp_find_filename    = '' # Ahh..
         self.__clicked_file          = None
-        self.__pre_clicked_file      = None
+        self.__pre_pressed_file      = None
         self.__index_of_clicked_file = None
         self.__pre_hov               = None
         self.__count_selected        = 0
@@ -462,7 +462,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 # block from create_new()
                 self.deselect()
                 self.__clicked_file = TUIFile(filename, profile=self.get_profile(path))
-                self.__pre_clicked_file = self.__clicked_file
+                self.__pre_pressed_file = self.__clicked_file
                 self.files.insert(self.__index_of_clicked_file if self.__index_of_clicked_file else 1 ,self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
                 self.resort()
                 self.scroll_to_file(self.__clicked_file,True,True)
@@ -520,14 +520,14 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
         def __get_selected_files(self): # I know it's not optimized at all, but ... anyways for now... I have a life too :P
-            if self.__count_selected > 1: # don't simplify the condition cause it doesn't count __pre_clicked_file as selected until it becomes clicked (if i remember well pre_clicked means pressed but not released)
+            if self.__count_selected > 1: # don't simplify the condition cause it doesn't count __pre_pressed_file as selected until it becomes clicked (if i remember well pre_clicked means pressed but not released)
                 f_list = []
                 for f in self.files:
                     if f.is_selected:
                         f_list.append(QUrl.fromLocalFile(self.directory + sep + f.name))
                 return f_list
-            elif self.__pre_clicked_file:
-                return [QUrl.fromLocalFile(self.directory + sep + self.__pre_clicked_file.name)]
+            elif self.__pre_pressed_file:
+                return [QUrl.fromLocalFile(self.directory + sep + self.__pre_pressed_file.name)]
 
 
         def handle_gui_to_tui_dropped_file(self, file_url, type): #TODO: Custom user actions on link patterns: eg. clone git, save at folder xy, etc.
@@ -573,7 +573,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     is_on_select_mode          = False
     __mouse_btn1_pressed_file  = None
-    __pre_clicked_file         = None
+    __pre_pressed_file         = None
     __clicked_file             = None
     __index_of_clicked_file    = None
     __start_time               = 0
@@ -777,7 +777,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.resort() # replaced -> self.reload(keep_search_results=True)
         self.__index_of_clicked_file = i
         self.__clicked_file          = self.files[i]
-        self.__pre_clicked_file      = self.files[i]
+        self.__pre_pressed_file      = self.files[i]
         self.__pre_hov               = None           
         self.select(self.__clicked_file)
 
@@ -1119,7 +1119,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             open(self.directory + sep + filename, 'w').close()
         self.deselect()
         self.__clicked_file = TUIFile(filename, profile=TUIFIProfiles.get(f':{_type}'))
-        self.__pre_clicked_file = self.__clicked_file # https://github.com/GiorgosXou/TUIFIManager/issues/98
+        self.__pre_pressed_file = self.__clicked_file # https://github.com/GiorgosXou/TUIFIManager/issues/98
         self.files.insert(self.__index_of_clicked_file if self.__index_of_clicked_file else 1 ,self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
         self.resort()
         self.scroll_to_file(self.__clicked_file,True,True)
@@ -1234,7 +1234,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
                         self.select(self.__mouse_btn1_pressed_file )
                     if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
-                        self.open(self.__clicked_file) #TODO: check if coordinates didn't change after the delay to fix issue with oppening wrong file if mouse moved fast to another | just caution with Windows support
+                            self.open(self.__clicked_file) #TODO: check if coordinates didn't change after the delay to fix issue with oppening wrong file if mouse moved fast to another | just caution with Windows support
                 elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file and not self.__clicked_file.is_selected: # this `and not self.__clicked_file.is_selected:` was needed because __clicked_file isn't marked as selected until "drop event" ends | tldr prevents from dropping files into itself
                     if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and self.has_write_access(self.directory + sep + self.__clicked_file.name):
                         i=0 # taken from __delete_multiple_selected_file
@@ -1260,9 +1260,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.__delay1 = time()
                 self.__index_of_pressed_file, self.__mouse_btn1_pressed_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
 
-                if not bstate & unicurses.BUTTON_CTRL and self.__pre_clicked_file and self.__pre_clicked_file.is_selected:#and summ > self.double_click_DELAY:
+                if not bstate & unicurses.BUTTON_CTRL and self.__pre_pressed_file and self.__pre_pressed_file.is_selected:#and summ > self.double_click_DELAY:
                     if self.__count_selected == 1:
-                        self.deselect(self.__pre_clicked_file)
+                        self.deselect(self.__pre_pressed_file)
                         self.menu.delete()
                 if bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT: 
                         self.deselect()
@@ -1279,7 +1279,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                     elif bstate & unicurses.BUTTON_CTRL :#and summ > self.double_click_DELAY:
                         self.deselect(self.__mouse_btn1_pressed_file)
 
-                self.__pre_clicked_file = self.__mouse_btn1_pressed_file
+                self.__pre_pressed_file = self.__mouse_btn1_pressed_file
         else: self.__handle_termux_touch_events(bstate, y, x)
 
         self.__x, self.__y = x,y
@@ -1367,7 +1367,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__index_of_clicked_file   = index
         self.__clicked_file            = self.files[index]
         self.__mouse_btn1_pressed_file = self.__clicked_file
-        self.__pre_clicked_file        = self.__clicked_file
+        self.__pre_pressed_file        = self.__clicked_file
         self.scroll_to_file(self.__clicked_file, True)
         self.__set_label_on_file_selection()
 
