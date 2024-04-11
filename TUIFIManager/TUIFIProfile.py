@@ -29,6 +29,18 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' █████▒▐┃ \n'
         ' ▀▀▀▀▀  ┘ '
     ),2),
+    ':folder_subfolder':TUIFIProfile((
+        ' █████░⎫⎫ \n'
+        ' █████░▐┇ \n'
+        ' █████░▐┃ \n'
+        ' ▀▀▀▀▀  ┘ '
+    ),2),
+    ':folder_single_file':TUIFIProfile((
+        ' █████░⎫⎫ \n'
+        ' █████░┇┃ \n'
+        ' █████░┃┃ \n'
+        ' ▀▀▀▀▀  ┘ '
+    ),2),
     ':empty_folder':TUIFIProfile((
         ' █████ ⎫⎫ \n'
         ' █████ ┇┇ \n'

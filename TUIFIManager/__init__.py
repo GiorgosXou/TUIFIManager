@@ -146,11 +146,18 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def get_profile(self, file_directory, new=False):
         if os.path.isdir(file_directory):
+            count = 0
             temp_profile = TUIFIProfiles.get(':empty_folder')
             for suffix in ['/', *self.suffixes] if self.suffixes else ['']: # TODO: Make sure there's no Potential Windows issue? 
-                if list(Path(file_directory + sep).glob('*'+suffix)):
-                    temp_profile = TUIFIProfiles.get(':folder')
-                    break
+                for f in Path(file_directory + sep).glob('*'+suffix): # thankfully is a generator
+                    count +=1
+                    if count == 2:
+                        return TUIFIProfiles.get(':folder')
+            if count == 1 : 
+                if os.path.isdir(f):
+                    return TUIFIProfiles.get(':folder_subfolder')
+                else:
+                    return TUIFIProfiles.get(':folder_single_file')
         else:
             file_extension = os.path.splitext(file_directory)[1]
             file_extension = f'/{file_extension[1:]}' if file_extension else basename(file_directory)
