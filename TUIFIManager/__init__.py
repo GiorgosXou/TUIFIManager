@@ -238,7 +238,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__load_file(f)
 
         self.maxpLines = self.___y + self.y if self.__count == 0 else self.___y + self.__max_h + PADDING_TOP + PADDING_BOTTOM + self.y
-        if not self.is_in_find_mode: self.__set_label_text(f'[{len(self.files)-1:04}] {directory}') # just because i know that len is stored as variable,  that's why i don;t count them in for loop
+        self.__set_label_text(f'[{len(self.files)-1:04}] {directory}') # just because i know that len is stored as variable,  that's why i don;t count them in for loop
         return self.files
 
 
