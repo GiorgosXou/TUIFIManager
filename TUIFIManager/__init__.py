@@ -985,7 +985,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
             open(self.directory + sep + filename, 'w').close()
         self.deselect()
         self.__clicked_file = TUIFile(filename, profile=TUIFIProfiles.get(f':{_type}'))
-        self.__index_of_clicked_file = 1
+        self.__pre_clicked_file = self.__clicked_file # https://github.com/GiorgosXou/TUIFIManager/issues/98
         self.files.insert(1,self.__clicked_file)
         self.resort()
         self.scroll_to_file(self.__clicked_file,True,True)
