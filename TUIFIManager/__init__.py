@@ -12,7 +12,7 @@ from           math import log10
 from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
-from   .TUItilities import Component, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX   
+from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER
 import   subprocess
 import    unicurses
@@ -57,7 +57,7 @@ def stty_a(key=None):  # whatever [...]
 
 
 
-class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager class where i will manage all the anchor, resizing and positional stuff for future components (something like Visual-Studio's c#/vb's Winform's behaviour)
+class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager class where i will manage all the anchor, resizing and positional stuff for future components (something like Visual-Studio's c#/vb's Winform's behaviour)
     """
     parent     (       win      ): Parent windows in which the Filemanager-pad is hosted.
     pad        ( Window pointer ): The window/Pad where the manager is hosted.

@@ -120,7 +120,7 @@ class Border:
 
 
 
-class Component():
+class WindowPad():
     def __init__(self, win, y, x, height, width, anchor, is_focused=False, color_pair_offset=0, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
         self.pad               = uc.newpad(height, width)
         self.parent            = Parent(win or uc.stdscr)
@@ -243,7 +243,7 @@ class Component():
 
 
 
-class Label(Component):
+class Label(WindowPad): # TODO: make components a type of Drawables\components rather than a WindowPad
     __text     = ''
     style      = uc.A_NORMAL
     color_pair = 2
