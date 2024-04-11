@@ -341,11 +341,11 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __reset_open(self):
-        # if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol | 2024-04-05 08:48:24 PM this was for keeping search/find/input mode after opening a folder but i didn't like it and removed it
-        #     self.find()
-        # else:
-        self.is_in_find_mode       = False # else content
-        self.escape_event_consumed = False # else content
+        if self.vim_mode and self.escape_event_consumed and not self.is_in_command_mode: # SuS SuS SuS SuS SuS damn that's so Sus lol | 2024-04-05 08:48:24 PM this was for keeping search/find/input mode after opening a folder but i didn't like it and removed it
+            self.find()
+        else:
+            self.is_in_find_mode       = False # else content
+            self.escape_event_consumed = False # else content
         self.__change_escape_event_consumed = False
         self.is_in_command_mode      = False
         self.__temp_findname         = ''
@@ -1138,7 +1138,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         path = self.directory + sep + file.name
         info = f'[{os.path.getsize(path)} bytes]' if os.path.isfile(path) else ''
         offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(index) + 3 + len(info) + 2
-        self.info_label.text = f'[{len(self.files) - 1:04}] [{index}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
+        if not self.is_in_find_mode: self.info_label.text = f'[{len(self.files) - 1:04}] [{index}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
     def __open_clicked_file(self):
