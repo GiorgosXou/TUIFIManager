@@ -649,37 +649,46 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.reload(keep_search_results=True)
 
 
+    def resort_reset_select(self, i):
+        self.resort() # replaced -> self.reload(keep_search_results=True)
+        self.__index_of_clicked_file = i
+        self.__clicked_file          = self.files[i]
+        self.__pre_clicked_file      = self.files[i]
+        self.__pre_hov               = None           
+        self.select(self.__clicked_file)
+
+
+    def __delete_selected_file(self):
+        # checking under __delete_file too but nvm cause i have no time right now
+        if self.__clicked_file.name == '..': return 0
+        self.__delete_file(self.__clicked_file)
+        del self.files[self.__index_of_clicked_file]
+        return self.__index_of_clicked_file - 1
+
+
+    def __delete_multiple_selected_file(self):
+        i=0
+        while True:
+            if self.files[i].is_selected: # first file is never selected because it is the .. one
+                self.__delete_file(self.files[i])
+                del self.files[i]
+                i-=1
+                if self.__count_selected == 0:
+                    break
+            i+=1
+        return i
+
+
     def delete(self):
         """
         Deletes the selected file(s). | Not fully implemented yet
         """
         if not self.has_write_access(self.directory): return
         if self.__count_selected == 1 and self.__clicked_file :
-            # checking under __delete_file too but nvm cause i have no time right now
-            if self.__clicked_file.name != '..':
-                self.__delete_file(self.__clicked_file)
-                temp_i = self.__index_of_clicked_file - 1
-                self.reload(keep_search_results=True)
-                self.__index_of_clicked_file = temp_i
-                self.__clicked_file          = self.files[temp_i]
-                self.__pre_clicked_file      = None # hmm.. sus?
-                self.select(self.__clicked_file)
+            fi = self.__delete_selected_file()
         else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
-            if self.__clicked_file:
-                temp_i = self.__index_of_clicked_file - self.__count_selected
-            else:
-                temp_i = 0 # VERY SUS BUT NVM NOW
-
-            for f in self.files:
-                if f.is_selected:
-                    self.__delete_file(f)
-                    if self.__count_selected == 0:
-                        self.reload(keep_search_results=True)
-                        self.__index_of_clicked_file = temp_i
-                        self.__clicked_file          = self.files[temp_i]
-                        self.__pre_clicked_file      = None # hmm.. sus
-                        self.select(self.__clicked_file)
-                        break
+            fi = self.__delete_multiple_selected_file()
+        self.resort_reset_select(fi)
 
 
     def load_markers(self, path=CONFIG_PATH):
