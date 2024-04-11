@@ -1101,7 +1101,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                         self.select(self.__mouse_btn1_pressed_file )
                     if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
                         self.open(self.__clicked_file)
-                elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file: #and not self.__clicked_file.is_selected:
+                elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file and not self.__clicked_file.is_selected: # this `and not self.__clicked_file.is_selected:` was needed because __clicked_file isn't marked as selected until "drop event" ends | tldr prevents from dropping files into itself
                     if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and  self.has_write_access(self.directory + sep + self.__clicked_file.name):
                         for f in self.files:
                             if f.is_selected:
