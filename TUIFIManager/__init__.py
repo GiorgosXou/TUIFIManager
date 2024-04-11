@@ -1112,12 +1112,24 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
                     if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
                         self.open(self.__clicked_file)
                 elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file and not self.__clicked_file.is_selected: # this `and not self.__clicked_file.is_selected:` was needed because __clicked_file isn't marked as selected until "drop event" ends | tldr prevents from dropping files into itself
-                    if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and  self.has_write_access(self.directory + sep + self.__clicked_file.name):
-                        for f in self.files:
-                            if f.is_selected:
-                                shutil.move(self.directory + sep + f.name, self.directory + sep + self.__clicked_file.name + sep + f.name)
-                        self.__pre_clicked_file = None
-                        self.reload(keep_search_results=True)
+                    if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and self.has_write_access(self.directory + sep + self.__clicked_file.name):
+                        i=0 # taken from __delete_multiple_selected_file
+                        folder_index = None
+                        while True:
+                            if self.files[i].is_selected: # first file is never selected because it is the .. one
+                                fname = self.files[i].name
+                                shutil.move(self.directory + sep + fname, self.directory + sep + self.__clicked_file.name + sep + fname)
+                                self.__count_selected -=1
+                                del self.files[i]
+                                i-=1
+                                if self.__count_selected == 0 and not folder_index == None:
+                                    break
+                            elif self.files[i] == self.__clicked_file:
+                                folder_index = i
+                                if self.__count_selected == 0:
+                                    break
+                            i+=1
+                        self.resort_reset_select(folder_index)
 
                 self.__start_time = time()
             elif (bstate & unicurses.BUTTON1_PRESSED) or (bstate & unicurses.BUTTON3_PRESSED):
