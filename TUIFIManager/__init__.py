@@ -574,6 +574,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     is_on_select_mode          = False
     __mouse_btn1_pressed_file  = None
     __pre_pressed_file         = None
+    __pre_clicked_file         = None
     __clicked_file             = None
     __index_of_clicked_file    = None
     __start_time               = 0
@@ -1233,8 +1234,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                         self.menu.create(y,x)
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
                         self.select(self.__mouse_btn1_pressed_file )
-                    if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
-                            self.open(self.__clicked_file) #TODO: check if coordinates didn't change after the delay to fix issue with oppening wrong file if mouse moved fast to another | just caution with Windows support
+                    if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED) and (self.__pre_clicked_file == self.__clicked_file)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
+                        self.open(self.__clicked_file) #NOTE: FIXED ISSUE Opening wrong file if mouse moved fast enough to another before next click
                 elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file and not self.__clicked_file.is_selected: # this `and not self.__clicked_file.is_selected:` was needed because __clicked_file isn't marked as selected until "drop event" ends | tldr prevents from dropping files into itself
                     if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and self.has_write_access(self.directory + sep + self.__clicked_file.name):
                         i=0 # taken from __delete_multiple_selected_file
@@ -1255,6 +1256,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                             i+=1
                         self.resort_reset_select(folder_index)
 
+                self.__pre_clicked_file = self.__clicked_file
                 self.__start_time = time()
             elif (bstate & unicurses.BUTTON1_PRESSED) or (bstate & unicurses.BUTTON3_PRESSED):
                 self.__delay1 = time()
