@@ -996,7 +996,7 @@ class TUIFIManager(Component, Cd):  # TODO: I need to create a TUIWindowManager 
         self.deselect()
         self.__clicked_file = TUIFile(filename, profile=TUIFIProfiles.get(f':{_type}'))
         self.__pre_clicked_file = self.__clicked_file # https://github.com/GiorgosXou/TUIFIManager/issues/98
-        self.files.insert(1,self.__clicked_file)
+        self.files.insert(self.__index_of_clicked_file if self.__index_of_clicked_file else 1 ,self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
         self.resort()
         self.scroll_to_file(self.__clicked_file,True,True)
         self.rename()
