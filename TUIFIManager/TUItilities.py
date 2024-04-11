@@ -76,6 +76,10 @@ class Parent:
         self.lines, self.columns = uc.getmaxyx(self.win)
 
 
+
+# # mapping function values 0-255 to 0-1000
+# C = lambda x: int((x - 0) * (1000 - 0) / (255 - 0) + 0)
+
 MY_COLOR_PAIRS = (
     (uc.COLOR_WHITE  ,uc.COLOR_BLACK  ),
     (uc.COLOR_YELLOW ,uc.COLOR_BLACK  ),
@@ -87,6 +91,21 @@ MY_COLOR_PAIRS = (
     (uc.COLOR_CYAN   ,uc.COLOR_BLACK  ),
     (uc.COLOR_BLACK  ,uc.COLOR_YELLOW ),
 )
+
+# DIM_OFFSET    = len(MY_COLOR_PAIRS) +1
+# BRIGHT_OFFSET = len(MY_COLOR_PAIRS) *2 +1
+
+
+initialized = False # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
+def initialize_colors():
+    global initialized 
+    if initialized: return
+    # if MY_COLORS:
+    #     for i in range(0, len(MY_COLORS)):
+    #         uc.init_color(i+1, *MY_COLORS[i])
+    for i in range(0, len(MY_COLOR_PAIRS)): # if uc.pair_content(i) in ((0,0),(7,0)): # if it exists in some way already | also TODO: https://github.com/GiorgosXou/TUIFIManager/issues/48
+        uc.init_pair(i+1 , *MY_COLOR_PAIRS[i] )
+    initialized = True
 
 
 
@@ -131,9 +150,7 @@ class WindowPad():
         self.warp              = warp
         self.border            = border # TODO: to check
         if border: self.border.draw(self.pad)
-        for i in range(1, 10):                                            # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
-            if uc.pair_content(i+color_pair_offset) in ((0,0),(7,0)):     # if it exists in some way | also TODO: https://github.com/GiorgosXou/TUIFIManager/issues/48
-                uc.init_pair(i+color_pair_offset, *MY_COLOR_PAIRS[i-1] )
+        initialize_colors()
 
 
     def refresh(self, redraw_parent=False):
