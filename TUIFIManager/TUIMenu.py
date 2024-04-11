@@ -35,13 +35,12 @@ class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selec
         'BUTTON3_RELEASED': unicurses.BUTTON3_RELEASED
     }
 
-    def __init__(self, items=None, color_pair_offset=0):
+    def __init__(self, items=None ):
         self.parent = unicurses.stdscr
         self.exists = False
         if items:self.items = items
         self.width  = len(max(self.items, key=len)) + 4
         self.height = len(self.items) + 2
-        self.color_pair_offset = color_pair_offset
 
 
     def create(self, atY=None, atX=None):
@@ -58,7 +57,7 @@ class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selec
             unicurses.delwin(self.pad)
 
         self.pad = unicurses.newpad(self.height, self.width) #unicurses.newwin(len(self.items)*2+1, self.width, self.y+offy , self.x+offx )
-        unicurses.wbkgd(self.pad,unicurses.COLOR_PAIR(1 + self.color_pair_offset))
+        unicurses.wbkgd(self.pad,unicurses.COLOR_PAIR(1))
         i = 1
         unicurses.mvwaddwstr(self.pad,0,0,'╭' + ('─'*(self.width-2)) + '╮')
         for item in self.items:
@@ -76,7 +75,7 @@ class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selec
             unicurses.delwin(self.pad)
             self.__it   = 0
             self.exists = False
-            unicurses.redrawwin(self.parent) # SuS? kinda same as touchwin?
+            # unicurses.redrawwin(self.parent) # SuS? kinda same as touchwin? | Update: 2024-04-06 11:50:09 AM Not sure why i had this there... 
             # unicurses.wrefresh(self.parent)
 
 
@@ -99,8 +98,8 @@ class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selec
                 if self.__it == len(self.items):
                     self.delete()
                     return True
-                unicurses.mvwchgat(self.pad, self.__it   , 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
-                unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
+                unicurses.mvwchgat(self.pad, self.__it   , 1, self.width -2, unicurses.A_BOLD, 1)
+                unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 7)
                 self.__it +=1
                 return True
             elif event == self.events.get('KEY_UP'):
@@ -108,8 +107,8 @@ class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selec
                     self.delete()
                     return True
                 self.__it -=1
-                unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
-                unicurses.mvwchgat(self.pad, self.__it , 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
+                unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 1)
+                unicurses.mvwchgat(self.pad, self.__it , 1, self.width -2, unicurses.A_BOLD, 7)
                 return True
             elif event in self.events.get('KEY_ENTER'):
                 i = self.__it -1 
@@ -128,9 +127,9 @@ class TUIMenu: # TODO: fix alt+down in __init__.py i think when no file is selec
             if self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height:
                 relative_y = y - self.y -1
                 if self.__y != y and self.height -2 > relative_y >= 0:
-                    unicurses.mvwchgat(self.pad, y-self.y , 1, self.width -2, unicurses.A_BOLD, 7 + self.color_pair_offset)
-                    unicurses.mvwchgat(self.pad, self.__y-self.y,1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
-                # unicurses.mvwchgat(self.pad, self.__x , 1, self.width -2, unicurses.A_BOLD, 1 + self.color_pair_offset)
+                    unicurses.mvwchgat(self.pad, y-self.y , 1, self.width -2, unicurses.A_BOLD, 7)
+                    unicurses.mvwchgat(self.pad, self.__y-self.y,1, self.width -2, unicurses.A_BOLD, 1)
+                # unicurses.mvwchgat(self.pad, self.__x , 1, self.width -2, unicurses.A_BOLD, 1)
                 if bstate & self.events.get('BUTTON1_RELEASED'):
                     if self.__x != x or self.__y != y : return 'exists'
                     if  self.height -2 > relative_y >= 0:

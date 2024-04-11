@@ -73,7 +73,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     auto_find_on_typing    (bool, optional): if true: when starting to type, automatically search else only if CTRL_F
     auto_command_on_typing (bool, optional): if true: when starting to type, automatically performs a command else only if space key is pressed
     vim_mode   (bool  , optional): If True: uses vim like keys to navigate. Defaults to False.
-    color_pair_offset   (int,  optional): Initializes\\Uses color-pairs from the offset an on | `unicurses.COLOR_PAIR(color_pair...+i)`
     is_focused (bool , optional): disables events
     cd         (bool , optional): cd or not to the current directory on exit (Doesn't support windows yet)
     show_hidden(bool , optional): Show hidden files (you can toggle them by using CTRL+H or use tuifi_show_hidden)
@@ -87,13 +86,13 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     vim_mode           = False
     info_label         = None
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, color_pair_offset=0, is_focused=False, cd=False, show_hidden=False):
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, cd=False, show_hidden=False):
         if has_label:
             height -= 1
-            self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), '', color_pair_offset, win)
+            self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), '', win)
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
 
-        super().__init__(win, y, x, height, width, anchor, is_focused, color_pair_offset)
+        super().__init__(win, y, x, height, width, anchor, is_focused)
         self.suffixes            = suffixes
         self.draw_files          = draw_files
         self.termux_touch_only   = termux_touch_only
@@ -101,7 +100,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
         self.show_hidden         = os.getenv('tuifi_show_hidden'           , str(    show_hidden    )) == 'True' 
         self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
-        self.menu                = TUIMenu(color_pair_offset=color_pair_offset)
+        self.menu                = TUIMenu()
 
         if directory:
             self.directory = os.path.normpath(directory)
@@ -137,7 +136,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.maxpLines = self.height
         unicurses.wresize(self.pad, self.maxpLines, self.width)
         for i,f in enumerate(self.files):
-            f.draw(self.pad, color_pair_offset=self.color_pair_offset)
+            f.draw(self.pad)
             self.__handle_focus_on_previour_dir(f,i)
 
 
@@ -254,7 +253,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__reset_coordinates()
         for f in self.files:
             self.__set_coordinates(f, resize=True)
-            f.draw(self.pad,redraw_icon=True, color_pair_offset=self.color_pair_offset)
+            f.draw(self.pad,redraw_icon=True)
 
         #unicurses.wresize(self.pad, self.maxpLines, self.width) # because it works doesn't also mean that i should do it like that
 
@@ -410,11 +409,11 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             for f in self.files:
                 if f.is_selected:
                     f.is_selected = False
-                    f.draw(self.pad, color_pair_offset=self.color_pair_offset)
+                    f.draw(self.pad)
             self.__count_selected = 0 # i can just -= 1 and break it if 0 :P
         elif tuifile.is_selected:
             tuifile.is_selected = False
-            tuifile.draw(self.pad, color_pair_offset=self.color_pair_offset)
+            tuifile.draw(self.pad)
             self.__count_selected -=1
 
 
@@ -424,7 +423,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         #for y in range(tuifile.y, tuifile.y + tuifile.profile.height):
         #    mvwchgat(self.pad,y, tuifile.x, tuifile.profile.width,A_REVERSE,7)
         tuifile.is_selected = True
-        tuifile.draw(self.pad, color_pair_offset=self.color_pair_offset)
+        tuifile.draw(self.pad)
 
 
     def select_all_files(self):
@@ -929,7 +928,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if self.__clicked_file:
             self.__set_label_text(f'[RENAMING] {self.__clicked_file.name}')
             self.escape_event_consumed = True
-            self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE, self.color_pair_offset)  # Yeah ok, whatever
+            self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE)  # Yeah ok, whatever
             self.__temp_name        = self.__clicked_file.name
             self.__temp_pre_name    = self.__temp_name
             self.__first_pass       = True
@@ -975,7 +974,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         else:
             self.__temp_name = self.__temp_name[:self.__temp_i] + unicurses.RCCHAR(event) + self.__temp_name[self.__temp_i:]
             self.__temp_i += 1
-        self.__clicked_file.draw_name(self.pad,self.__temp_name,self.__temp_pre_name, self.__temp_i, color_pair_offset=self.color_pair_offset)
+        self.__clicked_file.draw_name(self.pad,self.__temp_name,self.__temp_pre_name, self.__temp_i)
         self.__temp_pre_name = self.__temp_name
         self.__first_pass    = False
         #if event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
@@ -1068,13 +1067,13 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if tmp_hov_file and tmp_id_of_hov_file and not tmp_hov_file.is_selected: 
             self.__set_label_on_file_selection(tmp_id_of_hov_file,tmp_hov_file)
             # tmp_hov_file.is_selected = True
-            tmp_hov_file.draw_effect(self.pad, color_pair_offset=self.color_pair_offset, effect=0)
+            tmp_hov_file.draw_effect(self.pad, effect=0)
             if self.__pre_hov and self.__pre_hov != tmp_hov_file:
                 # self.__pre_hov.is_selected = False
-                self.__pre_hov.draw(self.pad, color_pair_offset=self.color_pair_offset)
+                self.__pre_hov.draw(self.pad)
             self.__pre_hov = tmp_hov_file
         elif self.__pre_hov:
-            self.__pre_hov.draw(self.pad, color_pair_offset=self.color_pair_offset)
+            self.__pre_hov.draw(self.pad)
             self.__pre_hov = None
 
 

@@ -121,14 +121,13 @@ class Border:
 
 
 class WindowPad():
-    def __init__(self, win, y, x, height, width, anchor, is_focused=False, color_pair_offset=0, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
+    def __init__(self, win, y, x, height, width, anchor, is_focused=False, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
         self.pad               = uc.newpad(height, width)
         self.parent            = Parent(win or uc.stdscr)
         self.position          = Position (y, x)
         self.size              = Size(height, width, iheight or height, iwidth or width)
         self.anchor            = Anchor   (*anchor)
         self.is_focused        = is_focused
-        self.color_pair_offset = color_pair_offset
         self.warp              = warp
         self.border            = border # TODO: to check
         if border: self.border.draw(self.pad)
@@ -248,8 +247,8 @@ class Label(WindowPad): # TODO: make components a type of Drawables\components r
     style      = uc.A_NORMAL
     color_pair = 2
 
-    def __init__(self,y=0, x=0, height=1, width=45, anchor=(False, False, False, False), text='', color_pair_offset=0, win=None) -> None:
-        super().__init__(win, y, x, height, width, anchor, color_pair_offset)
+    def __init__(self,y=0, x=0, height=1, width=45, anchor=(False, False, False, False), text='', win=None) -> None:
+        super().__init__(win, y, x, height, width, anchor)
         self.text       = text
 
 
@@ -259,8 +258,8 @@ class Label(WindowPad): # TODO: make components a type of Drawables\components r
     @text.setter
     def text(self, text):
         self.__text = text
-        uc.mvwaddstr(self.pad,0,0, ' '*self.width, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style )
-        uc.mvwaddstr(self.pad,0,0, text, uc.color_pair(self.color_pair+self.color_pair_offset) | self.style )
+        uc.mvwaddstr(self.pad,0,0, ' '*self.width, uc.color_pair(self.color_pair) | self.style )
+        uc.mvwaddstr(self.pad,0,0, text, uc.color_pair(self.color_pair) | self.style )
 
 
     def handle_resize(self, redraw_parent=True):
