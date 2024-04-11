@@ -324,7 +324,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
         print(END_MOUSE, end='\r')
         with self.suspend():
-            proc = subprocess.Popen([open_with, *dirs], shell=IS_WINDOWS)
+            proc = subprocess.Popen([open_with, *dirs], shell=IS_WINDOWS) # TODO: optional stdout=subprocess.DEVNULL when I'll add loading TUIFIProfiles from external file ?
             proc.wait()
         print(BEGIN_MOUSE, end='\r')
         self.__set_label_on_file_selection()
@@ -1119,7 +1119,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
                         self.select(self.__mouse_btn1_pressed_file )
                     if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
-                        self.open(self.__clicked_file)
+                        self.open(self.__clicked_file) #TODO: check if coordinates didn't change after the delay to fix issue with oppening wrong file if mouse moved fast to another | just caution with Windows support
                 elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file and not self.__clicked_file.is_selected: # this `and not self.__clicked_file.is_selected:` was needed because __clicked_file isn't marked as selected until "drop event" ends | tldr prevents from dropping files into itself
                     if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and self.has_write_access(self.directory + sep + self.__clicked_file.name):
                         i=0 # taken from __delete_multiple_selected_file

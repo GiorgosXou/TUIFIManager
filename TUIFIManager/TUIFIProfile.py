@@ -778,3 +778,5 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 DEFAULT_PROFILE   = TUIFIProfiles[':file']
 LINK_SYMBOL       = '↩'  # Potential:⤶ ⤾ ↲ ⎌ ☍ ⧉
 LINK_SYMBOL_COLOR = 1
+
+#TODO: Overide profiles from external file
