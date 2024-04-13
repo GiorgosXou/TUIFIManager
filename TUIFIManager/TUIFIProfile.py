@@ -207,7 +207,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇┏┓┏┓┒┒┇ \n'    # '█▃█ ██ █▃▀\n'
         ' ┃┣┫┣┛┣┓┃ \n'    # '█ █ █  █ █\n'
         ' ┗━━━━━━┛ '      # '          '
-    ),5, DEFAULT_EDITOR),
+    ),5, DEFAULT_OPENER),
     '/vim':TUIFIProfile((
         ' ┏━━━━━┳┓ \n'
         ' ┃VI━━━┫┇ \n'
