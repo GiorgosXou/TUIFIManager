@@ -108,8 +108,19 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
         self.show_hidden         = os.getenv('tuifi_show_hidden'           , str(    show_hidden    )) == 'True' 
         self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
-        self.menu                = TUIMenu()
-
+        self.menu                = TUIMenu  (on_choice=self.on_menu_choice ,
+            items=[
+                'Open       │ ENTER' ,
+                'Cut        │ CTRL+X',
+                'Copy       │ CTRL+C',
+                'Paste      │ CTRL+V',
+                'Delete     │ DEL'   ,
+                'Rename     │ CTRL+R',
+                'Reload     │ KEY_F5',
+                'New File   │ CTRL+W',
+                'New Folder │ CTRL+N',
+                'Properties │'      ],
+        )
         if directory:
             self.directory = os.path.normpath(directory)
             self.load_files(directory, suffixes, sort_by)
@@ -1147,22 +1158,20 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         return self.open(self.__clicked_file)
 
 
-    __menu_select_actions = {
-        'Open'      : __open_clicked_file           ,
-        'Cut'       : cut                           ,
-        'Delete'    : delete                        ,
-        'Copy'      : copy                          ,
-        'Paste'     : paste                         ,
-        'Rename'    : rename                        ,
-        'New File'  : create_new_file               ,
-        'New Folder': create_new_folder             ,
-        'Reload'    : reload                        ,
-    }
-    def __perform_menu_selected_action(self, action):
-        if not action : return False
-        action_func = self.__menu_select_actions.get(action)
-        if action_func: action_func(self) # don't change this, it has to return true even if no action_func() performed else it doesn't overide the events
-        return True
+    __menu_select_actions = (
+        __open_clicked_file           ,
+        cut                           ,
+        copy                          ,
+        paste                         ,
+        delete                        ,
+        rename                        ,
+        reload                        ,
+        create_new_file               ,
+        create_new_folder             ,
+        lambda *args : None 
+    )
+    def on_menu_choice(self, action):
+        self.__menu_select_actions[action](self)
 
 
     def __handle_termux_touch_events(self, bstate, y, x): # termux needs to implement CTRL + CLICK
@@ -1207,7 +1216,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if event != unicurses.KEY_MOUSE: return False
         in_range, id, x, y, z, bstate = self.get_mouse()
         if not IS_WINDOWS and not in_range: return True # TODO: https://github.com/GiorgosXou/TUIFIManager/issues/49
-        if self.__perform_menu_selected_action(self.menu.handle_mouse_events(id, x, y, z, bstate)): return True
+        if self.menu.handle_mouse_events(id, x, y, z, bstate): return True
         if self.__x != x or self.__y != y: self.hover_mode = True #hover mode
 
         if   not self.hover_mode and (bstate & unicurses.BUTTON4_PRESSED): self.scroll_pad(UP   if not bstate & unicurses.BUTTON_CTRL else CTRL_UP  )
@@ -1421,7 +1430,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD  | UPDATE: WHAT HAVE I DONE, WHY SO MANY IF AND NOT JSUT A DIRCT WITH FUNCTIONS
         if event == 0 or not self.is_focused                                           : return  # https://github.com/GiorgosXou/TUIFIManager/issues/24
         if self.__is_escape_consumed(event)                                            : return
-        if self.__perform_menu_selected_action(self.menu.handle_keyboard_events(event)): return
+        if self.menu.handle_keyboard_events(event): return
 
         if unicurses.keyname(event) in ('kxOUT','kxIN') :return # https://github.com/GiorgosXou/TUIFIManager/issues/81
         if self.events.get(event, self.__return)() != True : return # Is this too bad of a practice? let me know
