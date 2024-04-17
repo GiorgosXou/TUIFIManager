@@ -779,4 +779,4 @@ DEFAULT_PROFILE   = TUIFIProfiles[':file']
 LINK_SYMBOL       = '↩'  # Potential:⤶ ⤾ ↲ ⎌ ☍ ⧉
 LINK_SYMBOL_COLOR = 1
 
-#TODO: Overide profiles from external file
+#TODO: Overide profiles from external file | I'll do it, don't do it!
