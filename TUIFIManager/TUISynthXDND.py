@@ -193,8 +193,8 @@ class SyntheticXDND:
         app.exec()
 
 
-    def __del__(self):
-        self.proc_qt.stop()
+    # def __del__(self):
+        # self.proc_qt.stop()
 
 
     def __init__(self, on_drop=lambda *args : None, on_drag=lambda *args : None):
