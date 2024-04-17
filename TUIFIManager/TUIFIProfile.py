@@ -208,6 +208,24 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃┣┫┣┛┣┓┃ \n'    # '█ █ █  █ █\n'
         ' ┗━━━━━━┛ '      # '          '
     ),5, DEFAULT_OPENER),
+    '/adb':TUIFIProfile((
+        ' ┏━━━┏━━┓ \n'
+        ' ┇┏┓┏┇┏┓┇ \n'
+        ' ┃┣┫┇┛┣┫┃ \n'
+        ' ┗━━┛━━━┛ '
+    ),4, DEFAULT_OPENER),
+    '/ads':TUIFIProfile((
+        ' ┏━━━┏━━┓ \n'
+        ' ┇┏┓┏┇┏┓┇ \n'
+        ' ┃┣┫┇┛DS┃ \n'
+        ' ┗━━┛━━━┛ '
+    ),8, DEFAULT_OPENER),
+    '/lisp':TUIFIProfile((
+        ' ╭┳━┳━━┓╮ \n'
+        ' │┣━┛┏━┓│ \n'
+        ' │┗━┛┏━┫│ \n'
+        ' ╰┗━━┻━┻╯ '
+    ),1, DEFAULT_OPENER),
     '/vim':TUIFIProfile((
         ' ┏━━━━━┳┓ \n'
         ' ┃VI━━━┫┇ \n'
