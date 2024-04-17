@@ -140,7 +140,7 @@ class Border:
 
 
 class WindowPad():
-    def __init__(self, win, y, x, height, width, anchor, is_focused=False, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
+    def __init__(self, win=None, y=0, x=0, height=0, width=0, anchor=(False, False, False, False), is_focused=False, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
         self.pad               = uc.newpad(height, width)
         self.parent            = Parent(win or uc.stdscr)
         self.position          = Position (y, x)
@@ -149,11 +149,12 @@ class WindowPad():
         self.is_focused        = is_focused
         self.warp              = warp
         self.border            = border # TODO: to check
-        if border: self.border.draw(self.pad)
+        # if border: self.border.draw(self.pad)
         initialize_colors()
 
 
     def refresh(self, redraw_parent=False):
+        if self.border: self.border.update(self.pad)
         if redraw_parent:
             uc.touchwin(self.parent.win) # Do i need this? YES
         uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
