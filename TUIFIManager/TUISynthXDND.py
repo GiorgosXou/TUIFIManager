@@ -16,7 +16,13 @@ import copy
 import re
 
 
-# sys.stderr = open('/dev/null', 'w') # WARN: pyside\qt getting wild, cause cutie aint thread safe | VERY SuS thought
+
+class writerr(object):
+    def write(self, data): # Ignore warning
+        if not data == "sys:1: Warning: g_main_context_pop_thread_default: assertion 'stack != NULL' failed\n":
+            print(data)
+
+sys.stderr = writerr() # WARN: pyside\qt getting wild, cause cutie aint thread safe | VERY SuS thought
 
 # os.environ['QT_LOGGING_RULES'] = 'qt.qpa.input*.debug=false; *.debug=false; qt.*.debug=false; driver.*.debug=false'
 # os.environ["QT_LOGGING_RULES"] = '*.debug=false;qt.accessibility.cache.warning=false;qt.qpa.events.warning=false;qt.qpa.fonts.warning=false;qt.qpa.gl.warning=false;qt.qpa.input.devices.warning=false;qt.qpa.screen.warning=false;qt.qpa.xcb.warning=false;qt.text.font.db.warning=false;qt.xkb.compose.warning=false' # https://stackoverflow.com/questions/68809878/how-do-you-silence-console-messages-from-matplotlib-with-pyqt5-backend
