@@ -130,9 +130,17 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.load_markers       ()
         self.load_commands      ()
         self.__set_normal_events()
-        if stty_a('^C') or unicurses.OPERATING_SYSTEM == 'Windows': signal.signal(signal.SIGINT,self.copy) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
+        if stty_a('^Z')               : signal.signal(signal.SIGTSTP, self.suspend_proccess)
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
         if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files)
+
+
+    def suspend_proccess(self, signum, frame): # Kinda SuS but you know the deal...
+        print(END_MOUSE)
+        with self.suspend():
+            os.kill(os.getpid(), signal.SIGSTOP)
+        print(BEGIN_MOUSE)
+        unicurses.clear()
 
 
     def __del__(self):
