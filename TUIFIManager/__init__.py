@@ -471,12 +471,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 f.write(data)
                 f.close()
                 # block from create_new()
-                self.deselect()
-                self.__clicked_file = TUIFile(filename, profile=self.get_profile(path))
-                self.__pre_pressed_file = self.__clicked_file
-                self.files.insert(self.__index_of_clicked_file if self.__index_of_clicked_file else 1 ,self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
-                self.resort()
-                self.scroll_to_file(self.__clicked_file,True,True)
+                self.__sub_handle_creation_of(filename, self.get_profile(path))
                 self.__set_label_text(f'SAVED: "{filename}"')
                 return True
             except Exception as e:
@@ -1115,6 +1110,16 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         #    pass
 
 
+    def __sub_handle_creation_of(self, filename, profile):
+        self.deselect()
+        self.__clicked_file = TUIFile(filename, profile=profile)
+        self.__pre_pressed_file = self.__clicked_file # https://github.com/GiorgosXou/TUIFIManager/issues/98
+        self.__index_of_clicked_file = self.__index_of_clicked_file if self.__index_of_clicked_file else 1
+        self.files.insert(self.__index_of_clicked_file, self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
+        self.resort()
+        self.scroll_to_file(self.__clicked_file,True) # removed deselect=True thanks to `self.__index_of_clicked_file =...` but just in case I let this here
+
+
     def create_new(self,_type='folder'): # temporary implementation but nvm
         if not self.has_write_access(self.directory): return
         i, j = '', 0
@@ -1129,12 +1134,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             _type = 'empty_folder'
         else                :
             open(self.directory + sep + filename, 'w').close()
-        self.deselect()
-        self.__clicked_file = TUIFile(filename, profile=TUIFIProfiles.get(f':{_type}'))
-        self.__pre_pressed_file = self.__clicked_file # https://github.com/GiorgosXou/TUIFIManager/issues/98
-        self.files.insert(self.__index_of_clicked_file if self.__index_of_clicked_file else 1 ,self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
-        self.resort()
-        self.scroll_to_file(self.__clicked_file,True,True)
+
+        self.__sub_handle_creation_of(filename, TUIFIProfiles.get(f':{_type}'))
         self.rename()
 
 
