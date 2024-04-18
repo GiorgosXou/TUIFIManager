@@ -88,7 +88,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     """
 
     files              = []
-    pad                = None  # for now only pads
     directory          = sep
     __count_selected   = 0
     double_click_DELAY = 0.4
@@ -98,7 +97,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, cd=False, show_hidden=False):
         if has_label:
             height -= 1
-            self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), '', win)
+            self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), f' TUIFIManager {__version__} | Powered by uni-curses', win)
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
 
         super().__init__(win, y, x, height, width, anchor, is_focused)
@@ -134,6 +133,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.load_commands      ()
         self.__set_normal_events()
         if stty_a('^Z')               : signal.signal(signal.SIGTSTP, self.suspend_proccess)
+        if stty_a('^C') or IS_WINDOWS : signal.signal(signal.SIGINT , self.copy            ) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
         if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(weakref.proxy(self.handle_gui_to_tui_dropped_file), weakref.proxy(self.__get_selected_files)) # https://stackoverflow.com/a/14829479/11465149
 
@@ -279,7 +279,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.__load_file(f)
 
         self.maxpLines = self.___y + self.y if self.__count == 0 else self.___y + self.__max_h + PADDING_TOP + PADDING_BOTTOM + self.y
-        if not self.is_in_find_mode: self.__set_label_text(f'[{len(self.files)-1:04}] {directory}') # just because i know that len is stored as variable,  that's why i don;t count them in for loop
         return self.files
 
 
@@ -555,13 +554,15 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         def handle_gui_to_tui_dropped_file(self, file_url, type): #TODO: Custom user actions on link patterns: eg. clone git, save at folder xy, etc.
             self.__set_label_text(f'DROPPED: {file_url}')
             if type == 1:
-                pass #TODO: handle files
+                self.__set_label_text("It's on the todo list :P") #TODO: handle files
             elif type == 0:
                 self.download(file_url, self.directory + sep)
             elif file_url.startswith('data:') and not file_url.find('base64') == -1:
                 extension = mimetypes.guess_extension(file_url.split(';')[0].split(':')[1])
                 filename = self.get_available_filename('download'+extension)
                 self.save(self.directory, filename, base64.b64decode(file_url[file_url.find('4')+1:])) # 4 is from base64
+            else:
+                self.__set_label_text(f'DROPPED UNHANDLED: {file_url}')
 
                 # r = requests.get(file_url) # , stream=True
                 # r.headers.get('filename')
