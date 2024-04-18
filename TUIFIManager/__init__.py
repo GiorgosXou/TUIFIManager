@@ -946,9 +946,12 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.__change_escape_event_consumed = True
                 self.is_in_find_mode                = False
                 if self.__temp_findname != '': # When Escaping without searching anything
-                    i = 0 if len(self.files) == 1 else 1
-                    self.__index_of_clicked_file = i
-                    self.__clicked_file          = self.files[i]
+                    if len(self.files) == 1:  # if nothing is found (only folder ".." then reload at cancel)
+                        self.reload()
+                        self.__set_label_text('[NORMAL]')
+                        return False
+                    self.__index_of_clicked_file = 1
+                    self.__clicked_file          = self.files[1]
                 self.__set_label_text('[NORMAL]')
                 return False
             self.clear_find_results()
