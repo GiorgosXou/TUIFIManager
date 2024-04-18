@@ -49,6 +49,7 @@ if IS_DRAG_N_DROP:
     import requests
     import mimetypes
     import base64
+    import weakref
 
 
 def stty_a(key=None):  # whatever [...]
@@ -134,7 +135,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__set_normal_events()
         if stty_a('^Z')               : signal.signal(signal.SIGTSTP, self.suspend_proccess)
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
-        if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files)
+        if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(weakref.proxy(self.handle_gui_to_tui_dropped_file), weakref.proxy(self.__get_selected_files)) # https://stackoverflow.com/a/14829479/11465149
 
 
     def suspend_proccess(self, signum, frame): # Kinda SuS but you know the deal...
