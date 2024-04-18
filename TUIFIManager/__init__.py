@@ -101,6 +101,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
 
         super().__init__(win, y, x, height, width, anchor, is_focused)
+        self.__order_method      = sort_by
         self.suffixes            = suffixes
         self.draw_files          = draw_files
         self.termux_touch_only   = termux_touch_only
@@ -121,9 +122,10 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 'New Folder │ CTRL+N',
                 'Properties │'      ],
         )
+        self.load_order  ()
         if directory:
             self.directory = os.path.normpath(directory)
-            self.load_files(directory, suffixes, sort_by)
+            self.load_files(directory, suffixes)
             if draw_files:
                 self.draw()
 
@@ -145,6 +147,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def __del__(self):
         self.save_markers()
+        self.save_order  ()
 
 
     def __handle_focus_on_previour_dir(self, f, i):
@@ -255,20 +258,22 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     basename = ''
-    def load_files(self, directory, suffixes=[], sort_by=None):  # DON'T load and then don't show :P
+    def load_files(self, directory, suffixes=[]):  # DON'T load and then don't show :P
         directory = os.path.realpath(os.path.normpath(directory))
         if not os.path.isdir(directory):
             raise FileNotFoundError(f'DirectoryNotFound: "{directory}"')
         if not suffixes:
             suffixes = self.suffixes
 
+        order = self.get_order_of(directory)
+        self.is_order_reversed = order[1]
         self.basename = basename(self.directory)
         self.directory = directory
         self.files = []
         self.__reset_coordinates()
         self.__load_file('..')
         os.chdir(directory)
-        for f in sorted(os.listdir(), key=None): # key=os.path.getctime): # os.listdir(directory):
+        for f in sorted(os.listdir(), key=order[0], reverse=order[1]): # key=os.path.getctime): # os.listdir(directory):
             if not self.__is_valid_file(f): continue
             self.__load_file(f)
 
@@ -375,10 +380,11 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__pre_hov               = None
         self.__count_selected        = 0
         self.position.iy             = 0
+        self.__order_method          = None
 
 
     __is_opening_previous_dir = False
-    def open(self, directory, suffixes=[], sort_by=None, _with=None):
+    def open(self, directory, suffixes=[], _with=None):
         """
         `open()` is `load_files()` + `draw()`
         """
@@ -401,7 +407,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             return self.__try_open_with(directory, open_with, multiple) # TODO: check if the multiple selected files are folders and open them in new tabs
 
         self.__reset_open()
-        self.load_files(directory, suffixes, sort_by)
+        self.load_files(directory, suffixes)
+        if not self.is_in_find_mode: self.__set_label_text(f'[{len(self.files)-1:04}]' + (' [▼] ' if self.is_order_reversed else ' [▲] ') + directory ) # just because i know that len is stored as variable,  that's why i don;t count them in for loop
         self.draw()
         return self.files
 
@@ -585,6 +592,80 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         exit()
 
 
+    def load_order(self, path=CONFIG_PATH):
+        path = path + sep + 'ORDER.csv'
+        if not os.path.isfile(path) : return
+        tmp_order_methods = {
+            'getctime' : os.path.getctime,
+            'getsize ' : os.path.getsize ,
+            'getatime' : os.path.getatime,
+            'getmtime' : os.path.getmtime,
+            'none'     : None
+        }
+        with open(path, 'r') as file:
+            for d in file:
+                d = d.split(',')
+                self.ordered_dirs[d[0]] = (tmp_order_methods[d[1]], True if d[2][:-1] == 'True' else False) # -1 to remove newline
+
+
+    def save_order(self, path=CONFIG_PATH):
+        if not self.__ordered_dirs_need_saving: return # prevent unnecessary saving
+        with open(path + sep + 'ORDER.csv','w') as fp:
+            for k, v in self.ordered_dirs.items():
+                if os.path.isdir(k):
+                    fp.write(k + ',' + (v[0].__name__ if v[0] else 'none') + f',{v[1]}\n')
+
+
+    def get_order_of(self, directory):
+        tmp_ordered_dir = self.ordered_dirs.get(directory)
+        return (None, False) if not tmp_ordered_dir else tmp_ordered_dir
+
+
+    is_order_reversed = False
+    def ascend_order_switch(self, order_method=None):
+        if not self.is_order_reversed: order_method = self.__order_method
+        self.is_order_reversed = True
+        self.switch_order_method(order_method)
+
+
+    def descend_order_switch(self, order_method=None):
+        if self.is_order_reversed: order_method = self.__order_method
+        self.is_order_reversed = False
+        self.switch_order_method(order_method)
+
+
+    __ordered_dirs_need_saving = False
+    ordered_dirs = {}
+    def switch_order_method(self, order_method=None):
+        self.__ordered_dirs_need_saving = True
+        if order_method: 
+            self.__order_method = order_method
+            self.__set_label_text(('[▼] DESCENDING' if self.is_order_reversed else '[▲] ASCENDING') + ' ORDER')
+        elif self.__order_method == None:
+            self.__order_method = os.path.getctime
+            self.__set_label_text(('[▼]' if self.is_order_reversed else '[▲]') + '[ORDERED] BY CHANGE TIME')
+        elif self.__order_method == os.path.getctime: 
+            self.__order_method = os.path.getsize 
+            self.__set_label_text(('[▼]' if self.is_order_reversed else '[▲]') + '[ORDERED] BY SIZE')
+        elif self.__order_method == os.path.getsize:
+            self.__order_method = os.path.getatime
+            self.__set_label_text(('[▼]' if self.is_order_reversed else '[▲]') + '[ORDERED] BY ACCESS TIME')
+        elif self.__order_method == os.path.getatime:
+            self.__order_method = os.path.getmtime
+            self.__set_label_text(('[▼]' if self.is_order_reversed else '[▲]') + '[ORDERED] BY MODIFICATION TIME')
+        else:
+            self.__order_method = None # oreder default
+            self.__set_label_text(('[▼]' if self.is_order_reversed else '[▲]') + '[ORDERED] BY NAME')
+
+        if not self.is_order_reversed and self.__order_method == None: # prevent default mode to be saved 
+            if self.ordered_dirs.get(self.directory): del self.ordered_dirs[self.directory]
+        else:
+            self.ordered_dirs[self.directory] = (self.__order_method, self.is_order_reversed)
+
+        self.reload()
+
+
+
     is_on_select_mode          = False
     __mouse_btn1_pressed_file  = None
     __pre_pressed_file         = None
@@ -605,6 +686,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.KEY_BTAB      : self.__perform_key_btab           ,
             unicurses.KEY_DC        : self.delete                       ,
             unicurses.KEY_F(5)      : self.reload                       ,
+            unicurses.KEY_F(3)      : self.descend_order_switch         ,
+            unicurses.KEY_F(1)      : self.ascend_order_switch          ,
             unicurses.CTRL('A')     : self.select_all_files             ,
             unicurses.CTRL('T')     : self.toggle_hidden_files          ,
             unicurses.CTRL('R')     : self.rename                       ,
@@ -644,7 +727,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 unicurses.CCHAR('r') : self.rename                       ,
                 unicurses.CCHAR('c') : self.cut                          ,
                 unicurses.CCHAR('p') : self.paste                        ,
-                unicurses.CCHAR('O') : self.__open_DEFAULT_WITH          ,
+                unicurses.CCHAR('o') : self.descend_order_switch         ,
+                unicurses.CCHAR('O') : self.ascend_order_switch          ,
                 unicurses.CCHAR('K') : self.__perform_key_enter          ,
                 unicurses.CCHAR('J') : self.__open_previous_dir          ,
                 unicurses.CCHAR('b') : self.__open_previous_dir          ,
