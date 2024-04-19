@@ -594,6 +594,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.cd(self.directory)
         print(END_MOUSE)
         unicurses.endwin()
+        if IS_DRAG_N_DROP: self.__handle_garbage()
         exit()
 
 
