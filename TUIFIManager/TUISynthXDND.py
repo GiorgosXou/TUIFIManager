@@ -12,7 +12,6 @@ from Xlib import display
 from time import sleep
 import threading
 import sys
-import copy
 import re
 
 
