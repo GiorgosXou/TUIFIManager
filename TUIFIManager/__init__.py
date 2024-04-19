@@ -49,7 +49,6 @@ if IS_DRAG_N_DROP:
     import requests
     import mimetypes
     import base64
-    import weakref
 
 
 def stty_a(key=None):  # whatever [...]
