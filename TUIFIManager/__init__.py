@@ -1149,7 +1149,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def rename(self):
-        if self.__clicked_file:
+        if self.__clicked_file and not self.__clicked_file == self.files[0]:
             self.__set_label_text(f'[RENAMING] {self.__clicked_file.name}')
             self.escape_event_consumed = True
             self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE)  # Yeah ok, whatever
