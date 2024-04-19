@@ -135,7 +135,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if stty_a('^Z')               : signal.signal(signal.SIGTSTP, self.suspend_proccess)
         if stty_a('^C') or IS_WINDOWS : signal.signal(signal.SIGINT , self.copy            ) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
-        if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(weakref.proxy(self.handle_gui_to_tui_dropped_file), weakref.proxy(self.__get_selected_files)) # https://stackoverflow.com/a/14829479/11465149
+        if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files) #NOTE: https://stackoverflow.com/a/14829479/11465149
 
 
     def suspend_proccess(self, signum, frame): # Kinda SuS but you know the deal...
@@ -145,6 +145,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         print(BEGIN_MOUSE)
         unicurses.clear()
 
+
+    if IS_DRAG_N_DROP:
+        def __handle_garbage(self): self.__del__()
 
     def __del__(self):
         self.save_markers()
@@ -711,6 +714,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             263                     : self.__open_previous_dir          ,
             unicurses.KEY_RESIZE    : self.__handle_resize_event        ,
             32                      : self.command                      , # SPACEBAR
+            27                      : self.__handle_garbage if IS_DRAG_N_DROP else lambda *args : None #NOTE: https://stackoverflow.com/a/14829479/11465149
         }
 
     def toggle_vim_mode(self): # TODO: Use it in rename and find or something
