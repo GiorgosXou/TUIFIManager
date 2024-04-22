@@ -1,5 +1,8 @@
 # v.DEVELOPMENT
 
+> [!NOTE]
+> **[CHANGELOG.md is archived, from now on version-logs are at releases](https://github.com/GiorgosXou/TUIFIManager/releases)**
+
 ------------------------
 # v.2.1.9
 - ***Fixed:***
