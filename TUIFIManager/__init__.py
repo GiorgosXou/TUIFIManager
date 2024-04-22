@@ -979,6 +979,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
 
+        self.__pre_hov = None
         self.find_file(self.__temp_findname)
         self.__set_label_text(f'SEARCH: {self.__temp_findname}')
         i = 0 if len(self.files) == 1 else 1
