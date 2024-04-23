@@ -72,6 +72,7 @@
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [
                 pkgs.qt6.wrapQtAppsHook
+                pkgs.makeWrapper
               ]);
 
             propagatedBuildInputs =
@@ -81,6 +82,15 @@
                   qtbase
                   qt6gtk2
                 ]);
+
+            postFixup = let
+              # https://github.com/NixOS/nixpkgs/issues/60918
+              theme = pkgs.gnome3.gnome-themes-extra;
+            in
+              pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+                wrapProgram $out/bin/tuifi \
+                  --prefix GTK_PATH : "${theme}/lib/gtk-2.0"
+              '';
 
             pythonImportsCheck = ["TUIFIManager"];
             meta.mainProgram = "tuifi";
