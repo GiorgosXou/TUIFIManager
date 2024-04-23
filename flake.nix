@@ -23,6 +23,10 @@
         py-env = pkgs.python310.withPackages (p: [
           p.send2trash
           p.unicurses
+          p.pynput
+          p.pyside6
+          p.requests
+          p.xlib
         ]);
       in
         pkgs.mkShell {
@@ -55,15 +59,26 @@
               src = ./.;
               format = "pyproject";
 
-              nativeBuildInputs = [
-                setuptools
-                setuptools-scm
-              ];
+              nativeBuildInputs =
+                [
+                  setuptools
+                  setuptools-scm
+                ]
+                ++ [pkgs.qt6.wrapQtAppsHook];
 
-              propagatedBuildInputs = [
-                send2trash
-                unicurses
-              ];
+              propagatedBuildInputs =
+                [
+                  send2trash
+                  unicurses
+                  pynput
+                  pyside6
+                  requests
+                  xlib
+                ]
+                ++ (with pkgs.kdePackages; [
+                  qtbase
+                  qt6gtk2
+                ]);
 
               pythonImportsCheck = ["TUIFIManager"];
               meta.mainProgram = "tuifi";
