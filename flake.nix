@@ -21,14 +21,19 @@
       py = {
         env = pkgs.python311.withPackages (p: py.deps);
         pkgs = pkgs.python311.pkgs;
-        deps = with pkgs.python311.pkgs; [
-          send2trash
-          unicurses
-          pynput
-          pyside6
-          requests
-          xlib
-        ];
+        deps = with pkgs.python311.pkgs;
+          [
+            send2trash
+            unicurses
+          ]
+          # pyinput is marked as broken for darwin
+          # pkgs.gnome3.gnome-themes-extra
+          ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [
+            pynput
+            pyside6
+            requests
+            xlib
+          ]);
       };
     in {
       devShells.default = pkgs.mkShell {
@@ -60,19 +65,22 @@
             src = ./.;
             format = "pyproject";
 
-            nativeBuildInputs = with py.pkgs;
-              [
+            nativeBuildInputs =
+              (with py.pkgs; [
                 setuptools
                 setuptools-scm
-              ]
-              ++ [pkgs.qt6.wrapQtAppsHook];
+              ])
+              ++ (pkgs.lib.optionals pkgs.stdenv.isLinux [
+                pkgs.qt6.wrapQtAppsHook
+              ]);
 
             propagatedBuildInputs =
               py.deps
-              ++ (with pkgs.kdePackages; [
-                qtbase
-                qt6gtk2
-              ]);
+              ++ (with pkgs.kdePackages;
+                pkgs.lib.optionals pkgs.stdenv.isLinux [
+                  qtbase
+                  qt6gtk2
+                ]);
 
             pythonImportsCheck = ["TUIFIManager"];
             meta.mainProgram = "tuifi";
