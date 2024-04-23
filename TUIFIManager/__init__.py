@@ -815,7 +815,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def __set_label_on_copy(self,size):
         length = len(self.__temp__copied_files)
-        text   = f'{length} files [{size} bytes]' if length > 1 else f'{self.__temp__copied_files[0].name}'  
+        text   = f'{length} files [{self.convert_bytes(size)}]' if length > 1 else f'{self.__temp__copied_files[0].name}'
         action = 'CUTED' if self.__is_cut else 'COPIED'
         self.__set_label_text(f'[{action}]: {text}')
 
@@ -1249,12 +1249,21 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     def __int_len(self, n): # https://stackoverflow.com/a/2189827/11465149
         return int(log10(n))+1 if n != 0 else 0
 
+    size_units = ('bytes', 'KB', 'MB', 'GB', 'TB')
+    def convert_bytes(self, num): #WARN: https://stackoverflow.com/a/63839503/11465149 | https://stackoverflow.com/a/78117390/11465149
+        step_unit = 1000.0
+        for x in self.size_units:
+            if num < step_unit:
+                if x[0] == 'b': return "%i %s" % (num, x)
+                return "%3.1f %s" % (num, x)
+            num /= step_unit
+
     def __set_label_on_file_selection(self, index=None, file=None):
         if not self.info_label: return
         file = file if file else self.__clicked_file
         index= index if index else self.__index_of_clicked_file
         path = self.directory + sep + file.name
-        info = f'[{os.path.getsize(path)} bytes]' if os.path.isfile(path) else ''
+        info = f'[{self.convert_bytes(os.path.getsize(path))}]' if os.path.isfile(path) else ''
         offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(index) + 3 + len(info) + 2
         self.info_label.text = f'[{len(self.files) - 1:04}] [{index}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
