@@ -556,10 +556,15 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 return [QUrl.fromLocalFile(self.directory + sep + self.__pre_pressed_file.name)]
 
 
-        def handle_gui_to_tui_dropped_file(self, file_url, type): #TODO: Custom user actions on link patterns: eg. clone git, save at folder xy, etc.
+        def handle_gui_to_tui_dropped_file(self, file_url, type): #TODO: Custom user actions on link patterns: eg. clone git, save at folder xy, etc. + TODO: if dropped on folder
+            self.is_focused = False
             self.__set_label_text(f'DROPPED: {file_url}')
             if type == 1:
-                self.__set_label_text("It's on the todo list :P") #TODO: handle files
+                name = os.path.basename(file_url)
+                shutil.move(file_url, self.directory + sep + name)
+                self.__sub_handle_creation_of(name, self.get_profile(file_url)) # TODO: for other non \file_extensions
+                self.__set_label_text(f'MOVED: {name}')
+                self.refresh() #for some reason refresh is needed that's SuS. Should look on download too
             elif type == 0:
                 self.download(file_url, self.directory + sep)
             elif file_url.startswith('data:') and not file_url.find('base64') == -1:
@@ -568,7 +573,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.save(self.directory, filename, base64.b64decode(file_url[file_url.find('4')+1:])) # 4 is from base64
             else:
                 self.__set_label_text(f'DROPPED UNHANDLED: {file_url}')
-
+            self.is_focused = True
                 # r = requests.get(file_url) # , stream=True
                 # r.headers.get('filename')
                 # unicurses.mvwaddwstr(self.pad,0,0,f'is downloadable: {r.headers}')
