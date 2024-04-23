@@ -18,31 +18,33 @@
       "x86_64-darwin"
     ] (system: let
       pkgs = nixpkgs.legacyPackages.${system};
+      py = {
+        env = pkgs.python311.withPackages (p: py.deps);
+        pkgs = pkgs.python311.pkgs;
+        deps = with pkgs.python311.pkgs; [
+          send2trash
+          unicurses
+          pynput
+          pyside6
+          requests
+          xlib
+        ];
+      };
     in {
-      devShells.default = let
-        py-env = pkgs.python310.withPackages (p: [
-          p.send2trash
-          p.unicurses
-          p.pynput
-          p.pyside6
-          p.requests
-          p.xlib
-        ]);
-      in
-        pkgs.mkShell {
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.ncurses];
-          packages = [
-            py-env
-            py-env.pkgs.venvShellHook
-            pkgs.gnumake
-          ];
+      devShells.default = pkgs.mkShell {
+        LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.ncurses];
+        packages = [
+          py.env
+          py.env.pkgs.venvShellHook
+          pkgs.gnumake
+        ];
 
-          venvDir = "venv";
-          postVenvCreation = ''
-            pip install -r requirements.txt
-            pip install -e .
-          '';
-        };
+        venvDir = "venv";
+        postVenvCreation = ''
+          pip install -r requirements.txt
+          pip install -e .
+        '';
+      };
 
       formatter = pkgs.alejandra;
       packages = rec {
@@ -51,38 +53,30 @@
           pyproject = builtins.readFile ./pyproject.toml;
           version = (builtins.fromTOML pyproject).project.version;
         in
-          with pkgs.python3.pkgs;
-            buildPythonApplication {
-              pname = "tuifi-manager";
-              inherit version;
+          py.pkgs.buildPythonApplication {
+            pname = "tuifi-manager";
+            inherit version;
 
-              src = ./.;
-              format = "pyproject";
+            src = ./.;
+            format = "pyproject";
 
-              nativeBuildInputs =
-                [
-                  setuptools
-                  setuptools-scm
-                ]
-                ++ [pkgs.qt6.wrapQtAppsHook];
+            nativeBuildInputs = with py.pkgs;
+              [
+                setuptools
+                setuptools-scm
+              ]
+              ++ [pkgs.qt6.wrapQtAppsHook];
 
-              propagatedBuildInputs =
-                [
-                  send2trash
-                  unicurses
-                  pynput
-                  pyside6
-                  requests
-                  xlib
-                ]
-                ++ (with pkgs.kdePackages; [
-                  qtbase
-                  qt6gtk2
-                ]);
+            propagatedBuildInputs =
+              py.deps
+              ++ (with pkgs.kdePackages; [
+                qtbase
+                qt6gtk2
+              ]);
 
-              pythonImportsCheck = ["TUIFIManager"];
-              meta.mainProgram = "tuifi";
-            };
+            pythonImportsCheck = ["TUIFIManager"];
+            meta.mainProgram = "tuifi";
+          };
       };
     });
 }
