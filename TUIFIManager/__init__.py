@@ -7,7 +7,7 @@ from      functools import partial
 from        pathlib import Path
 from         typing import Optional, Final
 from           time import time
-from             os import sep, access, W_OK
+from             os import sep, access, W_OK, R_OK
 from           math import log10
 from        os.path import basename
 from       .TUIMenu import TUIMenu
@@ -263,6 +263,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     basename = ''
     def load_files(self, directory, suffixes=[]):  # DON'T load and then don't show :P
         directory = os.path.realpath(os.path.normpath(directory))
+        if not access(directory, R_OK):
+            self.__set_label_text(f'NO READ PERMISSION: "{directory}"')
+            return []
         if not os.path.isdir(directory):
             raise FileNotFoundError(f'DirectoryNotFound: "{directory}"')
         if not suffixes:
@@ -408,9 +411,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             open_with = TUIFIProfiles.get(prof, DEFAULT_PROFILE).open_with
             return self.__try_open_with(directory, open_with, multiple) # TODO: check if the multiple selected files are folders and open them in new tabs
 
-        self.__reset_open()
-        self.load_files(directory, suffixes)
+        if not self.load_files(directory, suffixes): return []
         if not self.is_in_find_mode: self.__set_label_text(f'[{len(self.files)-1:04}]' + (' [▼] ' if self.is_order_reversed else ' [▲] ') + directory ) # just because i know that len is stored as variable,  that's why i don;t count them in for loop
+        self.__reset_open()
         self.draw()
         return self.files
 
