@@ -343,8 +343,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __try_open_with(self, directory: str, open_with: Optional[str], multiple=False) -> None:
-        if not open_with:
-            return self.__set_label_on_file_selection()
+        if not open_with: return
 
         dirs = []
         if multiple: # puke-able shit lol xD, sorry for that
@@ -365,7 +364,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             proc = subprocess.Popen([open_with, *dirs], shell=IS_WINDOWS) # TODO: optional stdout=subprocess.DEVNULL when I'll add loading TUIFIProfiles from external file ?
             proc.wait()
         print(BEGIN_MOUSE, end='\r')
-        self.__set_label_on_file_selection()
         return
 
 
