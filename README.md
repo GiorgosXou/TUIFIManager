@@ -113,7 +113,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`gt` | open | 'directory':'~/.config/tuifi'           | - tuifi -|
 |`gh` | open | 'directory':'~/'                        | - Home -|
 |`owv` | open | 'directory':None,'\_with':'vim'         |Opened With Vim|
-|`yat` | copy | 'pattern':'.+\.txt'                     ||
+|`yat` | copy | 'pattern':'.+\\\\.txt'                     ||
 |`yy` | copy | 'pattern':None                          ||
 
 **Available Type-keywords:** `open`, `copy`, `cut`, [`find`](## 'Attributes: `filename`')

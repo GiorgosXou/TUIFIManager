@@ -408,13 +408,13 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),2, DEFAULT_EDITOR),
     '/cmd':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
-        ' ┃ C:\> ┃ \n'
+        ' ┃ C:\\> ┃ \n'
         ' ┇ CMD_ ┇ \n'
         ' ╰━━━━━━╯ '
     ),2, DEFAULT_EDITOR),
     '/bat':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
-        ' ┃ C:\> ┃ \n'
+        ' ┃ C:\\> ┃ \n'
         ' ┇ BAT_ ┇ \n'
         ' ╰━━━━━━╯ '
     ),2, DEFAULT_EDITOR),
@@ -719,9 +719,9 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
 
 
     '/tuifi':TUIFIProfile((
-        '             \                                      [            \n'
+        '             \\                                      [            \n'
         '              @                 ⟡                  ╢             \n'
-        '      /       ╣▒                                  ]▒       \     \n'
+        '      /       ╣▒                                  ]▒       \\     \n'
         '     ╔       ]Ñ▒                                  ╟╣┐       ▓    \n'
         '    ╢╣       ╣▓            √          t            ▓╣       ▓╣   \n'
         '   ▓╣▒╖    ╓╫╜           ╥▓   #TUIFI   ▓@           ╙▓╖    ╔╣╢║  \n'

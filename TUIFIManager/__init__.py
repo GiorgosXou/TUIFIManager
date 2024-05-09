@@ -16,6 +16,7 @@ from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_M
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER
 import   subprocess
 import    unicurses
+import     warnings
 import       shutil
 import       signal
 import         json
@@ -98,6 +99,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             height -= 1
             self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), f' TUIFIManager {__version__} | Powered by uni-curses', win)
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
+            warnings.showwarning = self.custom_warning_handler
 
         super().__init__(win, y, x, height, width, anchor, is_focused)
         self.__order_method      = sort_by
@@ -135,6 +137,17 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if stty_a('^C') or IS_WINDOWS : signal.signal(signal.SIGINT , self.copy            ) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
         if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files) #NOTE: https://stackoverflow.com/a/14829479/11465149
+
+
+    def custom_warning_handler(self, message, category, filename, lineno, file=None, line=None):
+        self.info_label.color_pair = 3
+        self.info_label.style = unicurses.A_BOLD
+        if category.__name__ == SyntaxWarning.__name__:
+            self.__set_label_text(f" Please check Issue #111 | {category.__name__}: {message} at {filename}:{lineno}")
+        else:
+            self.__set_label_text(f" {category.__name__}: {message} at {filename}:{lineno}")
+        self.info_label.color_pair = 2
+        self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
 
 
     def suspend_proccess(self, signum, frame): # Kinda SuS but you know the deal...
@@ -1077,7 +1090,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 "gt  | open | 'directory':'~/.config/tuifi' | - tuifi -\n"       +
                 "gh  | open | 'directory':'~/'              | - Home -\n"        +
                 "owv | open | 'directory':None,'_with':'vim'|Opened With Vim\n"  +
-                "yat | copy | 'pattern':'.+\.txt'           |\n"                 +
+                "yat | copy | 'pattern':'.+\\\\.txt'          |\n"               +
                 "yy  | copy | 'pattern':None                |\n" 
             )
             f.close()
