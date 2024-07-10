@@ -910,11 +910,13 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if self.__clicked_file.name == '..': return 0
         self.__delete_file(self.__clicked_file)
         del self.files[self.__index_of_clicked_file]
+        self.__set_label_text(f'[DELETED] "{self.__clicked_file.name}"')
         return self.__index_of_clicked_file - 1
 
 
     def __delete_multiple_selected_file(self):
         i=0
+        tmp_count = self.__count_selected
         while True:
             if self.files[i].is_selected: # first file is never selected because it is the .. one
                 self.__delete_file(self.files[i])
@@ -923,6 +925,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 if self.__count_selected == 0:
                     break
             i+=1
+        self.__set_label_text(f'[DELETED] {tmp_count} FILES')
         return i
 
 
