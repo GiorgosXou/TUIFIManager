@@ -936,8 +936,11 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if not self.has_write_access(self.directory): return
         if self.__count_selected == 1 and self.__clicked_file :
             fi = self.__delete_selected_file()
-        else: # if self.__count_selected > 1:  # Why do i even > 1 very sus
+        elif self.__count_selected > 1:  # Why do i even > 1 very sus | 2024-07-10 Update: I do so because people might delete without any selection!
             fi = self.__delete_multiple_selected_file()
+        else:
+            self.__set_label_text(' NO FILE SELECTED TO DELETE')
+            return
         self.resort_reset_select(fi)
 
 
