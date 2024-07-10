@@ -213,7 +213,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │┏┓┇┇┏┓│ \n'
         ' │┣┛┣┫┣┛│ \n'
         ' ╰━━━━━━╯ '
-    ),4, DEFAULT_OPENER),
+    ),4, DEFAULT_EDITOR),
     '/adb':TUIFIProfile((
         ' ┏━━━┏━━┓ \n'
         ' ┇┏┓┏┇┏┓┇ \n'
