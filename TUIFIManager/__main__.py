@@ -46,10 +46,9 @@ def main():
 
     while event != ESCAPE_KEY or fileManager.escape_event_consumed: # Main loop 
         event = uc.get_wch()
+        if event == uc.KEY_RESIZE: uc.resize_term(0,0)
         fileManager.handle_events(event)
         fileManager.refresh()
-        if event == uc.KEY_RESIZE:
-            uc.resize_term(0,0)
     print(END_MOUSE)
     uc.endwin()
 
