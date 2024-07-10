@@ -1,6 +1,7 @@
 """
 TUItilities is a set of TUI components and terminal utilities in ALPHA version (They will be exported to a new package).
 """
+from time import sleep
 import   unicurses as uc
 from   dataclasses import dataclass
 from         pipes import quote
@@ -12,10 +13,10 @@ from            os import getenv, getcwd
 BEGIN_MOUSE = "\033[?1003h"
 END_MOUSE   = "\033[?1003l"
 
-IS_WINDOWS     = uc.OPERATING_SYSTEM == 'Windows'
-HOME_DIR       = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
-SHELL          = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
-IS_TERMUX      = 'com.termux' in HOME_DIR
+IS_WINDOWS          = uc.OPERATING_SYSTEM == 'Windows'
+HOME_DIR            = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
+SHELL               = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
+IS_TERMUX           = 'com.termux' in HOME_DIR
 DEFAULT_BACKGROUND  =  -1 if getenv('tuitilities_default_background') == 'True' else uc.COLOR_BLACK
 
 
@@ -111,7 +112,7 @@ def initialize_colors():
 
 
 @dataclass
-class Border:
+class Border: # TODO: Make clear and draw availabe both for Drawables and WindowPads
     left                : int = uc.ACS_VLINE
     right               : int = uc.ACS_VLINE
     top                 : int = uc.ACS_HLINE
@@ -139,195 +140,480 @@ class Border:
         self.draw (win)
 
 
+class Events:
+    @property
+    def on_click (self): return self.__on_click
+    @property
+    def on_hover  (self): return self.__on_hover
 
-class WindowPad():
-    def __init__(self, win=None, y=0, x=0, height=0, width=0, anchor=(False, False, False, False), is_focused=False, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
-        self.pad               = uc.newpad(height, width)
+    @on_click.setter
+    def on_click (self, value): self.__on_click = value
+    @on_hover.setter
+    def on_hover  (self, value): self.__on_hover  = value
+
+    def __init__(self):
+        self.__on_click = lambda *args : None
+        self.__on_hover  = lambda *args : None
+
+
+
+class Component(Events):
+    __mouse_was_read = False
+    __colors_initialized = False
+
+    def __init__(self, win=None, y=0, x=0, height=0, width=0, anchor=(False, False, False, False), iheight=None, iwidth=None, warp=True, border:Border=None, visibility=True) -> None:
+        super().__init__()
         self.parent            = Parent(win or uc.stdscr)
         self.position          = Position (y, x)
         self.size              = Size(height, width, iheight or height, iwidth or width)
         self.anchor            = Anchor   (*anchor)
-        self.is_focused        = is_focused
         self.warp              = warp
         self.border            = border # TODO: to check
-        # if border: self.border.draw(self.pad)
-        initialize_colors()
+        self.components        = []
+        self.__visibility      = visibility
+        self._x_fraction = 0
+        self._y_fraction = 0
+        # if border: self.border.draw(self.pad) #TODO: see Border 
+        if not Component.__colors_initialized:
+            initialize_colors()
+            Component.__colors_initialized = True
 
 
     def refresh(self, redraw_parent=False):
-        if self.border: self.border.update(self.pad)
-        if redraw_parent:
-            uc.touchwin(self.parent.win) # Do i need this? YES
-        uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
-        uc.prefresh(self.pad, self.position.iy, self.position.ix, self.position.y, self.position.x, self.position.y + self.size.height -1, self.position.x + self.size.width -1)
+        Component.__mouse_was_read = False
 
+
+    def hide(self): self.visibility = False
+    def show(self): self.visibility = True
+
+
+    @property #TODO: ADD descrition like use `self.position.x` instead if you don't want to redraw the `parent.win` immediately after
+    def visibility(self): return self.__visibility
+
+    @visibility.setter
+    def visibility(self, visibility): self.__visibility = visibility; self.refresh(redraw_parent=isinstance(self,WindowPad))
 
     @property #TODO: ADD descrition like use `self.position.x` instead if you don't want to redraw the `parent.win` immediately after
     def x(self): return self.position.x
 
     @x.setter
-    def x(self, X): self.position.x = X; self.refresh(redraw_parent=True)
+    def x(self, X): self.position.x = X; self.refresh(redraw_parent=isinstance(self,WindowPad))
 
     @property
     def y(self): return self.position.y
 
     @y.setter
-    def y(self, Y): self.position.y = Y; self.refresh(redraw_parent=True)
+    def y(self, Y): self.position.y = Y; self.refresh(redraw_parent=isinstance(self,WindowPad))
 
     @property
     def ix(self): return self.position.ix
 
     @ix.setter
-    def ix(self, iX): self.position.ix = iX; self.refresh(redraw_parent=True)
+    def ix(self, iX): self.position.ix = iX; self.refresh(redraw_parent=isinstance(self,WindowPad))
 
     @property
     def iy(self): return self.position.iy
 
     @iy.setter
-    def iy(self, iY): self.position.iy = iY; self.refresh(redraw_parent=True)
+    def iy(self, iY): self.position.iy = iY; self.refresh(redraw_parent=isinstance(self,WindowPad))
 
     @property
     def width(self): return self.size.width
 
     @width.setter
-    def width(self, width): self.size.width = width; self.refresh(redraw_parent=True)
+    def width(self, width): self.size.width = width; self.refresh(redraw_parent=isinstance(self,WindowPad))
 
     @property
     def height(self): return self.size.height
 
     @height.setter
-    def height(self, height): self.size.height = height; self.refresh(redraw_parent=True)
+    def height(self, height): self.size.height = height; self.refresh(redraw_parent=isinstance(self,WindowPad))
+
+    @property
+    def minwidth(self): return self.size.minwidth
+
+    @minwidth.setter
+    def minwidth(self, minwidth): self.size.minwidth = minwidth
+
+    @property
+    def minheight(self): return self.size.minheight
+
+    @minheight.setter
+    def minheight(self, minheight): self.size.minheight = minheight
+
+    @property
+    def maxwidth(self): return self.size.maxwidth
+
+    @maxwidth.setter
+    def maxwidth(self, maxwidth): self.size.maxwidth = maxwidth
+
+    @property
+    def maxheight(self): return self.size.maxheight
+
+    @maxheight.setter
+    def maxheight(self, maxheight): self.size.maxheight = maxheight
 
     @property
     def iwidth(self): return self.size.iwidth
 
-    @iwidth.setter
-    def iwidth(self, iwidth): self.size.iwidth = iwidth; uc.wresize(self.pad, self.iheight, iwidth); self.refresh(redraw_parent=True)
-
     @property
     def iheight(self): return self.size.iheight
 
-    @iheight.setter
-    def iheight(self, iheight): self.size.iheight = iheight; uc.wresize(self.pad, iheight, self.iwidth); self.refresh(redraw_parent=True)
 
     def get_mouse(self):
-        id, x, y, z, bstate = uc.getmouse()
-        in_range = (
-            self.x <= x < self.x + self.width
-            and self.y <= y < self.y + self.height
-        )
-        return (in_range, id, x, y, z, bstate )
+        if not Component.__mouse_was_read:
+            Component.id, Component._x, Component._y, Component._z, Component.bstate = uc.getmouse()
+            Component.__mouse_was_read = True
+        Component.in_range = self._in_range()
+        return (Component.in_range, Component.id, Component._x, Component._y, Component._z, Component.bstate )
 
 
-    def handle_resize(self, redraw_parent=True, redraw_border=True): # TODO: max min sizes
-        if self.border and redraw_border: self.border.clear(self.pad)
+    def handle_events(self, event, redraw_parent=True):
+        if event == uc.KEY_MOUSE:
+            in_range, id, x, y, z, bstate = self.get_mouse() # aah... here because calling getmouse more than once, returns 0,0...
+            if not in_range:return
+            if (bstate & uc.BUTTON1_RELEASED or bstate & uc.BUTTON3_RELEASED or bstate & uc.BUTTON2_RELEASED):
+                self.on_click(self, id, x, y, z, bstate)
+                return
+            self.on_hover(self, id, x, y, z, bstate)
+
+
+    def centerX(self):
+        _, new_columns = uc.getmaxyx(self.parent.win)
+        self.position.x = (new_columns //2) - (self.width //2)
+        uc.touchwin(self.parent.win) # Do i need this? YES
+
+    def centerY(self):
+        new_lines, _ = uc.getmaxyx(self.parent.win)
+        self.position.y = (new_lines//2) - (self.height//2)
+        uc.touchwin(self.parent.win) # Do i need this? YES
+
+    def center(self):
         new_lines, new_columns = uc.getmaxyx(self.parent.win)
-        if self.anchor.bottom:
-            if self.anchor.top:
-                delta = (new_lines - self.parent.lines)
-                self.size.height  += delta
-                if self.warp or self.size.height > self.size.iheight: # That means that it won't contract the inside width unless you do so
-                    self.size.iheight += delta
-                    uc.wresize(self.pad, self.iheight, self.iwidth)
-            else:
-                deltaY           = (new_lines - self.parent.lines)
-                self.position.y  += deltaY
-                # self.size.height += deltaY
-        if self.anchor.right:
-            if self.anchor.left:
-                delta = (new_columns - self.parent.columns)
-                self.size.width  += delta
-                if self.warp or self.size.width > self.size.iwidth:
-                    self.size.iwidth += delta
-                    uc.wresize(self.pad, self.iheight, self.iwidth)
-            else:
-                deltaX           = (new_columns - self.parent.columns)
-                self.position.x += deltaX
-                # self.size.width += deltaX
+        self.position.x = (new_columns //2) - (self.width //2)
+        self.position.y = (new_lines//2) - (self.height//2)
+        uc.touchwin(self.parent.win) # Do i need this? YES
 
-        self.parent.lines   = new_lines
+    def handle_resize(self, redraw_parent=True, redraw_border=True):
+        if self.border and redraw_border:
+            self.border.clear(self.pad)  # TODO: implementation when I'll have borders for drawables too
+
+        new_lines, new_columns = uc.getmaxyx(self.parent.win)
+        deltaY = new_lines - self.parent.lines
+        deltaX = new_columns - self.parent.columns
+
+        # Handle vertical anchor resizing
+        if self.anchor.bottom and self.anchor.top:
+            tmp_height = self.size.height + deltaY
+            if self.size.maxheight != 0 and tmp_height > self.size.maxheight:
+                deltaY = tmp_height - self.size.maxheight
+                self.position.y += deltaY // 2
+                self._y_fraction += deltaY % 2
+                self.size.height = self.size.maxheight
+                if self._y_fraction >= 2:
+                    self.position.y += self._y_fraction // 2
+                    self._y_fraction %= 2
+            elif tmp_height < self.size.minheight:
+                deltaY = tmp_height - self.size.minheight
+                self.position.y += deltaY // 2
+                self._y_fraction += deltaY % 2
+                self.size.height = self.size.minheight
+                if self._y_fraction >= 2:
+                    self.position.y += self._y_fraction // 2
+                    self._y_fraction %= 2
+            else:
+                self.size.height = tmp_height
+
+            if self.warp or self.size.height > self.size.iheight:
+                self.size.iheight = self.size.height
+                self._resize()
+
+        elif self.anchor.bottom:
+            self.position.y += deltaY
+
+        # Handle horizontal anchor resizing
+        if self.anchor.right and self.anchor.left:
+            tmp_width = self.size.width + deltaX
+
+            if self.size.maxwidth != 0 and tmp_width > self.size.maxwidth:
+                deltaX = tmp_width - self.size.maxwidth
+                self.position.x += deltaX // 2
+                self._x_fraction += deltaX % 2
+                self.size.width = self.size.maxwidth
+                if self._x_fraction >= 2:
+                    self.position.x += self._x_fraction // 2
+                    self._x_fraction %= 2
+            elif tmp_width < self.size.minwidth:
+                deltaX = tmp_width - self.size.minwidth 
+                self.position.x += deltaX // 2
+                self._x_fraction += deltaX % 2
+                self.size.width = self.size.minwidth
+                if self._x_fraction >= 2:
+                    self.position.x += self._x_fraction // 2
+                    self._x_fraction %= 2
+            else:
+                self.size.width = tmp_width
+
+            if self.warp or self.size.width > self.size.iwidth:
+                self.size.iwidth = self.size.width
+                self._resize()
+
+        elif self.anchor.right:
+            self.position.x += deltaX
+
+        self.parent.lines = new_lines
         self.parent.columns = new_columns
+
         if redraw_parent:
             uc.touchwin(self.parent.win)
-        if self.border and redraw_border: self.border.draw(self.pad)
+        if self.border and redraw_border:
+            self.border.draw(self.pad)
+
+
+class WindowPad(Component):
+    def __init__(self, win=None, y=0, x=0, height=0, width=0, anchor=(False, False, False, False), is_focused=False, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
+        super().__init__(win, y, x, height, width, anchor, iheight, iwidth, warp, border)
+        self.pad               = uc.newpad(height, width)
+        self.is_focused        = is_focused
+        self.components        = []
+        initialize_colors()
 
 
     def add_component(self, obj):
         self.components.append(obj)
 
 
-    def handle_events(self, event, redraw_parent=True):
+    def refresh(self, redraw_parent=False, clear=True):
+        if not self.visibility: 
+            if redraw_parent: # when visibility changes it calls refresh with redraw_parent=True
+                uc.touchwin(self.parent.win) # Do i need this? YES
+            uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
+            return
+        if self.border: self.border.update(self.pad)
+        if clear: uc.werase(self.pad)
+        for drawable in self.components:
+            if drawable.visibility: drawable.draw()
+        if redraw_parent:
+            uc.touchwin(self.parent.win) # Do i need this? YES
+            # uc.wtouchline(self.parent.win, self.y,1) 
+            # uc.wtouchline(self.parent.win, self.y,self.height)
+        uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
+        uc.prefresh(self.pad, self.position.iy, self.position.ix, self.position.y, self.position.x, self.position.y + self.size.height -1, self.position.x + self.size.width -1)
+        super().refresh()
+
+
+    def _in_range(self):
+        return (
+            self.x <= Component._x < self.x + self.width
+            and self.y <= Component._y < self.y + self.height
+        )
+
+    def handle_events(self, event, redraw_parent=True): #  prevent multiple if conditions for drawable components too
         if event == uc.KEY_RESIZE: self.handle_resize(redraw_parent)
+        elif self.visibility:
+            super().handle_events(event,redraw_parent) 
+            for drawable in self.components: 
+                if drawable.visibility: drawable.handle_events(event, redraw_parent)
+
+
+    def _resize(self):
+        uc.wresize(self.pad, self.iheight, self.iwidth)
+
+
+    def handle_resize(self, redraw_parent=True, redraw_border=True): # TODO: max min sizes
+        super().handle_resize(redraw_parent=redraw_parent, redraw_border=redraw_border)
+        for drawable in self.components:
+            drawable.handle_resize()
 
 
 
-class Label(WindowPad): # TODO: make components a type of Drawables\components rather than a WindowPad
-    __text     = ''
-    style      = uc.A_NORMAL
-    color_pair = 2
 
-    def __init__(self,y=0, x=0, height=1, width=45, anchor=(False, False, False, False), text='', win=None) -> None:
-        super().__init__(win, y, x, height, width, anchor)
-        self.text       = text
+class Drawable(Component):
+    def __init__(self,winpad:WindowPad, y=0, x=0, height=1, width=45, anchor=(False, False, False, False) ) -> None:
+        self.winpad = winpad
+        super().__init__(winpad.pad, y, x, height, width, anchor)
+        self.__add_component_to(winpad) 
 
+
+    def _in_range(self):
+        return (
+            self.winpad.x+self.x <= Component._x < self.winpad.x + self.x + self.width 
+            and self.winpad.y+self.y <= Component._y < self.winpad.y + self.y + self.height
+        )
+
+
+    def centerX(self):
+        self.position.y = (self.winpad.height//2) - (self.height//2)
+
+    def centerY(self):
+        self.position.y = (self.winpad.height//2) - (self.height//2)
+
+    def center(self):
+        self.position.x = (self.winpad.width //2) - (self.width //2)
+        self.position.y = (self.winpad.height//2) - (self.height//2)
+
+
+    def refresh(self, redraw_parent=False):
+        self.winpad.refresh(redraw_parent)
+
+
+    def __add_component_to(self, winpad):
+        winpad.add_component(self)
+
+
+
+class Label(Drawable): # TODO: make components a type of Drawables\components rather than a WindowPad
+    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False ) -> None:
+        super().__init__(winpad, y, x, height, width if width else len(text), anchor)
+        self.style      = uc.A_NORMAL
+        self.color_pair = 2
+        self.__text     = text 
+        self.wrap_text  = wrap_text
+        self.maxheight  = 1 # WARN: this is temporary maybe?
+        self.minwidth  = len(text) # WARN: this is temporary maybe?
 
     @property
     def text(self): return self.__text
 
+
+    def draw(self):
+        x = self.x
+        w = self.width
+        text = self.text
+        if self.wrap_text and len(text) > self.width:
+            w = self.minwidth = self.size.width = len(text)
+        elif not self.wrap_text and len(text) > self.width:
+            text = text[:self.width-3] + '...'
+
+        if self.x < 0: 
+            x = 0
+            w = self.width +self.x
+            text = text[-self.x:]
+        if self.winpad.x < 0: 
+            x = 0
+            w = self.width +self.winpad.x 
+            text = text[-self.winpad.x:] 
+        uc.mvwaddstr(self.parent.win,self.y,x, ' '*w, uc.color_pair(self.color_pair) | self.style )
+        uc.mvwaddstr(self.parent.win,self.y,x, text, uc.color_pair(self.color_pair) | self.style )
+
+
     @text.setter
     def text(self, text):
         self.__text = text
-        uc.mvwaddstr(self.pad,0,0, ' '*self.width, uc.color_pair(self.color_pair) | self.style )
-        uc.mvwaddstr(self.pad,0,0, text, uc.color_pair(self.color_pair) | self.style )
+        self.refresh()
 
 
-    def handle_resize(self, redraw_parent=True):
-        super().handle_resize(redraw_parent)
-        self.text = self.__text
+    def _resize(self):
+        self.draw() # means clear so it's fine to just draw
+
+
+
+class Button(Label): # Let's pretend for a momment that this is a button too :P
+    def __init__(self, winpad: WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False)) -> None:
+        super().__init__(winpad, y, x, text, height, width , anchor)
+
 
 
 
 # THIS IS ONLY FOR TESTING PURPOSES
 def main():
+    def label_clicked(label, id, x, y, z, bstate):
+        label.text = f'C x:{x} y:{y}'
+
+    def label_hoverd(label, id, x, y, z, bstate):
+        label.text = f'HOVERED x:{x} y:{y} win: {winform.width} {winform.iwidth}'
+        
     event  = -1
     global stdscr
     stdscr = uc.initscr()  # Global UniCurses Variable
 
+    uc.use_default_colors()
     uc.start_color( )
     uc.cbreak     ( )
     uc.noecho     ( )
     uc.curs_set   (0)
 
     # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
-    uc.init_pair(1, uc.COLOR_WHITE  ,uc.COLOR_BLACK)
-    uc.init_pair(2, uc.COLOR_YELLOW ,uc.COLOR_BLACK)
-    uc.init_pair(3, uc.COLOR_RED    ,uc.COLOR_BLACK)
-    uc.init_pair(4, uc.COLOR_BLUE   ,uc.COLOR_BLACK)
-    uc.init_pair(5, uc.COLOR_GREEN  ,uc.COLOR_BLACK)
-    uc.init_pair(6, uc.COLOR_BLACK  ,uc.COLOR_WHITE)
-    uc.init_pair(7, uc.COLOR_BLUE   ,uc.COLOR_WHITE)
-    uc.init_pair(8, uc.COLOR_CYAN   ,uc.COLOR_BLACK)
+    uc.init_pair(10, -1   ,-1 )
 
     # Initializing Mouse and then Update/refresh() stdscr
     uc.mouseinterval(0)
-    uc.mousemask    (uc.ALL_MOUSE_EVENTS)  # | REPORT_MOUSE_POSITION); print("\033[?1003h\n")
+    uc.mousemask    (uc.ALL_MOUSE_EVENTS | uc.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
+    uc.keypad       (stdscr, True )
+    uc.nodelay      (stdscr, False)
+    print           (BEGIN_MOUSE) # Initializing mouse movement | Don't move it above because it won't work on Windows
     uc.keypad       (uc.stdscr, True)
-    uc.bkgd(uc.CCHAR("#"))
-    uc.refresh      ()
+
+    winform = WindowPad(stdscr,2,4,10,60, anchor=(True, True, True, True)) #TODO: default minmax to size when anchor ....?
+    winform.minwidth = 50
+    winform.maxwidth = 70
+    winform.minheight = 10
+    winform.maxheight = 20
+
+    uc.wbkgd(winform.pad, uc.COLOR_PAIR(7))
+    
+    winform2 = WindowPad(stdscr,12,4,10,60, anchor=(True, False, True, False))
+    # # winform2.minwidth = 30
+    # winform2.minwidth = 40
+    # winform2.maxwidth = 60
+    uc.wbkgd(winform2.pad, uc.COLOR_PAIR(9))
+
+    tl = Label(winform ,1,2 ,anchor=(True, False, True, False),text='top-left')
+    tr = Label(winform ,1,winform.width-11 ,anchor=(True, False, False, True),text='top-right')
+    bl = Label(winform ,winform.height-2,2 ,anchor=(False, True, True, False),text='btm-left')
+    br = Label(winform ,winform.height-2,winform.width-11 ,anchor=(False, True, False, True),text='btm-right')
+    tb = Label(winform ,0,0 ,anchor=(False, True, False, True),text='0123456789',width=10)
+    ta = Label(winform ,0,11,anchor=(False, True, False, True),text='0123456789',width=10)
+    td = Label(winform ,3,5 ,anchor=(True , True, True, True),text='teeeest')
+    tc = Label(winform ,2,1 ,anchor=(False, True,  True, True),text='teeeestloong', width=58,)
+    t2 = Label(winform2,0,0 ,anchor=(False, True,  True, True),text='winform2_label', wrap_text=True)
+    td.maxwidth = 7
+    ta.style = uc.A_REVERSE; ta.color_pair = 5
+    tc.style = uc.A_REVERSE; tb.color_pair = 8
+    tb.style = uc.A_REVERSE; 
+    t2.style = uc.A_REVERSE; t2.color_pair = 5
+    tb.on_click = label_clicked
+    tc.on_click = label_clicked
+    t2.on_click = label_clicked
+    t2.on_hover = label_hoverd
+    winform2.refresh()
+    winform.refresh()
 
     # Initializing TUIFIManager
-    tb = Label(anchor=(False, True, False, True))
-    tc = Label(2,1,anchor=(False, True, True, True))
 
     while event != 27:
         event = uc.get_wch()
-        tb.handle_events(event)
-        tc.handle_events(event)
-        tb.refresh()
-        tc.refresh()
+        if event == uc.CCHAR('a'):
+            for _ in range(0,5):
+                ta.x +=1
+                sleep(.1)
+        elif event == uc.CCHAR('b'):
+            for _ in range(0,5): # problematic, (maybe) needs a winpad handler for animations
+                winform2.x +=1
+                sleep(.1)
+        elif event == uc.CCHAR('d'): # problematic, (maybe) needs a winpad handler for animations
+            for _ in range(0,5):
+                winform.y +=1;
+                sleep(.1)
+        elif event == uc.CCHAR('c'): td.center()
+        elif event == uc.CCHAR('C'): winform.center()
+        elif event == uc.CCHAR('h'): tc.hide()
+        elif event == uc.CCHAR('s'): tc.show()
+        elif event == uc.CCHAR('H'): winform2.hide()
+        elif event == uc.CCHAR('S'): winform2.show()
+        elif event == uc.CCHAR('e'): uc.bkgd(uc.CCHAR("/"))
+        elif event == uc.CCHAR('f'): uc.bkgd(uc.CCHAR("%"))
+        elif event == uc.CCHAR('g'): uc.bkgd(uc.CCHAR(" "))
+
+        winform2.handle_events(event)
+        winform.handle_events(event)
+        winform2.refresh()
+        winform.refresh()
+        uc.refresh      ()
         if event == uc.KEY_RESIZE:
             uc.resize_term(0,0)
 
+    print(END_MOUSE)
     uc.endwin()
 
 
