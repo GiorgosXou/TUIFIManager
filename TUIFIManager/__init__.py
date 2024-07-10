@@ -12,7 +12,7 @@ from           math import log10
 from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
-from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX
+from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER
 import   subprocess
 import    unicurses
