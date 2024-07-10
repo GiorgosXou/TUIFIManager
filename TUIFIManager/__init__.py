@@ -97,7 +97,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, cd=False, show_hidden=False):
         if has_label:
             height -= 1
-            self.info_label       = Label(y+height, x, 1, width, (False,anchor[1],anchor[2],anchor[3]), f' TUIFIManager {__version__} | Powered by uni-curses', win)
+            self.labelpad         = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
+            self.info_label       = Label(self.labelpad,0, 0, f' TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False)
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
             warnings.showwarning = self.custom_warning_handler
 
@@ -137,6 +138,13 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if stty_a('^C') or IS_WINDOWS : signal.signal(signal.SIGINT , self.copy            ) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
         if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files) #NOTE: https://stackoverflow.com/a/14829479/11465149
+
+
+
+    def refresh(self):
+        super().refresh(clear=False)
+        if self.info_label: self.labelpad.refresh()
+        self.menu.refresh()
 
 
     def custom_warning_handler(self, message, category, filename, lineno, file=None, line=None):
@@ -428,13 +436,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__reset_open()
         self.draw()
         return self.files
-
-
-    def refresh(self):
-        super().refresh()
-        self.menu.refresh()
-        if self.info_label:
-            self.info_label.refresh()
 
 
     def get_tuifile_by_name(self, name):
@@ -1468,8 +1469,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     def __handle_resize_event(self):
         self.handle_resize(False)
         self.resort()
-        if self.info_label: self.info_label.handle_resize(False)
         unicurses.touchwin(self.parent.win)
+        if self.info_label:self.labelpad.handle_resize()
 
 
     def __is_escape_consumed(self,event):
