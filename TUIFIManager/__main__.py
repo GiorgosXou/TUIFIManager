@@ -23,9 +23,8 @@ def parse_terminal_arguments(): # TODO: -s --suffixes to be passed to TUIFIManag
 
 def main():
     args = parse_terminal_arguments()
-
     global stdscr
-    stdscr = uc.initscr()              # Global UniCurses Variable
+    stdscr = uc.initscr() # Global UniCurses Variable
     event  = -1
 
     if DEFAULT_BACKGROUND:
@@ -34,16 +33,17 @@ def main():
     uc.cbreak       ( )
     uc.noecho       ( )
     uc.curs_set     (0)
-    uc.mouseinterval(0)                 # Initializing Mouse and then Update/refresh() stdscr
+    uc.mouseinterval(0) # Initializing Mouse and then Update/refresh() stdscr
     uc.mousemask    (uc.ALL_MOUSE_EVENTS | uc.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
     uc.keypad       (stdscr, True )
     uc.nodelay      (stdscr, False)
     uc.set_escdelay (10)
+    print           (BEGIN_MOUSE) # Initializing mouse movement | Don't move it above because it won't work on Windows
     uc.refresh      ( )
 
     # Initializing TUIFIManager
-    HEIGHT,WIDTH       = uc.getmaxyx(stdscr)
-    fileManager        = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), **args, is_focused=True)
+    HEIGHT,WIDTH = uc.getmaxyx(stdscr)
+    fileManager  = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), **args, is_focused=True)
     fileManager.refresh()
 
     while event != ESCAPE_KEY or fileManager.escape_event_consumed: # Main loop 
