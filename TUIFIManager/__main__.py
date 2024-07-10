@@ -7,7 +7,7 @@ from __future__ import annotations
 # sys.path.append('/home/xou/.local/lib/python3.11/site-packages/')   # TESTING WITH DAP | REMINDER: python3.XX
 import argparse
 import unicurses as uc
-from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__
+from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__, DEFAULT_BACKGROUND
 
 ESCAPE_KEY = 27
 
