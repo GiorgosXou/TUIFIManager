@@ -8,13 +8,7 @@ VISIBLE_FILENAME_LINES  = int(getenv('tuifi_visible_filename_lines', 4))
 
 
 class TUIFile:
-    profile = DEFAULT_PROFILE
     #h,w = 4,11 # 10
-    x,y         = 0,0
-    name_height = 1
-    is_selected = False
-    is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files
-
 
     def chunk_str(self, text, n):
         base = '\n'.join(text[i:i+n] for i in range(0, len(text), n))
@@ -24,6 +18,8 @@ class TUIFile:
 
     def __init__(self, name, y=0, x=0, profile=DEFAULT_PROFILE, name_color=1, is_link=False):
         assert isinstance(profile, TUIFIProfile),'profile needs to be of type class TUIFIProfile'
+        self.is_selected = False
+        self.is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files
         self.name_color  = name_color
         self.profile     = profile
         self.y           = y
