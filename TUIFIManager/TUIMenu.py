@@ -65,7 +65,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
 
     def refresh(self, redraw_parent=False):
         if self.exists:
-            super().refresh(redraw_parent=redraw_parent)
+            super().refresh(redraw_parent=redraw_parent, clear=False)
             # unicurses.wrefresh(self.parent.win)
             # # unicurses.touchwin(self.pad)
             # # unicurses.wrefresh(self.pad)
