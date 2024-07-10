@@ -140,6 +140,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def custom_warning_handler(self, message, category, filename, lineno, file=None, line=None):
+        if "g_main_context_pop_thread_default: assertion" in str(message) :return # SyntheticXDND
         self.info_label.color_pair = 3
         self.info_label.style = unicurses.A_BOLD
         if category.__name__ == SyntaxWarning.__name__:

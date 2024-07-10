@@ -18,7 +18,7 @@ import re
 
 class writerr(object):
     def write(self, data): # Ignore warning
-        if not data.endswith("g_main_context_pop_thread_default: assertion 'stack != NULL' failed\n"):
+        if "g_main_context_pop_thread_default: assertion" in data: 
             print(data)
 
 sys.stderr = writerr() # WARN: pyside\qt getting wild, cause cutie aint thread safe | VERY SuS thought
