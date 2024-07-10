@@ -36,7 +36,7 @@ def main():
     uc.mousemask    (uc.ALL_MOUSE_EVENTS | uc.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
     uc.keypad       (stdscr, True )
     uc.nodelay      (stdscr, False)
-    print           (BEGIN_MOUSE)       # Initializing mouse movement | Don't move it above because it won't work on Windows
+    uc.set_escdelay (10)
     uc.refresh      ( )
 
     # Initializing TUIFIManager
