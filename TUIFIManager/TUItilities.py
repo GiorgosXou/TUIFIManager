@@ -16,6 +16,7 @@ IS_WINDOWS     = uc.OPERATING_SYSTEM == 'Windows'
 HOME_DIR       = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
 SHELL          = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
 IS_TERMUX      = 'com.termux' in HOME_DIR
+DEFAULT_BACKGROUND  =  -1 if getenv('tuitilities_default_background') == 'True' else uc.COLOR_BLACK
 
 
 class Cd: # https://stackoverflow.com/a/16694919/11465149
@@ -81,15 +82,15 @@ class Parent:
 # C = lambda x: int((x - 0) * (1000 - 0) / (255 - 0) + 0)
 
 MY_COLOR_PAIRS = (
-    (uc.COLOR_WHITE  ,uc.COLOR_BLACK  ),
-    (uc.COLOR_YELLOW ,uc.COLOR_BLACK  ),
-    (uc.COLOR_RED    ,uc.COLOR_BLACK  ),
-    (uc.COLOR_BLUE   ,uc.COLOR_BLACK  ),
-    (uc.COLOR_GREEN  ,uc.COLOR_BLACK  ),
-    (uc.COLOR_BLACK  ,uc.COLOR_WHITE  ),
-    (uc.COLOR_BLUE   ,uc.COLOR_WHITE  ),
-    (uc.COLOR_CYAN   ,uc.COLOR_BLACK  ),
-    (uc.COLOR_BLACK  ,uc.COLOR_YELLOW ),
+    (uc.COLOR_WHITE  ,DEFAULT_BACKGROUND),
+    (uc.COLOR_YELLOW ,DEFAULT_BACKGROUND),
+    (uc.COLOR_RED    ,DEFAULT_BACKGROUND),
+    (uc.COLOR_BLUE   ,DEFAULT_BACKGROUND),
+    (uc.COLOR_GREEN  ,DEFAULT_BACKGROUND),
+    (uc.COLOR_BLACK  ,uc.COLOR_WHITE    ),
+    (uc.COLOR_BLUE   ,uc.COLOR_WHITE    ),
+    (uc.COLOR_CYAN   ,DEFAULT_BACKGROUND),
+    (uc.COLOR_BLACK  ,uc.COLOR_YELLOW   ),
 )
 
 # DIM_OFFSET    = len(MY_COLOR_PAIRS) +1

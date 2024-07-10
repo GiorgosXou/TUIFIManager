@@ -136,6 +136,12 @@ In `vim_mode` both normal and vim shortcuts work
 
 </details>
 <details>
+<summary><i>How do I enable transparency?</i></summary>
+
+> Set `tuitilities_default_background` enviroment variable to `True`
+
+</details>
+<details>
 <summary><i>How do I enable synthetic XDND?</i></summary>
 
 > set `tuifi_synth_dnd` enviroment variable to `True`. `pip install requests pynput PySide6 python-xlib`. Know it's expirimental! You'll need to adapt to it slightly, **use it as: Drag&drop + click afterwords where you want the file to be dropped.** [See also](https://github.com/GiorgosXou/TUIFIManager/discussions/92) and [this issue](https://github.com/GiorgosXou/TUIFIManager/issues/21)

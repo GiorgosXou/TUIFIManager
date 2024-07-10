@@ -28,6 +28,8 @@ def main():
     stdscr = uc.initscr()              # Global UniCurses Variable
     event  = -1
 
+    if DEFAULT_BACKGROUND:
+        uc.use_default_colors()
     uc.start_color  ( )
     uc.cbreak       ( )
     uc.noecho       ( )
