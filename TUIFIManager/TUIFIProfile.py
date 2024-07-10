@@ -208,6 +208,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃┣┫┣┛┣┓┃ \n'    # '█ █ █  █ █\n'
         ' ┗━━━━━━┛ '      # '          '
     ),5, DEFAULT_OPENER),
+    '/php':TUIFIProfile((
+        ' ╭──────╮ \n'
+        ' │┏┓┇┇┏┓│ \n'
+        ' │┣┛┣┫┣┛│ \n'
+        ' ╰━━━━━━╯ '
+    ),4, DEFAULT_OPENER),
     '/adb':TUIFIProfile((
         ' ┏━━━┏━━┓ \n'
         ' ┇┏┓┏┇┏┓┇ \n'
@@ -430,6 +436,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │▒│█┠│▒│ \n'
         ' ╰━╰━┹╰━╯ '
     ),2, DEFAULT_OPENER),
+    '/dylib':TUIFIProfile((
+        ' ╭━╭━┳╭━╮ \n'
+        ' │D│Y┠│L│ \n'
+        ' │▒│█┠│▒│ \n'
+        ' ╰━╰━┹╰━╯ '
+    ),2, DEFAULT_OPENER),
 
 
     '/rar':TUIFIProfile((
@@ -437,6 +449,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ▒▒░ ░▒▒┃ \n'
         ' ▓▓░ ░▓▓┃ \n'
         ' ▀▀───▀▀┛ '
+    ),2, DEFAULT_OPENER),
+    '/7z':TUIFIProfile((
+        ' ────┒▃▃▃ \n'
+        ' ▒▒▒┃┃▒▒▒ \n'
+        ' ▓▓▓┃┃▓▓▓ \n'
+        ' 7Z ┗┃─── '
     ),2, DEFAULT_OPENER),
     '/zip':TUIFIProfile((
         ' ▃▃▃┃┓▃▃▃ \n'
