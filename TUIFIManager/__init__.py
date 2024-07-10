@@ -31,7 +31,7 @@ PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
-SCROLL_SENSITIVITY      = int(os.getenv('tuifi_scroll_sensitivity'     , 1))
+SCROLL_SENSITIVITY      = int(os.getenv('tuifi_scroll_sensitivity'     , 2 if not IS_TERMUX else 1))
 CTRL_SCROLL_SENSITIVITY = int(os.getenv('tuifi_ctrl_scroll_sensitivity', 7))
 
 UP             = -      SCROLL_SENSITIVITY
