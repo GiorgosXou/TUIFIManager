@@ -180,8 +180,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         unicurses.clear()
 
 
-    if IS_DRAG_N_DROP:
-        def __handle_garbage(self): self.__del__()
+    def __handle_garbage(self): self.__del__()
 
     def __del__(self):
         TUIFIManager._instance_count -= 1
@@ -629,7 +628,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.cd(self.directory)
         print(END_MOUSE)
         unicurses.endwin()
-        if IS_DRAG_N_DROP: self.__handle_garbage()
+        self.__handle_garbage()
         exit()
 
 
@@ -760,7 +759,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             263                     : self.__open_previous_dir          ,
             unicurses.KEY_RESIZE    : self.__handle_resize_event        ,
             32                      : self.command                      , # SPACEBAR
-            27                      : self.__handle_garbage if IS_DRAG_N_DROP else lambda *args : None #NOTE: https://stackoverflow.com/a/14829479/11465149
+            27                      : self.__handle_garbage             , #NOTE: https://stackoverflow.com/a/14829479/11465149
         }
 
     def toggle_vim_mode(self): # TODO: Use it in rename and find or something
