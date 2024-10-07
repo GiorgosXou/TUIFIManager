@@ -153,6 +153,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃ █▄▄▄ ┃ \n'
         ' ┗━━━━━━┛ '
     ),2, DEFAULT_EDITOR),
+    '/cc':TUIFIProfile((
+        ' ┏━━━━++┓ \n'
+        ' ┇ █▀▀▀ ┃ \n'
+        ' ┃ █▄▄▄ ┃ \n'
+        ' ┗━━━━━━┛ '
+    ),2, DEFAULT_EDITOR),
     '/cpp':TUIFIProfile((
         ' ┏━━━━++┓ \n'
         ' ┇ █▀▀▀ ┃ \n'
@@ -214,6 +220,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │┣┛┣┫┣┛│ \n'
         ' ╰━━━━━━╯ '
     ),4, DEFAULT_EDITOR),
+    '/bas':TUIFIProfile(( # is Giving me 60-70s Hippie vibes font (a wider version could be better?) 
+        ' ╭┏┓┏┓┏┓╮ \n'
+        ' │┃┫┣┫┗┓│ \n'
+        ' │BAS┇┇┃│ \n'
+        ' ╰┗┛╹╹┗┛╯ '
+    ),8, DEFAULT_EDITOR),
     '/adb':TUIFIProfile((
         ' ┏━━━┏━━┓ \n'
         ' ┇┏┓┏┇┏┓┇ \n'
@@ -714,6 +726,18 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┣┓░▃┏▓▆┇ \n'
         ' ┗━━━━━━┛ '
     ),4, DEFAULT_OPENER),
+    '/raw':TUIFIProfile(( # this gives me an-essence\vides of an old "raw"-filmstrip company's logo... it gives me XYZ-file-extension-vibes too...
+        ' ┏┓▄┏━━━┓ \n'
+        ' ┇┇▓┇RAW┃ \n'
+        ' ┃┇░┇┏━━┫ \n'
+        ' ┗━•━┛━━┛ '
+    ),1, DEFAULT_OPENER),
+    '/svg':TUIFIProfile(( # ... Aahh.. it feels nice for svg too (until I find a better one because those 2 might be in a same photoshop-path and then feel strange on the eye)
+        ' ┏┓▄┏━━━┓ \n'
+        ' ┇┇▓┇SVG┃ \n'
+        ' ┃┇░┇┏━━┫ \n'
+        ' ┗━•━┛━━┛ '
+    ),1, DEFAULT_OPENER),
 
 
     '/sqlite3':TUIFIProfile((
@@ -734,6 +758,33 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇▓░ ┣┻▄┃ \n'
         ' ┗━━ ▀  ┛ '
     ),8, DEFAULT_EDITOR),
+    '/kch':TUIFIProfile(( # NOTE: Profiles of NoSQL databases seems intuative to be flipped
+        '  ━━━━━━┓ \n'
+        ' ┇ ▄┓KCH┃ \n'
+        ' ┃▄┻┫░▓█┇ \n'
+        ' ┗━ ▀ ━━┛ '
+    ),8, DEFAULT_EDITOR),
+    '/kct':TUIFIProfile(( # B+Tree
+        '  ━━━━━━┓ \n'
+        ' ┇ ▄┓B+T┃ \n'
+        ' ┃▄┻┫░▓█┇ \n'
+        ' ┗━ ▀ ━━┛ '
+    ),8, DEFAULT_EDITOR),
+    '/gdbm':TUIFIProfile((
+        '  ━━━━━━┓ \n'
+        ' ┇ ▄┓GDB┃ \n'
+        ' ┃▄┻┫░▓█┇ \n'
+        ' ┗━ ▀ ━━┛ '
+    ),8, DEFAULT_EDITOR),
+
+
+    '/car':TUIFIProfile((
+        ' ┏━━━┓━━┓ \n'
+        ' ┇CAR┇▄┇┇ \n'
+        ' ━ ━ ━┫┇┇ \n'
+        ' ┗━━━ ▀ ┛ '
+    ),3, DEFAULT_EDITOR),
+
 
 
     '/tuifi':TUIFIProfile((
