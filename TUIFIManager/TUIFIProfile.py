@@ -127,7 +127,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃█▓░┣╋╋┫ \n'
         ' ┃CSV┣╋╋┫ \n'
         ' ╰━━━┻┻┻┛ '
-    ),1, DEFAULT_OPENER),
+    ),1, DEFAULT_EDITOR),
 
     '/ino':TUIFIProfile((
         ' ┏┳┳┳━━━╮ \n'
