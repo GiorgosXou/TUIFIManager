@@ -744,19 +744,19 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┏━━━━━━  \n'
         ' ┃SQL┏▄ ┇ \n'
         ' ┇█▓░┣┻▄┃ \n'
-        ' ┗━━ ▀  ┛ '
+        ' ┗━━ ▀ ━┛ '
     ),8, DEFAULT_EDITOR),
     '/mdf':TUIFIProfile((
         ' ┏━━━━━━  \n'
         ' ┃MDF┏▄ ┇ \n'
         ' ┇█▓░┣┻▄┃ \n'
-        ' ┗━━ ▀  ┛ '
+        ' ┗━━ ▀ ━┛ '
     ),8, DEFAULT_EDITOR),
     '/db':TUIFIProfile((
         ' ┏━━┳━━━  \n'
         ' ┃DB┇┏▄ ┇ \n'
         ' ┇▓░ ┣┻▄┃ \n'
-        ' ┗━━ ▀  ┛ '
+        ' ┗━━ ▀ ━┛ '
     ),8, DEFAULT_EDITOR),
     '/kch':TUIFIProfile(( # NOTE: Profiles of NoSQL databases seems intuative to be flipped
         '  ━━━━━━┓ \n'
