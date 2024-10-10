@@ -983,6 +983,13 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             fp.write(json.dumps(TUIFIManager.markers))
 
 
+    def __mark_file_as_currently_clicked(self, i):
+        self.__index_of_clicked_file   = i
+        self.__clicked_file            = self.files[i]
+        self.__mouse_btn1_pressed_file = self.__clicked_file
+        self.__pre_pressed_file        = self.__clicked_file
+
+
     def clear_find_results(self):
         self.is_in_find_mode                = False
         self.__change_escape_event_consumed = True
@@ -1012,6 +1019,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                         return False
                     self.__index_of_clicked_file = 1
                     self.__clicked_file          = self.files[1]
+                if not len(self.files) == 1 and not self.__clicked_file: # meaning at least 2 files exist and we haven't navigated to the previous folder while on search mode
+                    self.__mark_file_as_currently_clicked(1)
+                    self.select(self.__clicked_file)
                 self.__set_label_text('[NORMAL]')
                 return False
             self.clear_find_results()
@@ -1022,14 +1032,17 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             else:
                 self.clear_find_results()
                 return True
-        elif event in self.__arrow_keys or unicurses.CTRL(event) == event:
+        elif event in self.__arrow_keys or unicurses.CTRL(event) == event or event in (10, unicurses.KEY_ENTER): # unicurses.CTRL(event) seems to capture KEY_ENTER but just in case i'll include KEY_ENTER too...
             i = 0 if len(self.files) == 1 else 1
             self.__change_escape_event_consumed = True
             self.is_in_find_mode                = False
-            self.__index_of_clicked_file        = i
-            self.__clicked_file                 = self.files[i]
+            if not self.__clicked_file: # meaning if enter was pressed and something opened then don't __mark_file_as_currently_clicked because it was handled by another method (eg. when navigating to the previous folder)
+                self.__mark_file_as_currently_clicked(i) # I need to surppress when ".."
+                self.select(self.__clicked_file)
             return False
-        elif event in (unicurses.KEY_ENTER,10,unicurses.KEY_RESIZE,unicurses.KEY_MOUSE,unicurses.KEY_HOME , unicurses.KEY_DC) or unicurses.keyname(event) in ('kxOUT','kxIN'): # Ignore this shit :P
+        elif event == unicurses.KEY_MOUSE:
+            return False # but handle this case at handle_mouse_events > above self.open(self.__clicked_file)
+        elif event in (unicurses.KEY_RESIZE,unicurses.KEY_HOME , unicurses.KEY_DC) or unicurses.keyname(event) in ('kxOUT','kxIN'): # Ignore this shit :P
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
@@ -1038,8 +1051,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.find_file(self.__temp_findname)
         self.__set_label_text(f'SEARCH: {self.__temp_findname}')
         i = 0 if len(self.files) == 1 else 1
-        self.__clicked_file          = self.files[i]
-        self.__index_of_clicked_file = i
+        self.__mark_file_as_currently_clicked(i)
 
         self.scroll_to_file(self.__clicked_file, True, True)
         return True
@@ -1406,6 +1418,8 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
                         self.select(self.__mouse_btn1_pressed_file )
                     if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED) and (self.__pre_clicked_file == self.__clicked_file)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
+                        self.is_in_find_mode       = False # due to __is_valid_file 
+                        self.escape_event_consumed = False
                         self.open(self.__clicked_file)
                 elif self.__clicked_file and self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file == self.__clicked_file and not self.__clicked_file.is_selected: # this `and not self.__clicked_file.is_selected:` was needed because __clicked_file isn't marked as selected until "drop event" ends | tldr prevents from dropping files into itself
                     if os.path.isdir(self.directory + sep + self.__clicked_file.name) and self.has_write_access(self.directory) and self.has_write_access(self.directory + sep + self.__clicked_file.name):
