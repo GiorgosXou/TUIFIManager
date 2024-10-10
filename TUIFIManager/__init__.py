@@ -1189,7 +1189,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             self.is_in_command_mode = False
             self.__temp_findname    = ''
             self.__set_label_text('[NORMAL]')
-        elif event == unicurses.KEY_MOUSE or unicurses.keyname(event) in ('kxOUT','kxIN'):
+        elif event in (unicurses.KEY_MOUSE, unicurses.KEY_RESIZE) or unicurses.keyname(event) in ('kxOUT','kxIN'):
             return False
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
