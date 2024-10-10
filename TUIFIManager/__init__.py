@@ -12,8 +12,8 @@ from           math import log10
 from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
-from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND
-from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER
+from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND, has_custom_colorscheme # removing DEFAULT_BACKGROUND results on not running.... SuS...
+from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, load_theme
 import   subprocess
 import    unicurses
 import     warnings
@@ -39,7 +39,6 @@ DOWN           =        SCROLL_SENSITIVITY
 CTRL_UP        = - CTRL_SCROLL_SENSITIVITY
 CTRL_DOWN      =   CTRL_SCROLL_SENSITIVITY
 
-CONFIG_PATH    = os.getenv('tuifi_config_path',f'{HOME_DIR}{sep}.config{sep}tuifi')
 STTY_EXISTS    = shutil.which('stty')
 INIT_DIRECTORY = os.getcwd()
 
@@ -105,13 +104,14 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, cd=False, show_hidden=False):
+        load_theme()
         TUIFIManager._instance_count += 1
         self.__init_variables()
 
         if has_label:
             height -= 1
             self.labelpad         = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
-            self.info_label       = Label(self.labelpad,0, 0, f' TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False)
+            self.info_label       = Label(self.labelpad,0, 0, f' TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, 9)
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
             warnings.showwarning  = self.custom_warning_handler
 

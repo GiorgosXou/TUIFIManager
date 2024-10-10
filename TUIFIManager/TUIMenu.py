@@ -43,7 +43,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
             unicurses.delwin(self.pad)
 
         self.pad = unicurses.newpad(self.height, self.width) #unicurses.newwin(len(self.items)*2+1, self.width, self.y+offy , self.x+offx )
-        unicurses.wbkgd(self.pad,unicurses.COLOR_PAIR(1))
+        unicurses.wbkgd(self.pad,unicurses.COLOR_PAIR(3))
         i = 1
         # unicurses.mvwaddwstr(self.pad,0,0,'╭' + ('─'*(self.width-2)) + '╮')
         for item in self.items:
@@ -79,16 +79,16 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
             if self.__it == len(self.items):
                 self.delete()
                 return True
-            unicurses.mvwchgat(self.pad, self.__it   , 1, self.width -2, unicurses.A_BOLD, 1)
-            unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 6)
+            unicurses.mvwchgat(self.pad, self.__it   , 1, self.width -2, unicurses.A_BOLD, 3)
+            unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 1)
             self.__it +=1
         elif event == unicurses.KEY_UP:
             if self.__it <= 1:
                 self.delete()
                 return True
             self.__it -=1
-            unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 1)
-            unicurses.mvwchgat(self.pad, self.__it , 1, self.width -2, unicurses.A_BOLD, 6)
+            unicurses.mvwchgat(self.pad, self.__it +1, 1, self.width -2, unicurses.A_BOLD, 3)
+            unicurses.mvwchgat(self.pad, self.__it , 1, self.width -2, unicurses.A_BOLD, 1)
         elif event in (unicurses.KEY_ENTER,10):
             i = self.__it -1 
             self.delete()
@@ -104,8 +104,8 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
         if self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height:
             relative_y = y - self.y -1
             if self.__y != y and self.height -2 > relative_y >= 0:
-                unicurses.mvwchgat(self.pad, y-self.y , 1, self.width -2, unicurses.A_BOLD | unicurses.A_ITALIC, 6)
-                unicurses.mvwchgat(self.pad, self.__y-self.y,1, self.width -2, unicurses.A_BOLD, 1)
+                unicurses.mvwchgat(self.pad, y-self.y , 1, self.width -2, unicurses.A_BOLD | unicurses.A_ITALIC, 1)
+                unicurses.mvwchgat(self.pad, self.__y-self.y,1, self.width -2, unicurses.A_BOLD, 3)
                 # unicurses.mvwchgat(self.pad, self.__x , 1, self.width -2, unicurses.A_BOLD, 1)
             if bstate & unicurses.BUTTON1_RELEASED:
                 if self.__x != x or self.__y != y : return True

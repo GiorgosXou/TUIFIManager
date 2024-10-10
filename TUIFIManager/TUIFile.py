@@ -1,5 +1,6 @@
 import unicurses
 from .TUIFIProfile import TUIFIProfile, LINK_SYMBOL, LINK_SYMBOL_COLOR, DEFAULT_PROFILE
+from .TUItilities  import DIM, BLD
 from os import getenv
 
 
@@ -16,7 +17,7 @@ class TUIFile:
         return base
 
 
-    def __init__(self, name, y=0, x=0, profile=DEFAULT_PROFILE, name_color=1, is_link=False):
+    def __init__(self, name, y=0, x=0, profile=DEFAULT_PROFILE, name_color=3, is_link=False):
         assert isinstance(profile, TUIFIProfile),'profile needs to be of type class TUIFIProfile'
         self.is_selected = False
         self.is_cut      = False # This is pointless for now, until i find a way of efficiently drawing/managing cuted  files
@@ -51,7 +52,7 @@ class TUIFile:
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ' ' * len(ln)) # A_BOLD | 
         for offY, ln in enumerate(self.chunk_str(name,self.profile.width).split('\n')[:VISIBLE_FILENAME_LINES], self.profile.height):
             unicurses.mvwaddwstr(atpad,offY + self.y,self.x, ln, unicurses.COLOR_PAIR(self.name_color ) | attr) # A_BOLD | 
-        unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6 )
+        unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 1 )
 
 
     def __draw_file(self, atpad):
@@ -75,13 +76,13 @@ class TUIFile:
 
         for offY, ln in enumerate(self.chunk_str(self.name,self.profile.width).split('\n')[:VISIBLE_FILENAME_LINES], self.profile.height):
             unicurses.mvwchgat(atpad,offY + self.y, self.x, len(ln), effect, color_map)
-        # unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 1, unicurses.A_NORMAL, 6 )
+        # unicurses.mvwchgat(atpad,self.y + self.profile.height + y, self.x +x, 3, unicurses.A_NORMAL, 6 )
 
 
-    def reverse_effect   (self, atpad, redraw_icon=False, include_name=False): self.__perform_effect(atpad, unicurses.A_REVERSE, 7                      , redraw_icon, include_name)
-    def dim_effect       (self, atpad, redraw_icon=False, include_name=False): self.__perform_effect(atpad, unicurses.A_DIM    , 1                      , redraw_icon, include_name)
-    def dim_color_effect (self, atpad,                    include_name=False): self.__perform_effect(atpad, unicurses.A_DIM    , self.profile.color_map , False      , include_name)
-    def bold_color_effect(self, atpad,                    include_name=False): self.__perform_effect(atpad, unicurses.A_BOLD   , self.profile.color_map , False      , include_name)
+    def reverse_effect   (self, atpad, redraw_icon=False, include_name=False): self.__perform_effect(atpad, unicurses.A_REVERSE, 2 , redraw_icon, include_name)
+    def dim_effect       (self, atpad, redraw_icon=False, include_name=False): self.__perform_effect(atpad, *DIM(3)               , redraw_icon, include_name) # I think this was supposed to be used for "cutted", I might remove it
+    def dim_color_effect (self, atpad,                    include_name=False): self.__perform_effect(atpad, *DIM(self.profile.color_map), False, include_name)
+    def bold_color_effect(self, atpad,                    include_name=False): self.__perform_effect(atpad, *BLD(self.profile.color_map), False, include_name)
              
 
     def draw_effect(self,atpad, y=None, x=None, redraw_icon=False, effect=None, include_name=True):

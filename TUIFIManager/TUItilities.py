@@ -4,6 +4,7 @@ TUItilities is a set of TUI components and terminal utilities in ALPHA version (
 from time import sleep
 import   unicurses as uc
 from   dataclasses import dataclass
+from       os.path import isfile
 from         pipes import quote
 from            os import getenv, getcwd
 
@@ -83,22 +84,87 @@ class Parent:
 # C = lambda x: int((x - 0) * (1000 - 0) / (255 - 0) + 0)
 
 MY_COLOR_PAIRS = (
+    (uc.COLOR_BLACK  ,uc.COLOR_WHITE    ),
+    (uc.COLOR_BLUE   ,uc.COLOR_WHITE    ),
     (uc.COLOR_WHITE  ,DEFAULT_BACKGROUND),
     (uc.COLOR_YELLOW ,DEFAULT_BACKGROUND),
     (uc.COLOR_RED    ,DEFAULT_BACKGROUND),
     (uc.COLOR_BLUE   ,DEFAULT_BACKGROUND),
     (uc.COLOR_GREEN  ,DEFAULT_BACKGROUND),
-    (uc.COLOR_BLACK  ,uc.COLOR_WHITE    ),
-    (uc.COLOR_BLUE   ,uc.COLOR_WHITE    ),
     (uc.COLOR_CYAN   ,DEFAULT_BACKGROUND),
-    (uc.COLOR_BLACK  ,uc.COLOR_YELLOW   ),
+    (uc.COLOR_YELLOW ,DEFAULT_BACKGROUND), # I'll keep it extra for ui
 )
 
-# DIM_OFFSET    = len(MY_COLOR_PAIRS) +1
-# BRIGHT_OFFSET = len(MY_COLOR_PAIRS) *2 +1
+# Might need  TODO:  setters for dimming and bold effects because of this custom color theming thing....
+EFFECTS_OFFSET = 84 # (255-1) / 3 where 254 = Available colors minus the 0 one
+DIM__OFFSET = EFFECTS_OFFSET*2
+BOLD_OFFSET = EFFECTS_OFFSET
+
+custom_colorscheme = False
+
+
+def has_custom_colorscheme():
+    return custom_colorscheme
+
+
+def __DIM1 (pair_num): return uc.A_NORMAL , pair_num + DIM__OFFSET # DIM  FOR CUSTOM COLORSCHEMES
+def __BOLD1(pair_num): return uc.A_BOLD   , pair_num + BOLD_OFFSET # BOLD FOR CUSTOM COLORSCHEMES
+def __DIM2 (pair_num): return uc.A_DIM    , pair_num
+def __BOLD2(pair_num): return uc.A_BOLD   , pair_num
+
+__dim  = __DIM2
+__bold = __BOLD2
+
+def DIM(pair_num): return __dim (pair_num)
+def BLD(pair_num): return __bold(pair_num) # NOTE: BRIGHT BOLD NOT JUST BOLD
+
+
+def color_pair_with_effect2(pair, style): return uc.color_pair(pair) | style
+def color_pair_with_effect1(pair, style): # you can't have both bold and dim so i don't count for it
+    if (style | uc.A_BOLD == style): return uc.color_pair(pair) | style # (uc.color_pair(pair+BOLD_OFFSET) | (style)) # we want A_BOLD so we don't subtract it
+    if (style | uc.A_DIM  == style): return (uc.color_pair(pair+DIM__OFFSET) | (style-uc.A_DIM)) 
+
+color_pair_with_effect = color_pair_with_effect2
 
 
 initialized = False # Initializing color pairs of (FOREGROUND, BACKGROUND) colors.
+def toggle_colorsheme_initialization():
+    global initialized , custom_colorscheme
+    initialized = not initialized
+    custom_colorscheme = not custom_colorscheme
+
+
+def init_colorscheme(colorscheme_path):
+    if not isfile(colorscheme_path) or custom_colorscheme :return # meaning if colorscheme_path doesn't exist OR a custom_colorscheme has already been initialized by another app
+    toggle_colorsheme_initialization()
+    with open(colorscheme_path, 'r') as file:
+        global __dim, __bold, color_pair_with_effect
+        color_pair_with_effect = color_pair_with_effect1
+        __dim  = __DIM1
+        __bold = __BOLD1
+        i = 0
+        r,g,b,rgb = None, None, None, None
+        bold_i, dim__i = None, None
+        for ln in (file):
+            rgb = ln.strip().split(',')
+            r,g,b = int(rgb[0]), int(rgb[1]), int(rgb[2]) 
+            bold_i = i+BOLD_OFFSET
+            dim__i = i+DIM__OFFSET
+            uc.init_color(dim__i, r-200 if r-200 >= 0 else 0,g-200 if g-200 >= 0 else 0,b-200 if b-200 >= 0 else 0) # A_DIM
+            # uc.init_color(dim__i, r-200 ,g-200 ,b-200 ) # A_DIM
+            uc.init_color(i, r, g, b)
+            uc.init_color(bold_i, r+200 if r+200 <= 1000 else 1000,g+200 if g+200 <= 1000 else 1000,b+200 if b+200 <= 1000 else 1000) # A_BOLD
+            # uc.init_color(bold_i, r+200 ,g+200 ,b+200) # A_BOLD
+            uc.init_pair(i  ,i  ,DEFAULT_BACKGROUND)
+            uc.init_pair(bold_i,bold_i,DEFAULT_BACKGROUND)
+            uc.init_pair(dim__i,dim__i,DEFAULT_BACKGROUND)
+            i+=1
+        f1,_ = uc.pair_content(1)
+        f2,_ = uc.pair_content(2)
+        uc.init_pair(1  ,f1  , 10)
+        uc.init_pair(2  ,f2  , 11)
+
+
 def initialize_colors():
     global initialized 
     if initialized: return
@@ -463,10 +529,10 @@ class Drawable(Component):
 
 
 class Label(Drawable): # TODO: make components a type of Drawables\components rather than a WindowPad
-    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False ) -> None:
+    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
         super().__init__(winpad, y, x, height, width if width else len(text), anchor)
         self.style      = uc.A_NORMAL
-        self.color_pair = 2
+        self.color_pair = color
         self.__text     = text 
         self.wrap_text  = wrap_text
         self.maxheight  = 1 # WARN: this is temporary maybe?
@@ -493,8 +559,8 @@ class Label(Drawable): # TODO: make components a type of Drawables\components ra
             x = 0
             w = self.width +self.winpad.x 
             text = text[-self.winpad.x:] 
-        uc.mvwaddstr(self.parent.win,self.y,x, ' '*w, uc.color_pair(self.color_pair) | self.style )
-        uc.mvwaddstr(self.parent.win,self.y,x, text, uc.color_pair(self.color_pair) | self.style )
+        uc.mvwaddstr(self.parent.win,self.y,x, ' '*w, color_pair_with_effect(self.color_pair , self.style ))
+        uc.mvwaddstr(self.parent.win,self.y,x, text , color_pair_with_effect(self.color_pair , self.style ))
 
 
     @text.setter
