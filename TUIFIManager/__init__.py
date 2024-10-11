@@ -1334,7 +1334,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
     def __open_clicked_file(self):
-        return self.open(self.__clicked_file)
+        self.open(self.__clicked_file)
 
 
     __menu_select_actions = (
