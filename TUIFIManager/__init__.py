@@ -155,6 +155,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def refresh(self):
+        if self.menu.exists:
+            self.menu.refresh()
+            return
         super().refresh(clear=False)
         if self.info_label: self.labelpad.refresh()
         self.menu.refresh()
