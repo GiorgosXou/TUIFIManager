@@ -923,7 +923,8 @@ def setup_profiles():
 
 def load_theme():
     if not TUIFI_THEME: return
-    init_colorscheme(f'{THEME_PATH}COLORS.csv')
+    init_colorscheme(f'{THEME_PATH}COLORS.csv')                    # Check if COLORS exist to init else ...
+    init_colorscheme(f'{THEME_PATH}LIGHT_COLORS.csv', light=True) # Check if LIGHT_COLORS exist instead
     setup_profiles()
 
 

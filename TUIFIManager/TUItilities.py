@@ -134,10 +134,15 @@ def toggle_colorsheme_initialization():
     custom_colorscheme = not custom_colorscheme
 
 
-def init_colorscheme(colorscheme_path):
+def init_colorscheme(colorscheme_path, light=False):
     if not isfile(colorscheme_path) or custom_colorscheme :return # meaning if colorscheme_path doesn't exist OR a custom_colorscheme has already been initialized by another app
     toggle_colorsheme_initialization()
     with open(colorscheme_path, 'r') as file:
+        bold_offset = BOLD_OFFSET
+        dim__offset = DIM__OFFSET
+        if light:
+            bold_offset = DIM__OFFSET
+            dim__offset = BOLD_OFFSET
         global __dim, __bold, color_pair_with_effect
         color_pair_with_effect = color_pair_with_effect1
         __dim  = __DIM1
@@ -148,8 +153,8 @@ def init_colorscheme(colorscheme_path):
         for ln in (file):
             rgb = ln.strip().split(',')
             r,g,b = int(rgb[0]), int(rgb[1]), int(rgb[2]) 
-            bold_i = i+BOLD_OFFSET
-            dim__i = i+DIM__OFFSET
+            bold_i = i+bold_offset
+            dim__i = i+dim__offset
             uc.init_color(dim__i, r-200 if r-200 >= 0 else 0,g-200 if g-200 >= 0 else 0,b-200 if b-200 >= 0 else 0) # A_DIM
             # uc.init_color(dim__i, r-200 ,g-200 ,b-200 ) # A_DIM
             uc.init_color(i, r, g, b)
