@@ -14,6 +14,7 @@ from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
 from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND, has_custom_colorscheme # removing DEFAULT_BACKGROUND results on not running.... SuS...
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, load_theme
+from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, TUIFI_THEME, load_theme
 import   subprocess
 import    unicurses
 import     warnings
@@ -111,7 +112,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if has_label:
             height -= 1
             self.labelpad         = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
-            self.info_label       = Label(self.labelpad,0, 0, f' TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, 9)
+            self.info_label       = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, 9)
             self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
             warnings.showwarning  = self.custom_warning_handler
 

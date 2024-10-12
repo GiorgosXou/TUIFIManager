@@ -96,7 +96,9 @@ MY_COLOR_PAIRS = (
 )
 
 # Might need  TODO:  setters for dimming and bold effects because of this custom color theming thing....
-EFFECTS_OFFSET = 84 # (255-1) / 3 where 254 = Available colors minus the 0 one
+
+# due to https://invisible-island.net/ncurses/man/curs_color.3x.html#:~:text=default%20colors%20are%0A%20%20%20%20%20%20%20%20%20%20%20not%20allowed%20here.
+EFFECTS_OFFSET = 82 # ^^^ (255-8) / 3 where 247 = Available colors... and for a good reason, if you use A_BOLD with an initialized color between 0-7 you get the wrong color in some terminal eg. XTerm, Kitty... but not alacritty
 DIM__OFFSET = EFFECTS_OFFSET*2
 BOLD_OFFSET = EFFECTS_OFFSET
 
@@ -119,10 +121,11 @@ def DIM(pair_num): return __dim (pair_num)
 def BLD(pair_num): return __bold(pair_num) # NOTE: BRIGHT BOLD NOT JUST BOLD
 
 
-def color_pair_with_effect2(pair, style): return uc.color_pair(pair) | style
+def color_pair_with_effect2(pair, style): return uc.COLOR_PAIR(pair) | style # this is when theres no custom_colorscheme
 def color_pair_with_effect1(pair, style): # you can't have both bold and dim so i don't count for it
-    if (style | uc.A_BOLD == style): return uc.color_pair(pair) | style # (uc.color_pair(pair+BOLD_OFFSET) | (style)) # we want A_BOLD so we don't subtract it
-    if (style | uc.A_DIM  == style): return (uc.color_pair(pair+DIM__OFFSET) | (style-uc.A_DIM)) 
+    # if (style | uc.A_BOLD == style): return uc.COLOR_PAIR(pair) | style # (uc.COLOR_PAIR(pair+BOLD_OFFSET) | (style)) # we want A_BOLD so we don't subtract it
+    if (style | uc.A_DIM  == style): return (uc.COLOR_PAIR(pair+DIM__OFFSET) | (style-uc.A_DIM))
+    return uc.color_pair(pair) | style
 
 color_pair_with_effect = color_pair_with_effect2
 
@@ -147,27 +150,25 @@ def init_colorscheme(colorscheme_path, light=False):
         color_pair_with_effect = color_pair_with_effect1
         __dim  = __DIM1
         __bold = __BOLD1
-        i = 0
-        r,g,b,rgb = None, None, None, None
-        bold_i, dim__i = None, None
-        for ln in (file):
+
+        # Initialize background at 0
+        rgb = file.__next__().strip().split(',')
+        r,g,b = int(rgb[0]), int(rgb[1]), int(rgb[2])
+        uc.init_color(uc.COLOR_BLACK, r, g, b) # which is the uc.COLOR_BLACK
+
+        for i, ln in enumerate(file, start=8):
             rgb = ln.strip().split(',')
             r,g,b = int(rgb[0]), int(rgb[1]), int(rgb[2]) 
-            bold_i = i+bold_offset
-            dim__i = i+dim__offset
-            uc.init_color(dim__i, r-200 if r-200 >= 0 else 0,g-200 if g-200 >= 0 else 0,b-200 if b-200 >= 0 else 0) # A_DIM
-            # uc.init_color(dim__i, r-200 ,g-200 ,b-200 ) # A_DIM
             uc.init_color(i, r, g, b)
-            uc.init_color(bold_i, r+200 if r+200 <= 1000 else 1000,g+200 if g+200 <= 1000 else 1000,b+200 if b+200 <= 1000 else 1000) # A_BOLD
-            # uc.init_color(bold_i, r+200 ,g+200 ,b+200) # A_BOLD
-            uc.init_pair(i  ,i  ,DEFAULT_BACKGROUND)
-            uc.init_pair(bold_i,bold_i,DEFAULT_BACKGROUND)
-            uc.init_pair(dim__i,dim__i,DEFAULT_BACKGROUND)
-            i+=1
+            uc.init_color(i+dim__offset, r-200 if r-200 >= 0 else 0,g-200 if g-200 >= 0 else 0,b-200 if b-200 >= 0 else 0) # A_DIM
+            uc.init_color(i+bold_offset, r+200 if r+200 <= 1000 else 1000,g+200 if g+200 <= 1000 else 1000,b+200 if b+200 <= 1000 else 1000) # A_BOLD
+            uc.init_pair(i-7 ,i  ,DEFAULT_BACKGROUND)
+            uc.init_pair(i+bold_offset-7,i+bold_offset,DEFAULT_BACKGROUND)
+            uc.init_pair(i+dim__offset-7,i+dim__offset,DEFAULT_BACKGROUND)
         f1,_ = uc.pair_content(1)
         f2,_ = uc.pair_content(2)
-        uc.init_pair(1  ,f1  , 10)
-        uc.init_pair(2  ,f2  , 11)
+        uc.init_pair(1  ,f1  , 17)
+        uc.init_pair(2  ,f2  , 18)
 
 
 def initialize_colors():
