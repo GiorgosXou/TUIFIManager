@@ -35,8 +35,8 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
 
         parent_width  = unicurses.getmaxx(self.parent.win)
         parent_height = unicurses.getmaxy(self.parent.win)
-        if self.x + self.width  > parent_width : self.x -= self.width
-        if self.y + self.height > parent_height: self.y -= self.height
+        if self.x + self.width  > parent_width : self.position.x -= self.width - 1
+        if self.y + self.height > parent_height: self.position.y -= self.height - 1
         if self.y < 0 : self.y = 0
 
         if self.exists:
@@ -101,7 +101,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
     __x = __y = 0
     def handle_mouse_events(self, id, x, y, z, bstate):
         if not self.exists: return False
-        if self.x <= x <= self.x + self.width and self.y <= y <= self.y + self.height:
+        if self.x <= x < self.x + self.width and self.y <= y < self.y + self.height:
             relative_y = y - self.y -1
             if self.__y != y and self.height -2 > relative_y >= 0:
                 unicurses.mvwchgat(self.pad, y-self.y , 1, self.width -2, unicurses.A_BOLD | unicurses.A_ITALIC, 1)
