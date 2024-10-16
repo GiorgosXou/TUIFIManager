@@ -3,10 +3,16 @@ TUItilities is a set of TUI components and terminal utilities in ALPHA version (
 """
 from time import sleep
 import   unicurses as uc
+import   threading 
+import   threading
 from   dataclasses import dataclass
 from       os.path import isfile
 from         pipes import quote
 from            os import getenv, getcwd
+
+
+lock = threading.Lock()
+
 
 # ======================== ========== ========================
 #                          -UTILITIES                         
@@ -456,6 +462,7 @@ class WindowPad(Component):
 
 
     def refresh(self, redraw_parent=False, clear=True):
+        lock.acquire_lock()
         if not self.visibility: 
             if redraw_parent: # when visibility changes it calls refresh with redraw_parent=True
                 uc.touchwin(self.parent.win) # Do i need this? YES
@@ -472,6 +479,7 @@ class WindowPad(Component):
         uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
         uc.prefresh(self.pad, self.position.iy, self.position.ix, self.position.y, self.position.x, self.position.y + self.size.height -1, self.position.x + self.size.width -1)
         super().refresh()
+        lock.release()
 
 
     def _in_range(self):
