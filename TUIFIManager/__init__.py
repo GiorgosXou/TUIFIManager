@@ -1000,6 +1000,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__temp_findname                = ''
         self.__clicked_file                 = self.files[0] # https://github.com/GiorgosXou/TUIFIManager/issues/25
         self.__index_of_clicked_file        = 0
+        self.__set_label_text('[NORMAL]')
         self.load_files(self.directory)
         self.draw() # i might want to scroll_to_file after that here too? or nah..
 
