@@ -1172,11 +1172,91 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 if   character == 'p': 
                     self.__set_label_text('[COPIED] File-path to clipboard'      if clipboard(str(self.directory+sep+self.__clicked_file.name if self.__clicked_file else self.directory)) else 'FAILD TO COPY TO CLIPBOARD')
                     self.__temp_findname = '' # to prevent blocking command mode I include those 2 lines 2 times, once here ...
-                    self.consume_escape_once()
+                    self.__ignore_escape()
+            return False
+        if self.__temp_findname.startswith('f'):
+            if len(self.__temp_findname) == 2:
+                at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
+                for i, tfl in enumerate(self.files[at:], start=at):
+                    if tfl.name[0] in (character, character.upper()):
+                        self.__scroll_to_file(self.files[i], True, True)
+                        self.__mark_file_as_currently_clicked(i)
+                        self.__set_label_on_file_selection(i,tfl)
+                        self.__ignore_escape()
+                        return False
+                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
+                self.__ignore_escape()
+            return False
+        if self.__temp_findname.startswith('F'):
+            if len(self.__temp_findname) == 2:
+                at = self.__index_of_clicked_file if self.__index_of_clicked_file else 0
+                for i, tfl in enumerate(reversed(self.files[:at])):
+                    if tfl.name[0] in (character, character.upper()):
+                        i = at-i-1
+                        self.__scroll_to_file(self.files[i], True, True)
+                        self.__mark_file_as_currently_clicked(i)
+                        self.__set_label_on_file_selection(i,self.__clicked_file)
+                        self.__ignore_escape()
+                        return False
+                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
+                self.__ignore_escape()
                 elif character == 'd': 
                     self.__set_label_text('[COPIED] Directory-path to clipboard' if clipboard(str(self.directory)) else 'FAILD TO COPY TO CLIPBOARD')
                     self.__temp_findname = '' # ... and once here
-                    self.consume_escape_once()
+                    self.__ignore_escape()
+            return False
+        if self.__temp_findname.startswith('f'):
+            if len(self.__temp_findname) == 2:
+                at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
+                for i, tfl in enumerate(self.files[at:], start=at):
+                    if tfl.name[0] in (character, character.upper()):
+                        self.__scroll_to_file(self.files[i], True, True)
+                        self.__mark_file_as_currently_clicked(i)
+                        self.__set_label_on_file_selection(i,tfl)
+                        self.__ignore_escape()
+                        return False
+                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
+                self.__ignore_escape()
+            return False
+        if self.__temp_findname.startswith('F'):
+            if len(self.__temp_findname) == 2:
+                at = self.__index_of_clicked_file if self.__index_of_clicked_file else 0
+                for i, tfl in enumerate(reversed(self.files[:at])):
+                    if tfl.name[0] in (character, character.upper()):
+                        i = at-i-1
+                        self.__scroll_to_file(self.files[i], True, True)
+                        self.__mark_file_as_currently_clicked(i)
+                        self.__set_label_on_file_selection(i,self.__clicked_file)
+                        self.__ignore_escape()
+                        return False
+                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
+                self.__ignore_escape()
+        if self.__temp_findname.startswith('f'):
+            if len(self.__temp_findname) == 2:
+                at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
+                for i, tfl in enumerate(self.files[at:], start=at):
+                    if tfl.name[0] in (character, character.upper()): 
+                        self.__scroll_to_file(self.files[i], True, True)
+                        self.__mark_file_as_currently_clicked(i)
+                        self.__set_label_on_file_selection(i,tfl)
+                        self.__ignore_escape()
+                        return False
+                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
+                self.__ignore_escape()
+            return False
+        if self.__temp_findname.startswith('F'):
+            if len(self.__temp_findname) == 2:
+                at = self.__index_of_clicked_file if self.__index_of_clicked_file else 0
+                for i, tfl in enumerate(reversed(self.files[:at])):
+                    if tfl.name[0] in (character, character.upper()): 
+                        i = at-i-1
+                        self.__scroll_to_file(self.files[i], True, True)
+                        self.__mark_file_as_currently_clicked(i)
+                        self.__set_label_on_file_selection(i,self.__clicked_file)
+                        self.__ignore_escape()
+                        return False
+                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
+                self.__ignore_escape()
             return False
         if self.__temp_findname.startswith('m'):
             self.__set_label_text('[MARKER]')
