@@ -131,12 +131,12 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
         self.properties          = TUIProps ()
         self.menu                = TUIMenu  (on_choice=self.on_menu_choice ,
-            items=[
+            items=(
                 'Open       │ ENTER' ,
                 'Cut        │ CTRL+X',
                 'Copy       │ CTRL+C',
                 'Paste      │ CTRL+V',
-                'Delete     │ DEL'   ,
+                'Delete     │ DELETE',
                 'Rename     │ CTRL+R',
                 'Reload     │ KEY_F5',
                 'New File   │ CTRL+W',
@@ -1623,6 +1623,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if event == 0 or not self.is_focused                                           : return  # https://github.com/GiorgosXou/TUIFIManager/issues/24
         if self.__is_escape_consumed(event)                                            : return
         if self.menu.handle_keyboard_events(event): return
+        if self.menu      .handle_events(event): self.consume_escape_once(); return
         if self.properties.handle_events(event): self.consume_escape_once(); return
 
         if unicurses.keyname(event) in ('kxOUT','kxIN') :return # https://github.com/GiorgosXou/TUIFIManager/issues/81

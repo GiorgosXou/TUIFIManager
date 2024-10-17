@@ -15,17 +15,12 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
 
     # x    , y      = 0 , 0
     # width, height = 20, 15
-    items  = []
-    events = {
-    }
 
-    def __init__(self, items=[], border=Border(), on_choice=lambda *args : None ):
-        super().__init__(border=border)
+    def __init__(self, items, border=Border(), on_choice=lambda *args : None ):
+        super().__init__(border=border, height=len(items) + 2, width=len(max(items, key=len)) + 4)
         # self.parent = unicurses.stdscr
         self.exists = False
-        if items:self.items = items
-        self.width  = len(max(self.items, key=len)) + 4
-        self.height = len(self.items) + 2
+        self.items = items
         self.on_choice = on_choice
 
 
@@ -37,7 +32,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
         parent_height = unicurses.getmaxy(self.parent.win)
         if self.x + self.width  > parent_width : self.position.x -= self.width - 1
         if self.y + self.height > parent_height: self.position.y -= self.height - 1
-        if self.y < 0 : self.y = 0
+        if self.y < 0 : self.position.y = 0
 
         if self.exists:
             unicurses.delwin(self.pad)
@@ -52,6 +47,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
 
         self.exists = True
         self.refresh()
+        self.is_focused = False # to allow redrawing of windows behind on creation-(first time)
 
 
     def delete(self):
@@ -59,6 +55,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
             unicurses.delwin(self.pad)
             self.__it   = 0
             self.exists = False
+            self.is_focused = False
             # unicurses.redrawwin(self.parent) # SuS? kinda same as touchwin? | Update: 2024-04-06 11:50:09 AM Not sure why i had this there... 
             # unicurses.wrefresh(self.parent)
 
@@ -66,13 +63,26 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
     def refresh(self, redraw_parent=False):
         if self.exists:
             super().refresh(redraw_parent=redraw_parent, clear=False)
+            self.is_focused = True
             # unicurses.wrefresh(self.parent.win)
             # # unicurses.touchwin(self.pad)
             # # unicurses.wrefresh(self.pad)
             # unicurses.prefresh(self.pad, 0, 0, self.y, self.x, self.y + self.height -1, self.x + self.width -1)
 
 
+    def handle_resize(self, redraw_parent=True, redraw_border=True):
+        self.is_focused = False; 
+        return False # super().handle_resize(redraw_parent, redraw_border)
+
+
     __it = 0
+    def handle_events(self, event, redraw_parent=True):
+        if not self.exists: return False
+        if event == unicurses.KEY_MOUSE : return self.__handle_mouse_events()
+        if event == unicurses.KEY_RESIZE: return self.handle_resize()
+        return self.handle_keyboard_events(event)
+
+
     def handle_keyboard_events(self, event):
         if not self.exists or event == unicurses.KEY_MOUSE: return False
         if event == unicurses.KEY_DOWN:
@@ -99,8 +109,8 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
 
 
     __x = __y = 0
-    def handle_mouse_events(self, id, x, y, z, bstate):
-        if not self.exists: return False
+    def __handle_mouse_events(self):
+        in_range, id, x, y, z, bstate = self.get_mouse()
         if self.x <= x < self.x + self.width and self.y <= y < self.y + self.height:
             relative_y = y - self.y -1
             if self.__y != y and self.height -2 > relative_y >= 0:
