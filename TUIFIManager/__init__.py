@@ -796,6 +796,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 unicurses.CCHAR('w') : partial(self.create_new, 'file'  ),
                 unicurses.CCHAR('W') : partial(self.create_new, 'folder'),
                 unicurses.CCHAR('i') : self.find                         ,
+                unicurses.CCHAR('R') : self.reload                       ,
                 unicurses.CCHAR('e') : self.exit_to_self_directory       ,
                 unicurses.CTRL ('D') : self.delete                       ,
             }) # TODO Map  events
