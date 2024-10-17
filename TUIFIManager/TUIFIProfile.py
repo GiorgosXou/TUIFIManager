@@ -1,5 +1,5 @@
 from unicurses    import COLOR_PAIR, COLOR_WHITE, OPERATING_SYSTEM, init_color, init_pair, pair_content
-from .TUItilities import HOME_DIR, init_colorscheme
+from .TUItilities import HOME_DIR, IS_MACOS, IS_WINDOWS, init_colorscheme
 from shutil       import which
 from os.path      import isfile
 from os           import getenv, sep
@@ -26,7 +26,7 @@ class TUIFIProfile: #█┇▓┃▒┃░┃
 
 
 
-DEFAULT_OPENER = 'start' if 'Windows' == OPERATING_SYSTEM else 'open' if 'Darwin' == OPERATING_SYSTEM  else 'xdg-open'   # meh.. # TODO: make an enviromental variable insted of those 2 vars, for everything
+DEFAULT_OPENER = 'start' if OPERATING_SYSTEM == IS_WINDOWS else 'open' if OPERATING_SYSTEM == IS_MACOS else 'xdg-open'   # meh.. # TODO: make an enviromental variable insted of those 2 vars, for everything
 DEFAULT_EDITOR = which(getenv('tuifi_default_editor', getenv('EDITOR', 'nvim'))) or which('emacs') or which('vim') or which('micro') or which('nano')  or which('vi') or DEFAULT_OPENER
 DEFAULT_WITH   = DEFAULT_EDITOR
 
@@ -819,7 +819,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         '  C                                                            j \n'
         '   L                                                          ]  \n'
         '                                                                 '
-    ),4),
+    ),4, DEFAULT_EDITOR),
     '/tuifi3':TUIFIProfile((
         '              .^        \n'
         '            ~GB^        \n'
@@ -841,7 +841,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         '        JBY^            \n'
         '       .^.              \n'
         '                        '
-    ),5),
+    ),5, DEFAULT_EDITOR),
     '/tuifi4':TUIFIProfile((
         '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n'
         '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n'
@@ -874,7 +874,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⠀⠀⠀⠀\n'
         '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⠀⠀⠀⠀\n'
         '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠁⠀⠀⠀'
-    ),8)
+    ),8, DEFAULT_EDITOR)
 }
 DEFAULT_PROFILE   = TUIFIProfiles[':file']
 LINK_SYMBOL       = '↩'  # Potential:⤶ ⤾ ↲ ⎌ ☍ ⧉

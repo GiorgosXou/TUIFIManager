@@ -1,13 +1,14 @@
 """
 TUItilities is a set of TUI components and terminal utilities in ALPHA version (They will be exported to a new package).
 """
-from time import sleep
 import   unicurses as uc
-import   threading 
+import  subprocess
 import   threading
 from   dataclasses import dataclass
 from       os.path import isfile
+from        shutil import which
 from         pipes import quote
+from          time import sleep
 from            os import getenv, getcwd
 
 
@@ -20,6 +21,7 @@ lock = threading.Lock()
 BEGIN_MOUSE = "\033[?1003h"
 END_MOUSE   = "\033[?1003l"
 
+IS_MACOS            = uc.OPERATING_SYSTEM == 'Darwin'
 IS_WINDOWS          = uc.OPERATING_SYSTEM == 'Windows'
 HOME_DIR            = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
 SHELL               = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
@@ -369,11 +371,14 @@ class Component(Events):
     def handle_events(self, event, redraw_parent=True):
         if event == uc.KEY_MOUSE:
             in_range, id, x, y, z, bstate = self.get_mouse() # aah... here because calling getmouse more than once, returns 0,0...
-            if not in_range:return
-            if (bstate & uc.BUTTON1_RELEASED or bstate & uc.BUTTON3_RELEASED or bstate & uc.BUTTON2_RELEASED):
+            if not in_range: return False # If not in_range, there's no consumption of the event
+            if ( bstate & uc.BUTTON1_RELEASED or bstate & uc.BUTTON3_RELEASED or bstate & uc.BUTTON2_RELEASED) or \
+                (bstate & uc.BUTTON1_CLICKED  or bstate & uc.BUTTON3_CLICKED  or bstate & uc.BUTTON2_CLICKED): # because Termux doesn't care about uc.mouseinterval(0), see also /TUIFIManager/issues/114
                 self.on_click(self, id, x, y, z, bstate)
-                return
+                return True
             self.on_hover(self, id, x, y, z, bstate)
+            return True
+        return False
 
 
     def centerX(self):
@@ -509,11 +514,13 @@ class WindowPad(Component):
         )
 
     def handle_events(self, event, redraw_parent=True): #  prevent multiple if conditions for drawable components too
-        if event == uc.KEY_RESIZE: self.handle_resize(redraw_parent)
+        if event == uc.KEY_RESIZE: return self.handle_resize(redraw_parent) # meaning no event consumption, we let KEY_RESIZE pass through
         elif self.visibility:
-            super().handle_events(event,redraw_parent) 
+            event_consumed = super().handle_events(event,redraw_parent) 
             for drawable in self.components: 
-                if drawable.visibility: drawable.handle_events(event, redraw_parent)
+                if drawable.visibility: event_consumed |= drawable.handle_events(event, redraw_parent)
+            return event_consumed
+        return False # meaning no event consumption, we found no event matching
 
 
     def _resize(self):
@@ -524,6 +531,7 @@ class WindowPad(Component):
         super().handle_resize(redraw_parent=redraw_parent, redraw_border=redraw_border)
         for drawable in self.components:
             drawable.handle_resize()
+        return False # meaning no event consumption, we let KEY_RESIZE pass through
 
 
 
@@ -563,17 +571,17 @@ class Drawable(Component):
 
 
 class Label(Drawable): # TODO: make components a type of Drawables\components rather than a WindowPad
-    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
+    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4, style=uc.A_NORMAL ) -> None:
         super().__init__(winpad, y, x, height, width if width else len(text), anchor)
-        self.style      = uc.A_NORMAL
+        self.style      = style
         self.color_pair = color
-        self.__text     = text 
+        self._text      = text
         self.wrap_text  = wrap_text
-        self.maxheight  = 1 # WARN: this is temporary maybe?
-        self.minwidth  = len(text) # WARN: this is temporary maybe?
+        self.maxheight  = 1 # WARN         : this is temporary maybe?
+        self.minwidth   = len(text) # WARN : this is temporary maybe?
 
     @property
-    def text(self): return self.__text
+    def text(self): return self._text
 
 
     def draw(self):
@@ -599,7 +607,7 @@ class Label(Drawable): # TODO: make components a type of Drawables\components ra
 
     @text.setter
     def text(self, text):
-        self.__text = text
+        self._text = text
         self.refresh()
 
 
@@ -619,60 +627,6 @@ class PictureBoxMono(Drawable): # Monochrome
         super().__init__(winpad, y, x, height, width if width else len(text), anchor)
         self.style      = uc.A_NORMAL
         self._text      = text
-        self.color_pair = color
-
-
-    @property
-    def text(self): return self._text
-
-
-    @text.setter
-    def text(self, text):
-        self._text = text
-        self.refresh()
-
-
-    def draw(self):
-        if not self.text: return
-        for i, ln in enumerate(self.text.split('\n')):
-            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ' '*len(ln), color_pair_with_effect(self.color_pair , self.style ))
-            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ln         , color_pair_with_effect(self.color_pair , self.style ))
-
-
-
-
-class PictureBoxMono(Drawable): # Monochrome
-    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
-        super().__init__(winpad, y, x, height, width if width else len(text), anchor)
-        self.style      = uc.A_NORMAL
-        self._text      = text
-        self.color_pair = color
-
-
-    @property
-    def text(self): return self._text
-
-
-    @text.setter
-    def text(self, text):
-        self._text = text
-        self.refresh()
-
-
-    def draw(self):
-        if not self.text: return
-        for i, ln in enumerate(self.text.split('\n')):
-            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ' '*len(ln), color_pair_with_effect(self.color_pair , self.style ))
-            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ln         , color_pair_with_effect(self.color_pair , self.style ))
-
-
-
-
-class PictureBoxMono(Drawable): # Monochrome
-    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
-        super().__init__(winpad, y, x, height, width if width else len(text), anchor)
-        self.style      = uc.A_NORMAL
-        self._text     = text 
         self.color_pair = color
 
 
@@ -731,13 +685,13 @@ def main():
     winform.minheight = 10
     winform.maxheight = 20
 
-    uc.wbkgd(winform.pad, uc.COLOR_PAIR(7))
+    uc.wbkgd(winform.pad, uc.COLOR_PAIR(1))
     
     winform2 = WindowPad(stdscr,12,4,10,60, anchor=(True, False, True, False))
     # # winform2.minwidth = 30
     # winform2.minwidth = 40
     # winform2.maxwidth = 60
-    uc.wbkgd(winform2.pad, uc.COLOR_PAIR(9))
+    uc.wbkgd(winform2.pad, uc.COLOR_PAIR(1))
 
     tl = Label(winform ,1,2 ,anchor=(True, False, True, False),text='top-left')
     tr = Label(winform ,1,winform.width-11 ,anchor=(True, False, False, True),text='top-right')

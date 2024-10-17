@@ -115,10 +115,11 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
         if has_label:
             height -= 1
-            self.labelpad         = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
-            self.info_label       = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, 9)
-            self.info_label.style = unicurses.A_REVERSE | unicurses.A_BOLD
-            warnings.showwarning  = self.custom_warning_handler
+            self.labelpad            = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
+            self.info_label          = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, 9)
+            self.info_label.style    = unicurses.A_REVERSE | unicurses.A_BOLD
+            self.info_label.on_click = self.info_label_clicked
+            warnings.showwarning     = self.custom_warning_handler
 
         super().__init__(win, y, x, height, width, anchor, is_focused)
         self.__order_method      = sort_by
@@ -203,7 +204,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.__index_of_clicked_file = i
                 self.__clicked_file = f
                 self.__pre_pressed_file = f # https://github.com/GiorgosXou/TUIFIManager/issues/96
-            self.scroll_to_file(f, not IS_TERMUX or not self.termux_touch_only)
+            self.__scroll_to_file(f, not IS_TERMUX or not self.termux_touch_only)
             self.__is_opening_previous_dir = False
 
 
@@ -809,7 +810,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def __set_label_text(self, text):
         if self.info_label:
-            self.info_label.text = text
+            self.info_label._text = text
 
 
     def __delete_file(self,file):
@@ -826,7 +827,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__count_selected -= 1
 
 
-    def scroll_to_file(self, tuifile, select=False, deselect=False):
+    def __scroll_to_file(self, tuifile, select=False, deselect=False):
         if deselect:
             self.deselect()
         if select:
@@ -1008,7 +1009,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__index_of_clicked_file        = 0
         self.__set_label_text('[NORMAL]')
         self.load_files(self.directory)
-        self.draw() # i might want to scroll_to_file after that here too? or nah..
+        self.draw() # i might want to __scroll_to_file after that here too? or nah..
 
 
     def __init_variables_for_find_mode(self):
@@ -1064,7 +1065,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         i = 0 if len(self.files) == 1 else 1
         self.__mark_file_as_currently_clicked(i)
 
-        self.scroll_to_file(self.__clicked_file, True, True)
+        self.__scroll_to_file(self.__clicked_file, True, True)
         return True
 
 
@@ -1165,41 +1166,17 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         return subprocess.Popen(cmd.split(), shell=IS_WINDOWS, stdout=subprocess.PIPE)[0]
 
 
+    def __ignore_escape(self): self.consume_escape_once()
+
     markers = {}
-    def __perform_static_cmd_events(self, event):
+    def __perform_hardcoded_cmd_events(self, event):
+        character = unicurses.RCCHAR(event)
         if self.__temp_findname.startswith('y'):
             if len(self.__temp_findname) == 2:
                 if   character == 'p': 
                     self.__set_label_text('[COPIED] File-path to clipboard'      if clipboard(str(self.directory+sep+self.__clicked_file.name if self.__clicked_file else self.directory)) else 'FAILD TO COPY TO CLIPBOARD')
                     self.__temp_findname = '' # to prevent blocking command mode I include those 2 lines 2 times, once here ...
                     self.__ignore_escape()
-            return False
-        if self.__temp_findname.startswith('f'):
-            if len(self.__temp_findname) == 2:
-                at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
-                for i, tfl in enumerate(self.files[at:], start=at):
-                    if tfl.name[0] in (character, character.upper()):
-                        self.__scroll_to_file(self.files[i], True, True)
-                        self.__mark_file_as_currently_clicked(i)
-                        self.__set_label_on_file_selection(i,tfl)
-                        self.__ignore_escape()
-                        return False
-                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
-                self.__ignore_escape()
-            return False
-        if self.__temp_findname.startswith('F'):
-            if len(self.__temp_findname) == 2:
-                at = self.__index_of_clicked_file if self.__index_of_clicked_file else 0
-                for i, tfl in enumerate(reversed(self.files[:at])):
-                    if tfl.name[0] in (character, character.upper()):
-                        i = at-i-1
-                        self.__scroll_to_file(self.files[i], True, True)
-                        self.__mark_file_as_currently_clicked(i)
-                        self.__set_label_on_file_selection(i,self.__clicked_file)
-                        self.__ignore_escape()
-                        return False
-                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
-                self.__ignore_escape()
                 elif character == 'd': 
                     self.__set_label_text('[COPIED] Directory-path to clipboard' if clipboard(str(self.directory)) else 'FAILD TO COPY TO CLIPBOARD')
                     self.__temp_findname = '' # ... and once here
@@ -1231,42 +1208,14 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                         return False
                 self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
                 self.__ignore_escape()
-        if self.__temp_findname.startswith('f'):
-            if len(self.__temp_findname) == 2:
-                at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
-                for i, tfl in enumerate(self.files[at:], start=at):
-                    if tfl.name[0] in (character, character.upper()): 
-                        self.__scroll_to_file(self.files[i], True, True)
-                        self.__mark_file_as_currently_clicked(i)
-                        self.__set_label_on_file_selection(i,tfl)
-                        self.__ignore_escape()
-                        return False
-                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
-                self.__ignore_escape()
-            return False
-        if self.__temp_findname.startswith('F'):
-            if len(self.__temp_findname) == 2:
-                at = self.__index_of_clicked_file if self.__index_of_clicked_file else 0
-                for i, tfl in enumerate(reversed(self.files[:at])):
-                    if tfl.name[0] in (character, character.upper()): 
-                        i = at-i-1
-                        self.__scroll_to_file(self.files[i], True, True)
-                        self.__mark_file_as_currently_clicked(i)
-                        self.__set_label_on_file_selection(i,self.__clicked_file)
-                        self.__ignore_escape()
-                        return False
-                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
-                self.__ignore_escape()
             return False
         if self.__temp_findname.startswith('m'):
             self.__set_label_text('[MARKER]')
             if len(self.__temp_findname) == 2:
-                marker = unicurses.RCCHAR(event)
-                self.__set_label_text(f'[MARKER] SET TO [{marker}]')
-                TUIFIManager.markers[marker]        = self.directory
-                self.__temp_findname                = ''
-                self.__change_escape_event_consumed = True
-                self.is_in_command_mode             = False
+                self.__set_label_text(f'[MARKER] SET TO [{character}]')
+                TUIFIManager.markers[character] = self.directory
+                self.__temp_findname = ''
+                self.__ignore_escape()
             return True
         elif self.__temp_findname.startswith(('`',';')):
             self.__set_label_text('[GOTO MARKER]')
@@ -1277,8 +1226,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                     self.open(path) # scroll to file maby too?
                 else: 
                     self.__set_label_text('[MARKER] NOT FOUND')
-                    self.__change_escape_event_consumed = True
-                    self.is_in_command_mode             = False
+                    self.__ignore_escape()
             return True
         # elif Z_EXISTS and self.__temp_findname.startswith('z'): # TODO: I've wanted to call z command but it says something about permissions and stopped trying
             
@@ -1308,7 +1256,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         else:
             self.__temp_findname += unicurses.RCCHAR(event)
             self.__set_label_text(f'[COMMAND] {self.__temp_findname}')
-        if self.__perform_static_cmd_events(event): return True
+        if self.__perform_hardcoded_cmd_events(event): return True
         self.call_command(self.__temp_findname)
         return True
 
@@ -1355,7 +1303,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 self.__clicked_file.name    = self.__temp_name
                 self.__clicked_file.profile = self.get_profile(new_path_name)
                 self.resort()
-                self.scroll_to_file(self.__clicked_file, True, True)
+                self.__scroll_to_file(self.__clicked_file, True, True)
             else:
                 self.__temp_name = self.__clicked_file.name
         elif unicurses.RCCHAR(event) in TUIFIManager.__illegal_filename_characters or event == unicurses.KEY_MOUSE or unicurses.keyname(event) in ('kxOUT','kxIN'):
@@ -1388,7 +1336,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__index_of_clicked_file = self.__index_of_clicked_file if self.__index_of_clicked_file else 1
         self.files.insert(self.__index_of_clicked_file, self.__clicked_file) # condition added because if self.__index_of_clicked_file is None and create a file it fails
         self.resort()
-        self.scroll_to_file(self.__clicked_file,True) # removed deselect=True thanks to `self.__index_of_clicked_file =...` but just in case I let this here
+        self.__scroll_to_file(self.__clicked_file,True) # removed deselect=True thanks to `self.__index_of_clicked_file =...` but just in case I let this here
 
 
     def create_new(self,_type='folder'): # temporary implementation but nvm
@@ -1487,7 +1435,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if event != unicurses.KEY_MOUSE: return False
         in_range, id, x, y, z, bstate = self.get_mouse()
         if not IS_WINDOWS and not in_range: return True # TODO: https://github.com/GiorgosXou/TUIFIManager/issues/49
-        if self.menu.handle_mouse_events(id, x, y, z, bstate): return True
         if self.__x != x or self.__y != y: self.hover_mode = True #hover mode
 
         if   not self.hover_mode and (bstate & unicurses.BUTTON4_PRESSED): self.scroll_pad(UP   if not bstate & unicurses.BUTTON_CTRL else CTRL_UP  )
@@ -1605,8 +1552,12 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.handle_resize(False)
         self.resort()
         unicurses.touchwin(self.parent.win)
-        if self.info_label:self.labelpad.handle_resize()
 
+
+    def consume_escape_once(self):
+        self.__change_escape_event_consumed = True # not sure if this line is necessary.. surely not for __perform_hardcoded_cmd_events
+        self.escape_event_consumed = True
+        self.is_in_command_mode = False
 
     def __is_escape_consumed(self,event):
         if not self.escape_event_consumed: return False # REDIRECT ALL KEYBOARD EVENTS
@@ -1626,7 +1577,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def __open_previous_dir(self):
-        self.open(self.directory + sep + '..'),
+        self.open(self.directory + sep + '..')
 
 
     def __open_DEFAULT_WITH(self): # opens folder 
@@ -1638,7 +1589,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.open(self.__clicked_file)
 
 
-    def __reset_index_of_clicked_file(self) -> None:
+    def __reset_index_of_clicked_file(self) -> bool|None:
         if self.__index_of_clicked_file is not None: return False # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
         self.select(self.files[0])
         self.__clicked_file = self.files[0]
@@ -1652,7 +1603,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__clicked_file            = self.files[index]
         self.__mouse_btn1_pressed_file = self.__clicked_file
         self.__pre_pressed_file        = self.__clicked_file
-        self.scroll_to_file(self.__clicked_file, True)
+        self.__scroll_to_file(self.__clicked_file, True)
         self.__set_label_on_file_selection()
 
 
@@ -1701,13 +1652,14 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def handle_events(self, event): # wtf, ok .. works acceptably :P, TODO: REMOVE rrrrepeating code but nvm for now >:( xD  | UPDATE: WHAT HAVE I DONE, WHY SO MANY IF AND NOT JSUT A DIRCT WITH FUNCTIONS
-        if event == 0 or not self.is_focused                                           : return  # https://github.com/GiorgosXou/TUIFIManager/issues/24
-        if self.__is_escape_consumed(event)                                            : return
-        if self.menu.handle_keyboard_events(event): return
+        if event == 0 or not self.is_focused            : return # https://github.com/GiorgosXou/TUIFIManager/issues/24
+        if unicurses.keyname(event) in ('kxOUT','kxIN') : return # https://github.com/GiorgosXou/TUIFIManager/issues/81
+        if self.__is_escape_consumed(event)             : return
         if self.menu      .handle_events(event): self.consume_escape_once(); return
         if self.properties.handle_events(event): self.consume_escape_once(); return
+        if self.labelpad: 
+            self.labelpad.handle_events(event)
 
-        if unicurses.keyname(event) in ('kxOUT','kxIN') :return # https://github.com/GiorgosXou/TUIFIManager/issues/81
         if self.events.get(event, self.__return)() != True : return # Is this too bad of a practice? let me know
         if self.__handle_mouse_events          (event) : return
         if self.__handle_alt_down              (event) : return
