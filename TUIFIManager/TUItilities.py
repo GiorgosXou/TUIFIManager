@@ -614,6 +614,87 @@ class Button(Label): # Let's pretend for a momment that this is a button too :P
 
 
 
+class PictureBoxMono(Drawable): # Monochrome
+    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
+        super().__init__(winpad, y, x, height, width if width else len(text), anchor)
+        self.style      = uc.A_NORMAL
+        self._text      = text
+        self.color_pair = color
+
+
+    @property
+    def text(self): return self._text
+
+
+    @text.setter
+    def text(self, text):
+        self._text = text
+        self.refresh()
+
+
+    def draw(self):
+        if not self.text: return
+        for i, ln in enumerate(self.text.split('\n')):
+            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ' '*len(ln), color_pair_with_effect(self.color_pair , self.style ))
+            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ln         , color_pair_with_effect(self.color_pair , self.style ))
+
+
+
+
+class PictureBoxMono(Drawable): # Monochrome
+    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
+        super().__init__(winpad, y, x, height, width if width else len(text), anchor)
+        self.style      = uc.A_NORMAL
+        self._text      = text
+        self.color_pair = color
+
+
+    @property
+    def text(self): return self._text
+
+
+    @text.setter
+    def text(self, text):
+        self._text = text
+        self.refresh()
+
+
+    def draw(self):
+        if not self.text: return
+        for i, ln in enumerate(self.text.split('\n')):
+            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ' '*len(ln), color_pair_with_effect(self.color_pair , self.style ))
+            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ln         , color_pair_with_effect(self.color_pair , self.style ))
+
+
+
+
+class PictureBoxMono(Drawable): # Monochrome
+    def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4 ) -> None:
+        super().__init__(winpad, y, x, height, width if width else len(text), anchor)
+        self.style      = uc.A_NORMAL
+        self._text     = text 
+        self.color_pair = color
+
+
+    @property
+    def text(self): return self._text
+
+
+    @text.setter
+    def text(self, text):
+        self._text = text
+        self.refresh()
+
+
+    def draw(self):
+        if not self.text: return
+        for i, ln in enumerate(self.text.split('\n')):
+            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ' '*len(ln), color_pair_with_effect(self.color_pair , self.style ))
+            uc.mvwaddstr(self.parent.win,self.y+i,self.x, ln         , color_pair_with_effect(self.color_pair , self.style ))
+
+
+
+
 
 # THIS IS ONLY FOR TESTING PURPOSES
 def main():
