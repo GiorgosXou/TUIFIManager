@@ -121,7 +121,7 @@ In `vim_mode` both normal and vim shortcuts work
 
 **important note:** `o` is also used for ordering in `vim_mode`. In this case you can first press space-bar before proceeding with `owv` or with any other already reserved starting key, or just change it. 
 
-**Additionally** there are also some "static" ones like the `m`+character which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character 
+**Additionally** there are also some hardcoded ones, like the `m`+character: which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character. `yp` and `yd` to copy either the file-path or directory-path to clipboard.
 
 
 

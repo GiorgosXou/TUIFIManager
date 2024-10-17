@@ -25,6 +25,13 @@ HOME_DIR            = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
 SHELL               = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
 IS_TERMUX           = 'com.termux' in HOME_DIR
 DEFAULT_BACKGROUND  =  -1 if getenv('tuitilities_default_background') == 'True' else uc.COLOR_BLACK
+COPY_APP = (
+    ["pbcopy"] if IS_MACOS else
+    ["clip"] if IS_WINDOWS else
+    ["xclip", "-sel", "clipboard"] if which("xclip") else
+    ["wl-copy"] if which("wl-copy") else None
+)
+
 
 
 class Cd: # https://stackoverflow.com/a/16694919/11465149
@@ -45,6 +52,19 @@ class Cd: # https://stackoverflow.com/a/16694919/11465149
     def __del__(self):
         if self.perform_cd and not IS_WINDOWS and not self.directory == getcwd():
              self.cd(self.directory)
+
+
+
+def clipboard(text:str):
+    if COPY_APP:
+        try:
+            subprocess.run(COPY_APP, input=text, universal_newlines=True, check=True)
+            return True
+        except Exception as e:
+            return False
+    else:
+        return False
+
 
 
 # ======================== ========== ========================

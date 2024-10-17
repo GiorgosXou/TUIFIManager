@@ -104,6 +104,10 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.__init_variables_for_find_mode   ()
 
 
+    def info_label_clicked(self, *args):
+        self.info_label._text = " COPIED DIRECTORY ON CLIPBOARD" if clipboard(self.directory) else " FAILED TO COPY DIRECTORY ON CLIPBOARD"
+
+
     def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, cd=False, show_hidden=False):
         load_theme()
         TUIFIManager._instance_count += 1
@@ -1162,6 +1166,17 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     markers = {}
     def __perform_static_cmd_events(self, event):
+        if self.__temp_findname.startswith('y'):
+            if len(self.__temp_findname) == 2:
+                if   character == 'p': 
+                    self.__set_label_text('[COPIED] File-path to clipboard'      if clipboard(str(self.directory+sep+self.__clicked_file.name if self.__clicked_file else self.directory)) else 'FAILD TO COPY TO CLIPBOARD')
+                    self.__temp_findname = '' # to prevent blocking command mode I include those 2 lines 2 times, once here ...
+                    self.consume_escape_once()
+                elif character == 'd': 
+                    self.__set_label_text('[COPIED] Directory-path to clipboard' if clipboard(str(self.directory)) else 'FAILD TO COPY TO CLIPBOARD')
+                    self.__temp_findname = '' # ... and once here
+                    self.consume_escape_once()
+            return False
         if self.__temp_findname.startswith('m'):
             self.__set_label_text('[MARKER]')
             if len(self.__temp_findname) == 2:
