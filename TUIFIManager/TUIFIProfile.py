@@ -31,6 +31,12 @@ DEFAULT_EDITOR = which(getenv('tuifi_default_editor', getenv('EDITOR', 'nvim')))
 DEFAULT_WITH   = DEFAULT_EDITOR
 
 TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and etc. files on __init__.py as if they where kind of folders?
+    ':all':TUIFIProfile(( # multiple tuifiles custom (grid like)-icon for use in tuiprop
+        ' ┏━━━━━┳┓ \n'
+        ' ┃▀┇▀┇╋╋┫ \n'
+        ' ┃▀┇┇╋╋╋┫ \n'
+        ' ┗━┻┻┻┻┻┛ '
+    ),4),
     ':folder':TUIFIProfile(( # TODO: change folder and empty_folder to something containing illegal characters because if someone names a hidden file that way, there will be a conflict 2022-12-19 09:16:13 PM
         ' █████▒⎫⎫ \n'
         ' █████▒▐┇ \n'

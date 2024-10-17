@@ -87,13 +87,14 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + R`     | `r` |Rename selected file                          | 
 |`CTRL + T`     | | Toggle hidden files|
 |`CTRL + N`     | `W` |Create new folder                             |
+|`CTRL + P`     | | Show properties|
 |`CTRL + W`     | `w` |Create new file                               |
 |`ARROW KEYS`   | `l` `k` `j` `h`  |Navigates files                               |
 |`KEY_ENTER`    | `K`|Opens files                                   |
 |`CTRL + E`     | `e` |Exit with `cd`                                  |
 |`ESCAPE`       |   |Exit                                          |
 
-**(*TIP:** 🐁 use `ALT + CLICK` for multiple mouse selection if `SHIFT` not working)*
+**(*TIP:** 🐁 use `ALT + CLICK` for multiple mouse selection if `SHIFT` not working. You can also use `s i m a c` to copy individual properties when you have them opened)*
 
 ***TERMUX only Shortcuts\Keybindings***
 | Shortcut    | Action                                                                         |

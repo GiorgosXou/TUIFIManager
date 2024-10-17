@@ -12,8 +12,8 @@ from           math import log10
 from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
-from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND, has_custom_colorscheme # removing DEFAULT_BACKGROUND results on not running.... SuS...
-from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, load_theme
+from      .TUIProps import TUIProps, convert_bytes
+from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND, clipboard # DEFAULT_BACKGROUND is imported from __main__
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, TUIFI_THEME, load_theme
 import   subprocess
 import    unicurses
@@ -125,6 +125,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
         self.show_hidden         = os.getenv('tuifi_show_hidden'           , str(    show_hidden    )) == 'True' 
         self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
+        self.properties          = TUIProps ()
         self.menu                = TUIMenu  (on_choice=self.on_menu_choice ,
             items=[
                 'Open       │ ENTER' ,
@@ -136,7 +137,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
                 'Reload     │ KEY_F5',
                 'New File   │ CTRL+W',
                 'New Folder │ CTRL+N',
-                'Properties │'      ],
+                'Properties │ CTRL+P'),
         )
         self.load_order  ()
         if directory:
@@ -156,12 +157,11 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def refresh(self):
-        if self.menu.exists:
-            self.menu.refresh()
-            return
-        super().refresh(clear=False)
         if self.info_label: self.labelpad.refresh()
+        if not (self.menu.is_focused or self.properties.is_focused):
+            super().refresh(clear=False)
         self.menu.refresh()
+        self.properties.refresh()
 
 
     def custom_warning_handler(self, message, category, filename, lineno, file=None, line=None):
@@ -754,6 +754,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
             unicurses.CTRL('F')     : self.find                         ,
             unicurses.CTRL('O')     : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
             unicurses.CTRL('E')     : self.exit_to_self_directory       ,
+            unicurses.CTRL('P')     : self.view_clicked_file_properties ,
             unicurses.KEY_HOME      : partial(self.open, HOME_DIR)      ,
             unicurses.KEY_ENTER     : self.__perform_key_enter          ,
             10                      : self.__perform_key_enter          ,
@@ -861,7 +862,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
     def __set_label_on_copy(self,size):
         length = len(TUIFIManager.__temp__copied_files)
-        text   = f'{length} files [{self.convert_bytes(size)}]' if length > 1 else f'{TUIFIManager.__temp__copied_files[0].name}'
+        text   = f'{length} files [~{convert_bytes(size)}]' if length > 1 else f'{TUIFIManager.__temp__copied_files[0].name}'
         action = 'CUTED' if self.__is_cut else 'COPIED'
         self.__set_label_text(f'[{action}]: {text}')
 
@@ -1319,24 +1320,19 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     def __int_len(self, n): # https://stackoverflow.com/a/2189827/11465149
         return int(log10(n))+1 if n != 0 else 0
 
-    size_units = ('bytes', 'KB', 'MB', 'GB', 'TB')
-    def convert_bytes(self, num): #WARN: https://stackoverflow.com/a/63839503/11465149 | https://stackoverflow.com/a/78117390/11465149
-        step_unit = 1000.0
-        for x in TUIFIManager.size_units:
-            if num < step_unit:
-                if x[0] == 'b': return "%i %s" % (num, x)
-                return "%3.1f %s" % (num, x)
-            num /= step_unit
-
     def __set_label_on_file_selection(self, index=None, file=None):
         if not self.info_label: return
         file = file if file else self.__clicked_file
         index= index if index else self.__index_of_clicked_file
         path = self.directory + sep + file.name
-        info = f'[{self.convert_bytes(os.path.getsize(path))}]' if os.path.isfile(path) else ''
+        info = f'[{convert_bytes(os.path.getsize(path))}]' if os.path.isfile(path) else ''
         offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(index) + 3 + len(info) + 2
         self.info_label.text = f'[{len(self.files) - 1:04}] [{index}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
+
+
+    def view_clicked_file_properties(self):
+        if self.__clicked_file: self.properties.create_tui_for([self.__clicked_file] if self.__count_selected == 1 else self.files, self.directory)
 
     def __open_clicked_file(self):
         self.open(self.__clicked_file)
@@ -1352,7 +1348,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         reload                        ,
         create_new_file               ,
         create_new_folder             ,
-        lambda *args : None 
+        view_clicked_file_properties # lambda *args : None 
     )
     def on_menu_choice(self, action):
         TUIFIManager.__menu_select_actions[action](self)
@@ -1612,6 +1608,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         if event == 0 or not self.is_focused                                           : return  # https://github.com/GiorgosXou/TUIFIManager/issues/24
         if self.__is_escape_consumed(event)                                            : return
         if self.menu.handle_keyboard_events(event): return
+        if self.properties.handle_events(event): self.consume_escape_once(); return
 
         if unicurses.keyname(event) in ('kxOUT','kxIN') :return # https://github.com/GiorgosXou/TUIFIManager/issues/81
         if self.events.get(event, self.__return)() != True : return # Is this too bad of a practice? let me know
