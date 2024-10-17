@@ -1191,10 +1191,10 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         elif self.__temp_findname.startswith(('`',';')):
             self.__set_label_text('[GOTO MARKER]')
             if len(self.__temp_findname) == 2:
-                marker = unicurses.RCCHAR(event)
-                dir    = TUIFIManager.markers.get(marker) 
-                if dir: 
-                    self.open(dir) # scroll to file maby too?
+                path = TUIFIManager.markers.get(character)
+                if path:
+                    self.deselect()
+                    self.open(path) # scroll to file maby too?
                 else: 
                     self.__set_label_text('[MARKER] NOT FOUND')
                     self.__change_escape_event_consumed = True
