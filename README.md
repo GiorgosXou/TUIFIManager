@@ -48,9 +48,9 @@ for more details look into the `__main__.py`
 - [Supports X11 Drag&Drop from terminals](#-customization 'set `tuifi_synth_dnd` enviroment variable to `True`. `pip install requests pynput PySide6 python-xlib`...')
 - Supports most common mouse events 
 - Can be used as a component
-- Uses about [~30MB](## '80mb with synthetic xdnd') of RAM
+- Uses about [35MB](## '80mb with synthetic xdnd, python... :P') of RAM
 - Strong [C TUI backend](https://github.com/unicurses/unicurses 'Via Uni-Curses, a NCurses\\PDCurses wrapper')
-- It is pretty snappy <!-- Kinda lol -->
+- It is pretty snappy ! <!-- Kinda lol -->
 - Supports [Termux](https://github.com/termux) 
 - Cross Platform 
 - and more
@@ -61,7 +61,7 @@ for more details look into the `__main__.py`
 - Undo\Redo
 - Improved UI
 - Multiple tabs
-- [Sixel support](https://github.com/GiorgosXou/TUIFIManager/issues/86#issuecomment-2016846146)
+- [Image\Sixel support](https://github.com/GiorgosXou/TUIFIManager/issues/86#issuecomment-2016846146)
 - Effect on cutted Files
 - Multithread performance
 
@@ -131,6 +131,12 @@ In `vim_mode` both normal and vim shortcuts work
 
 # 💭 Customization 
 <details>
+<summary><i>How do I change theme?</i></summary>
+
+> You either [download](https://github.com/GiorgosXou/our-tuifi-themes) one or make your own based on this [how-to](https://github.com/GiorgosXou/our-tuifi-themes/blob/main/TUTORIAL.md). <!-- [.](https://github.com/GiorgosXou/TUIFIManager/issues/38) -->
+
+</details>
+<details>
 <summary><i>How do I enable vim_mode?</i></summary>
 
 > Set `tuifi_vim_mode` enviroment variable to `True`
@@ -188,12 +194,6 @@ In `vim_mode` both normal and vim shortcuts work
 <summary><i>How do I toggle hidden files/folders?</i></summary>
 
 > You can either `CTRL + T` or set `tuifi_show_hidden` enviroment variable to `True`
-
-</details>
-<details>
-<summary><i>How do I change the default colors?</i></summary>
-
-> [look here for more informations](https://github.com/GiorgosXou/TUIFIManager/issues/38)
 
 </details>
 
