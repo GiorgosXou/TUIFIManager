@@ -3,6 +3,7 @@ from  .TUItilities import Border, WindowPad, Label, clipboard, IS_WINDOWS, lock
 from      .TUIFile import TUIFile, VISIBLE_FILENAME_LINES
 from      datetime import datetime
 from       os.path import basename, sep, join, getsize
+from        typing import List
 from          copy import copy
 from            os import stat, walk
 import unicurses
@@ -190,7 +191,7 @@ class TUIProps(WindowPad):
         self.refresh()
 
 
-    def create_tui_for(self, tuifiles:list[TUIFile], directory:str): # kinda the same as TUIMenu's create
+    def create_tui_for(self, tuifiles:List[TUIFile], directory:str): # kinda the same as TUIMenu's create
         if self.exists: unicurses.werase(self.pad)
 
         self.inode = None

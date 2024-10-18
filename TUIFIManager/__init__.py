@@ -9,6 +9,7 @@ from         typing import Optional, Final
 from           time import time
 from             os import sep, access, W_OK, R_OK
 from           math import log10
+from         typing import Union
 from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
@@ -1589,7 +1590,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.open(self.__clicked_file)
 
 
-    def __reset_index_of_clicked_file(self) -> bool|None:
+    def __reset_index_of_clicked_file(self) -> Union[bool,None]:
         if self.__index_of_clicked_file is not None: return False # sus, maybe elif len(self.files) == 2 ? in case of any issue  with "folder" ".."
         self.select(self.files[0])
         self.__clicked_file = self.files[0]
