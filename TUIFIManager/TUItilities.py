@@ -30,6 +30,7 @@ DEFAULT_BACKGROUND  =  -1 if getenv('tuitilities_default_background') == 'True' 
 COPY_APP = (
     ["pbcopy"] if IS_MACOS else
     ["clip"] if IS_WINDOWS else
+    ["termux-clipboard-set"] if IS_TERMUX else
     ["xclip", "-sel", "clipboard"] if which("xclip") else
     ["wl-copy"] if which("wl-copy") else None
 )
