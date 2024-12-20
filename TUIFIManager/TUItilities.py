@@ -7,7 +7,7 @@ import   threading
 from   dataclasses import dataclass
 from       os.path import isfile
 from        shutil import which
-from         pipes import quote
+from         shlex import quote
 from          time import sleep
 from            os import getenv, getcwd
 
