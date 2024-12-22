@@ -14,7 +14,7 @@ from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
 from      .TUIProps import TUIProps, convert_bytes
-from   .TUItilities import WindowPad, Cd, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, DEFAULT_BACKGROUND, clipboard # DEFAULT_BACKGROUND is imported from __main__
+from   .TUItilities import WindowPad, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, TEMP_PATH, DEFAULT_BACKGROUND, clipboard # DEFAULT_BACKGROUND is imported from __main__
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, TUIFI_THEME, load_theme
 import   subprocess
 import    unicurses
@@ -42,7 +42,6 @@ CTRL_UP        = - CTRL_SCROLL_SENSITIVITY
 CTRL_DOWN      =   CTRL_SCROLL_SENSITIVITY
 
 STTY_EXISTS    = shutil.which('stty')
-INIT_DIRECTORY = os.getcwd()
 
 IS_DRAG_N_DROP = os.getenv('tuifi_synth_dnd') == 'True'
 if IS_DRAG_N_DROP: 
@@ -67,7 +66,7 @@ def stty_a(key=None):  # whatever [...]
 
 
 
-class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager class where i will manage all the anchor, resizing and positional stuff for future components (something like Visual-Studio's c#/vb's Winform's behaviour)
+class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager class where i will manage all the anchor, resizing and positional stuff for future components (something like Visual-Studio's c#/vb's Winform's behaviour)
     """
     parent     (       win      ): Parent windows in which the Filemanager-pad is hosted.
     pad        ( Window pointer ): The window/Pad where the manager is hosted.
@@ -84,7 +83,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
     auto_command_on_typing (bool, optional): if true: when starting to type, automatically performs a command else only if space key is pressed
     vim_mode   (bool  , optional): If True: uses vim like keys to navigate. Defaults to False.
     is_focused (bool , optional): disables events
-    cd         (bool , optional): cd or not to the current directory on exit (Doesn't support windows yet)
     show_hidden(bool , optional): Show hidden files (you can toggle them by using CTRL+H or use tuifi_show_hidden)
     """
 
@@ -109,7 +107,7 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.info_label._text = " COPIED DIRECTORY ON CLIPBOARD" if clipboard(self.directory) else " FAILED TO COPY DIRECTORY ON CLIPBOARD"
 
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, cd=False, show_hidden=False):
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, show_hidden=False):
         load_theme()
         TUIFIManager._instance_count += 1
         self.__init_variables()
@@ -130,7 +128,6 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
         self.auto_find_on_typing = os.getenv('tuifi_auto_find_on_typing'   , str(auto_find_on_typing)) == 'True' 
         self.auto_cmd_on_typing  = os.getenv('tuifi_auto_command_on_typing', str(auto_cmd_on_typing )) == 'True' 
         self.show_hidden         = os.getenv('tuifi_show_hidden'           , str(    show_hidden    )) == 'True' 
-        self.perform_cd          = os.getenv('tuifi_cd_on_exit'            , str(         cd        )) == 'True' 
         self.properties          = TUIProps ()
         self.menu                = TUIMenu  (on_choice=self.on_menu_choice ,
             items=(
@@ -634,9 +631,9 @@ class TUIFIManager(WindowPad, Cd):  # TODO: I need to create a TUIWindowManager 
 
 
     def exit_to_self_directory(self):
-        if not IS_WINDOWS and not self.directory == INIT_DIRECTORY:
-            self.cd(self.directory)
         print(END_MOUSE)
+        with open(f'{TEMP_PATH}tuifi_last_path.txt', 'w') as file:
+            file.write(self.directory)
         unicurses.endwin()
         self.__handle_garbage()
         exit()

@@ -5,9 +5,9 @@ import   unicurses as uc
 import  subprocess
 import   threading
 from   dataclasses import dataclass
-from       os.path import isfile
+from      tempfile import gettempdir
+from       os.path import isfile, isdir
 from        shutil import which
-from         pipes import quote
 from          time import sleep
 from            os import getenv, getcwd
 
@@ -34,28 +34,8 @@ COPY_APP = (
     ["xclip", "-sel", "clipboard"] if which("xclip") else
     ["wl-copy"] if which("wl-copy") else None
 )
-
-
-
-class Cd: # https://stackoverflow.com/a/16694919/11465149
-    directory  = HOME_DIR 
-    perform_cd = True
-
-    def quote_against_shell_expansion(self, s):
-        return quote(s)
-
-    def put_text_back_into_terminal_input_buffer(self, text):
-        from termios import TIOCSTI
-        from   fcntl import ioctl 
-        for c in text: ioctl(1, TIOCSTI, c)
-
-    def cd(self, dest): # change_parent_process_directory
-        self.put_text_back_into_terminal_input_buffer("cd "+self.quote_against_shell_expansion(dest)+"\n")
-
-    def __del__(self):
-        if self.perform_cd and not IS_WINDOWS and not self.directory == getcwd():
-             self.cd(self.directory)
-
+# storing in '/dev/shm/' means storing in RAM ! not in hard dirve
+TEMP_PATH = '/dev/shm/' if isdir('/dev/shm/') else gettempdir()
 
 
 def clipboard(text:str):
