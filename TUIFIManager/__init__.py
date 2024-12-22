@@ -1190,7 +1190,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                         self.__set_label_on_file_selection(i,tfl)
                         self.__ignore_escape()
                         return False
-                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
+                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
                 self.__ignore_escape()
             return False
         if self.__temp_findname.startswith('F'):
@@ -1204,7 +1204,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                         self.__set_label_on_file_selection(i,self.__clicked_file)
                         self.__ignore_escape()
                         return False
-                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
+                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
                 self.__ignore_escape()
             return False
         if self.__temp_findname.startswith('m'):
