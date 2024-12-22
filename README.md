@@ -91,7 +91,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + W`     | `w` |Create new file                               |
 |`ARROW KEYS`   | `l` `k` `j` `h`  |Navigates files                               |
 |`KEY_ENTER`    | `K`|Opens files                                   |
-|`CTRL + E`     | `e` |Exit with `cd`                                  |
+|`CTRL + E`     | `e` |[Exit with `cd`](https://github.com/GiorgosXou/TUIFIManager/tree/master/etc)                                  |
 |`ESCAPE`       |   |Exit                                          |
 
 **(*TIP:** 🐁 use `ALT + CLICK` for multiple mouse selection if `SHIFT` not working. You can also use `s i m a c` to copy individual properties when you have them opened)*
@@ -121,7 +121,7 @@ In `vim_mode` both normal and vim shortcuts work
 
 **important note:** `o` is also used for ordering in `vim_mode`. In this case you can first press space-bar before proceeding with `owv` or with any other already reserved starting key, or just change it. 
 
-**Additionally** there are also some hardcoded ones, like the `m`+character: which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character. `yp` and `yd` to copy either the file-path or directory-path to clipboard.
+**Additionally** there are also some hardcoded ones, like the `m`+character: which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character. `yp` and `yd` to copy either the file-path or directory-path to clipboard. `F` and `f` for finding\\jumping-to the first filename-ocurance of the next letter you type, backwards or forwards
 
 
 
