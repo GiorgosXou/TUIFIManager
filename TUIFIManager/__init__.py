@@ -152,8 +152,8 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         self.load_markers       ()
         self.load_commands      ()
         self.__set_normal_events()
-        if stty_a('^Z')               : signal.signal(signal.SIGTSTP, self.suspend_proccess)
-        if stty_a('^C') or IS_WINDOWS : signal.signal(signal.SIGINT , self.copy            ) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
+        if not IS_WINDOWS and stty_a('^Z') : signal.signal(signal.SIGTSTP, self.suspend_proccess)
+        if     IS_WINDOWS or  stty_a('^C') : signal.signal(signal.SIGINT , self.copy            ) # https://docs.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
         if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files) #NOTE: https://stackoverflow.com/a/14829479/11465149
 
