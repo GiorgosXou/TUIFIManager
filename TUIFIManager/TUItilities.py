@@ -9,7 +9,7 @@ from      tempfile import gettempdir
 from       os.path import isfile, isdir
 from        shutil import which
 from          time import sleep
-from            os import getenv, getcwd
+from            os import getenv, sep
 
 
 lock = threading.Lock()
@@ -35,7 +35,7 @@ COPY_APP = (
     ["wl-copy"] if which("wl-copy") else None
 )
 # storing in '/dev/shm/' means storing in RAM ! not in hard dirve
-TEMP_PATH = '/dev/shm/' if isdir('/dev/shm/') else gettempdir()
+TEMP_PATH = '/dev/shm/' if isdir('/dev/shm/') else gettempdir() + sep
 
 
 def clipboard(text:str):
