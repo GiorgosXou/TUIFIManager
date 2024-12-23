@@ -43,6 +43,7 @@ CTRL_DOWN      =   CTRL_SCROLL_SENSITIVITY
 
 STTY_EXISTS    = shutil.which('stty')
 
+HAS_CD_ON_ESC  = os.getenv('tuifi_cd_on_esc') == 'True' or (IS_TERMUX and not os.getenv('tuifi_cd_on_esc') == 'False')
 IS_DRAG_N_DROP = os.getenv('tuifi_synth_dnd') == 'True'
 if IS_DRAG_N_DROP: 
     from   .TUISynthXDND  import SyntheticXDND
@@ -187,13 +188,19 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         unicurses.clear()
 
 
-    def __handle_garbage(self): self.__del__()
-
-    def __del__(self):
+    def save_last_state(self, cd=False):
         TUIFIManager._instance_count -= 1
         if TUIFIManager._instance_count == 0:
+            if cd or HAS_CD_ON_ESC:
+                with open(f'{TEMP_PATH}tuifi_last_path.txt', 'w') as file:
+                    file.write(self.directory)
             self.save_markers()
             self.save_order  ()
+
+    def __del__(self):
+        self.save_last_state()
+
+    def __handle_garbage(self): self.__del__()
 
 
     def __handle_focus_on_previour_dir(self, f, i):
@@ -632,10 +639,8 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     def exit_to_self_directory(self):
         print(END_MOUSE)
-        with open(f'{TEMP_PATH}tuifi_last_path.txt', 'w') as file:
-            file.write(self.directory)
         unicurses.endwin()
-        self.__handle_garbage()
+        self.save_last_state(cd=True) # it's self.__handle_garbage() but eew!
         exit()
 
 
