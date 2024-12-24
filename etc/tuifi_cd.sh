@@ -1,8 +1,7 @@
 # You need to copy the content of this file to your shell rc file (e.g. `~/.bashrc` `~/.zshrc`)
 
-# Alias for TUIFIManager with cd functionality on exit (Ctrl+E)
-alias tuifi='function _tuifi(){
-  # Run tuifi. Change tuifi_cd_on_esc to True so it CDs with escape key
+function _tuifi(){
+  # Run tuifi. Optionally enable escape-key to cd if set to True
   tuifi_cd_on_esc=False tuifi "$@"
 
   # Check if path exists in this virtual file system (stored in RAM) and cd...
@@ -10,4 +9,7 @@ alias tuifi='function _tuifi(){
     cd "$(</dev/shm/tuifi_last_path.txt)"
     rm /dev/shm/tuifi_last_path.txt
   fi
-}; _tuifi'
+}
+
+# Alias for TUIFIManager with cd functionality on exit (Ctrl+E)
+alias tuifi='_tuifi'
