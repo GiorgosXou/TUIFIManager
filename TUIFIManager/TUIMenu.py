@@ -84,7 +84,7 @@ class TUIMenu(WindowPad): # TODO: fix alt+down in __init__.py i think when no fi
 
 
     def handle_keyboard_events(self, event):
-        if not self.exists or event == unicurses.KEY_MOUSE: return False
+        if event == unicurses.KEY_MOUSE: return False
         if event == unicurses.KEY_DOWN:
             if self.__it == len(self.items):
                 self.delete()
