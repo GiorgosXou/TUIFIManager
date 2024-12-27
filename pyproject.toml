@@ -6,6 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "TUIFIManager"
 version = "5.0.7"
 
+authors = [{name="George Chousos", email="gxousos@gmail.com"}]
+
 description = "A cross-platform terminal-based termux-oriented file manager."
 requires-python = ">=3.8"
 readme = "README.md"
@@ -41,6 +43,9 @@ keywords = [
     "vim-motions",
     "cross-platform"
 ]
+
+[project.urls]
+Github="https://github.com/GiorgosXou/TUIFIManager"
 
 [project.scripts]
 tuifi = "TUIFIManager.__main__:main"
