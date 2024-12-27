@@ -540,6 +540,14 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),4, DEFAULT_OPENER),
 
 
+    '/crt':TUIFIProfile((
+        ' ┌─┏━┓──┐ \n'
+        ' │C┃E┃RT│ \n'
+        ' │I┃┇┇1C│ \n'
+        ' └─┗━┛──┘ '
+    ),8, DEFAULT_EDITOR),
+
+
     '/torrent':TUIFIProfile((
         ' ╭──────╮ \n'
         ' │TORENT│ \n'
@@ -561,6 +569,7 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │▀┇┇╋╋╋┥ \n'
         ' ╰━┻┻┻┻┻╯ '
     ),3, DEFAULT_OPENER),
+
 
     '/mp4':TUIFIProfile((
         ' ┏┳┳┳┳┳┳┓ \n'
