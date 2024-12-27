@@ -1658,8 +1658,10 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         if event == 0 or not self.is_focused            : return # https://github.com/GiorgosXou/TUIFIManager/issues/24
         if unicurses.keyname(event) in ('kxOUT','kxIN') : return # https://github.com/GiorgosXou/TUIFIManager/issues/81
         if self.__is_escape_consumed(event)             : return
-        if self.menu      .handle_events(event): self.consume_escape_once(); return
         if self.properties.handle_events(event): self.consume_escape_once(); return
+        if self.menu      .handle_events(event):
+            if event == 27: self.consume_escape_once() # the escape condition is necessary for preventing issues with renaming after creation of "new file/folder"
+            return
         if self.labelpad: 
             self.labelpad.handle_events(event)
 
