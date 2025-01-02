@@ -370,14 +370,14 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),3, DEFAULT_EDITOR),
     '/txt':TUIFIProfile((
         ' ┏━━┓┓┓┓┓ \n'
-        ' ┃┏┇┃☵☲┃┇ \n'
-        ' ┃┇┛┃☲☵┃┃ \n'
+        ' ┃┏┇┃EΞ┃┇ \n'
+        ' ┃┇┛┃ΞE┃┃ \n'
         ' ┗━━┛━━┛┛ '
     ),3, DEFAULT_EDITOR),
     '/log':TUIFIProfile((
         ' ┏━━┓┓┓┓┓ \n'
-        ' ┃┋┇┃☵☲┃┇ \n'
-        ' ┃┇┋┃☲☵┃┃ \n'
+        ' ┃┋┇┃ΞE┃┇ \n'
+        ' ┃┇┋┃EΞ┃┃ \n'
         ' ┗━━┛━━┛┛ '
     ),3, DEFAULT_EDITOR),
     '/qml':TUIFIProfile((
@@ -387,16 +387,16 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┕━━━━━━╯ '
     ),7, DEFAULT_EDITOR),
     '/css':TUIFIProfile((
-        ' ╭━━━━╮╮╮ \n'
-        ' ┃CSS┃▅▅┃ \n'
-        ' ┃┇▒▒┃☲☰┃ \n'
-        ' ┗━━━╯━━╯ '
+        ' ┏━━━━┑┑┑ \n'
+        ' ┃CSS┃▅▅│ \n'
+        ' ┃┇▒▒┃ΞΞ│ \n'
+        ' ┗━━━┛━━╯ '
     ),4, DEFAULT_EDITOR),
     '/scss':TUIFIProfile((
-        ' ╭━━━━╮╮╮ \n'
-        ' ┃SCS┃▅▅┃ \n'
-        ' ┃┇▒▒┃S☲┃ \n'
-        ' ┗━━━╯━━╯ '
+        ' ┏━━━━╮╮╮ \n'
+        ' ┃SCS┃▅▅│ \n'
+        ' ┃┇▒▒┃ΞS│ \n'
+        ' ┗━━━┛━━╯ '
     ),4, DEFAULT_EDITOR),
     '/pdf':TUIFIProfile((
         ' ╭━━━━╮━╮ \n'
