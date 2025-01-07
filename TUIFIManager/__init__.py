@@ -465,6 +465,10 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         return self.files
 
 
+    def navigate(self, *args):
+        self.__count_selected = 0
+        self.open(*args)
+
 
     def get_tuifile_by_name(self, name):
         return next((f for f in self.files if f.name == name), None)
@@ -763,13 +767,13 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             unicurses.CTRL('O')     : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
             unicurses.CTRL('E')     : self.exit_to_self_directory       ,
             unicurses.CTRL('P')     : self.view_clicked_file_properties ,
-            unicurses.KEY_HOME      : partial(self.open, HOME_DIR)      ,
+            unicurses.KEY_HOME      : partial(self.navigate, HOME_DIR)  ,
             unicurses.KEY_ENTER     : self.__perform_key_enter          ,
             10                      : self.__perform_key_enter          ,
-            unicurses.KEY_BACKSPACE : self.__open_previous_dir          ,
-            8                       : self.__open_previous_dir          , # https://superuser.com/questions/212874/why-is-backspace-often-represented-with-h | TODO: I might remove it 
-            127                     : self.__open_previous_dir          ,
-            263                     : self.__open_previous_dir          ,
+            unicurses.KEY_BACKSPACE : self.__navigate_to_previous_dir   ,
+            8                       : self.__navigate_to_previous_dir   , # https://superuser.com/questions/212874/why-is-backspace-often-represented-with-h | TODO: I might remove it
+            127                     : self.__navigate_to_previous_dir   ,
+            263                     : self.__navigate_to_previous_dir   ,
             unicurses.KEY_RESIZE    : self.__handle_resize_event        ,
             32                      : self.command                      , # SPACEBAR
             27                      : self.__handle_garbage             , #NOTE: https://stackoverflow.com/a/14829479/11465149
@@ -794,9 +798,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 unicurses.CCHAR('o') : self.descend_order_switch         ,
                 unicurses.CCHAR('O') : self.ascend_order_switch          ,
                 unicurses.CCHAR('K') : self.__perform_key_enter          ,
-                unicurses.CCHAR('J') : self.__open_previous_dir          ,
-                unicurses.CCHAR('b') : self.__open_previous_dir          ,
-                unicurses.CCHAR('H') : partial(self.open      , HOME_DIR),
+                unicurses.CCHAR('J') : self.__navigate_to_previous_dir   ,
+                unicurses.CCHAR('b') : self.__navigate_to_previous_dir   ,
+                unicurses.CCHAR('H') : partial(self.navigate  , HOME_DIR),
                 unicurses.CCHAR('w') : partial(self.create_new, 'file'  ),
                 unicurses.CCHAR('W') : partial(self.create_new, 'folder'),
                 unicurses.CCHAR('i') : self.find                         ,
@@ -1579,8 +1583,8 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         return True
 
 
-    def __open_previous_dir(self):
-        self.open(self.directory + sep + '..')
+    def __navigate_to_previous_dir(self):
+        self.navigate(self.directory + sep + '..')
 
 
     def __open_DEFAULT_WITH(self): # opens folder 
