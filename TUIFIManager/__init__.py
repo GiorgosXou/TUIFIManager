@@ -766,7 +766,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             unicurses.CTRL('F')     : self.find                         ,
             unicurses.CTRL('O')     : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
             unicurses.CTRL('E')     : self.exit_to_self_directory       ,
-            unicurses.CTRL('P')     : self.view_clicked_file_properties ,
+            unicurses.CTRL('P')     : self.view_selected_file_properties,
             unicurses.KEY_HOME      : partial(self.navigate, HOME_DIR)  ,
             unicurses.KEY_ENTER     : self.__perform_key_enter          ,
             10                      : self.__perform_key_enter          ,
@@ -1382,8 +1382,11 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
 
-    def view_clicked_file_properties(self):
-        if self.__clicked_file: self.properties.create_tui_for([self.__clicked_file] if self.__count_selected == 1 else self.files, self.directory)
+    def view_selected_file_properties(self):
+        if self.__count_selected == 1:
+            self.properties.create_tui_for([self.__clicked_file], self.directory)
+        elif self.__count_selected > 1:
+            self.properties.create_tui_for(self.files, self.directory)
 
     def __open_clicked_file(self):
         self.open(self.__clicked_file)
@@ -1399,7 +1402,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         reload                        ,
         create_new_file               ,
         create_new_folder             ,
-        view_clicked_file_properties # lambda *args : None 
+        view_selected_file_properties # lambda *args : None
     )
     def on_menu_choice(self, action):
         TUIFIManager.__menu_select_actions[action](self)
