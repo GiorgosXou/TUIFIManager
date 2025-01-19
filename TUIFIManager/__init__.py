@@ -1502,6 +1502,15 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 self.__delay1 = time()
                 self.__index_of_pressed_file, self.__mouse_btn1_pressed_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
 
+                # # Sub-click navigation
+                # if not bstate & unicurses.BUTTON_CTRL and ((bstate & unicurses.BUTTON1_PRESSED) and self.__mouse_btn1_pressed_file):
+                #     self.is_in_find_mode       = False # due to __is_valid_file
+                #     self.escape_event_consumed = False
+                #     self.deselect()
+                #     self.open(self.__mouse_btn1_pressed_file)
+                #     self.__mouse_btn1_pressed_file = None
+                #     return True
+
                 if not bstate & unicurses.BUTTON_CTRL and self.__pre_pressed_file and self.__pre_pressed_file.is_selected:#and summ > self.double_click_DELAY:
                     if self.__count_selected == 1:
                         self.deselect(self.__pre_pressed_file)
