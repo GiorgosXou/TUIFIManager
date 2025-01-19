@@ -33,6 +33,7 @@ PADDING_RIGHT  = 2
 PADDING_TOP    = 1
 PADDING_BOTTOM = 0
 
+HAS_SINGLE_CLICK        = os.getenv('tuifi_has_single_click') == 'True'
 SCROLL_SENSITIVITY      = int(os.getenv('tuifi_scroll_sensitivity'     , 2 if not IS_TERMUX else 1))
 CTRL_SCROLL_SENSITIVITY = int(os.getenv('tuifi_ctrl_scroll_sensitivity', 7))
 
@@ -1471,7 +1472,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                         self.menu.create(y,x)
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
                         self.select(self.__mouse_btn1_pressed_file )
-                    if (((sumed_time < self.double_click_DELAY) and (bstate & unicurses.BUTTON1_RELEASED) and (self.__pre_clicked_file == self.__clicked_file)) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
+                    if (((HAS_SINGLE_CLICK or (sumed_time < self.double_click_DELAY)) and (bstate & unicurses.BUTTON1_RELEASED) and (HAS_SINGLE_CLICK or (self.__pre_clicked_file == self.__clicked_file) )) or bstate & unicurses.BUTTON1_DOUBLE_CLICKED) and self.__clicked_file: #and count == 2  :
                         self.is_in_find_mode       = False # due to __is_valid_file 
                         self.escape_event_consumed = False
                         self.open(self.__clicked_file)

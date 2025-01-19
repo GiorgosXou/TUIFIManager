@@ -173,6 +173,12 @@ In `vim_mode` both normal and vim shortcuts work
 
 </details>
 <details>
+<summary><i>How do I enable single-click navigation mode?</i></summary>
+
+> You just set `tuifi_has_single_click` enviroment variable to `True`
+
+</details>
+<details>
 <summary><i>How do I change the default keys (besides commands)?</i></summary>
 
 > This is not possible right now althought you could play around with the content of `toggle_vim_mode` function under `__init__.py`
