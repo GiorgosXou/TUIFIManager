@@ -1297,9 +1297,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     __illegal_filename_characters  = ('<', '>', ':',  '/', '\\', '|', '?', '*', '"')
     def handle_rename_events(self, event):  # At this momment i don't even care about optimizing anything... just kidding, you get the point, no free time | TODO: change event == ... to self.events.get(...)
-        if event == unicurses.KEY_LEFT:
+        if event in (unicurses.KEY_LEFT, unicurses.CTRL('H')):
             if self.__temp_i != 0: self.__temp_i -= 1
-        elif event == unicurses.KEY_RIGHT:
+        elif event in (unicurses.KEY_RIGHT, unicurses.CTRL('L')):
             if self.__temp_i != len(self.__temp_name): self.__temp_i += 1
         elif event in (27, unicurses.KEY_ENTER, 10) or (event == unicurses.KEY_MOUSE and ((self.get_mouse()[5] & unicurses.BUTTON1_PRESSED) or (self.get_mouse()[5] & unicurses.BUTTON3_PRESSED))):
             new_path_name                       = self.directory + sep + self.__temp_name
@@ -1320,6 +1320,12 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             if self.__temp_i != 0:
                 self.__temp_i   -= 1
                 self.__temp_name = self.__temp_name[:self.__temp_i] + self.__temp_name[self.__temp_i+1:]
+            elif self.__first_pass:
+                self.__temp_name = ''
+        elif event == unicurses.CTRL('X'):
+            if self.__temp_i != 0:
+                self.__temp_name = self.__temp_name[:self.__temp_i] + self.__temp_name[self.__temp_i+1:]
+                self.__temp_i   -= 1
             elif self.__first_pass:
                 self.__temp_name = ''
         elif event == unicurses.KEY_HOME: self.__temp_i = 0
