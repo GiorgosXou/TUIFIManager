@@ -1301,7 +1301,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             if self.__temp_i != 0: self.__temp_i -= 1
         elif event == unicurses.KEY_RIGHT:
             if self.__temp_i != len(self.__temp_name): self.__temp_i += 1
-        elif event in (27, unicurses.KEY_ENTER, 10) or (event == unicurses.KEY_MOUSE and (self.get_mouse()[5] & unicurses.BUTTON1_PRESSED)) : # TODO: clicks to act as enter
+        elif event in (27, unicurses.KEY_ENTER, 10) or (event == unicurses.KEY_MOUSE and ((self.get_mouse()[5] & unicurses.BUTTON1_PRESSED) or (self.get_mouse()[5] & unicurses.BUTTON3_PRESSED))):
             new_path_name                       = self.directory + sep + self.__temp_name
             self.__temp_i                       = 0
             self.__change_escape_event_consumed = True
