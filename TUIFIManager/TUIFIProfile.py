@@ -922,7 +922,7 @@ LINK_SYMBOL_COLOR = 3
 
 def setup_profiles():
     if not isfile(f'{THEME_PATH}PROFILES'):return
-    with open(f'{THEME_PATH}PROFILES', 'r') as file:
+    with open(f'{THEME_PATH}PROFILES', 'r', encoding="utf-8") as file:
         line = ''
         icon = ''
         pair = None
