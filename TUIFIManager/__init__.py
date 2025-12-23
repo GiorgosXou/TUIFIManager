@@ -772,7 +772,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             unicurses.KEY_ENTER     : self.__perform_key_enter          ,
             10                      : self.__perform_key_enter          ,
             unicurses.KEY_BACKSPACE : self.__navigate_to_previous_dir   ,
-            8                       : self.__navigate_to_previous_dir   , # https://superuser.com/questions/212874/why-is-backspace-often-represented-with-h | TODO: I might remove it
+            8                       : self.__navigate_to_previous_dir   , # ##2 https://superuser.com/questions/212874/why-is-backspace-often-represented-with-h | TODO: I might remove it
             127                     : self.__navigate_to_previous_dir   ,
             263                     : self.__navigate_to_previous_dir   ,
             unicurses.KEY_RESIZE    : self.__handle_resize_event        ,
@@ -1046,7 +1046,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 return False
             self.clear_find_results()
             return True
-        elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263):
+        elif event in (unicurses.KEY_BACKSPACE, 8, 127, 263): #2
             if len(self.__temp_findname) > 1:
                 self.__temp_findname = self.__temp_findname[:-1]
             else:
@@ -1297,7 +1297,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     __illegal_filename_characters  = ('<', '>', ':',  '/', '\\', '|', '?', '*', '"')
     def handle_rename_events(self, event):  # At this momment i don't even care about optimizing anything... just kidding, you get the point, no free time | TODO: change event == ... to self.events.get(...)
-        if event in (unicurses.KEY_LEFT, unicurses.CTRL('H')):
+        if (event == unicurses.KEY_LEFT) or (event == unicurses.CTRL('H') and not IS_WINDOWS): #2 2025-12-23 09:48:42 PM temporary Windows fix for backspace
             if self.__temp_i != 0: self.__temp_i -= 1
         elif event in (unicurses.KEY_RIGHT, unicurses.CTRL('L')):
             if self.__temp_i != len(self.__temp_name): self.__temp_i += 1
