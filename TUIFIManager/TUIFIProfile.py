@@ -68,6 +68,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),4, DEFAULT_EDITOR),
 
+    '.gitmodules':TUIFIProfile((
+        '          \n'
+        ' ┏━━━┏▄ ┓ \n'
+        ' ┇█▓░┣┻▄┇ \n'
+        ' ┗━━ ▀  ┛ '
+    ),3, DEFAULT_EDITOR),
     '.gitattributes':TUIFIProfile((
         '          \n'
         ' ┏ATR┏▄ ┓ \n'
@@ -161,6 +167,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃ █▄▄█ ┃ \n'
         ' ┗━━━━━━┛ '
     ),3, DEFAULT_OPENER),
+    '/out':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┇ █▀▀█ ┇ \n'
+        ' ┇ █▄▄█ ┇ \n'
+        ' ┗━━━━━━┛ '
+    ),3, DEFAULT_OPENER),
     '/h':TUIFIProfile((
         ' ┏━━━━━━┓ \n'
         ' ┇ █▂▂█ ┃ \n'
@@ -251,6 +263,18 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇┣┫┗┓┃┇┃ \n'
         ' ┃┃┃┇┃ASM \n'
         ' ┗┻┻┗┛╹╹╹ '
+    ),8, DEFAULT_EDITOR),
+    '/s':TUIFIProfile((
+        ' ┏┏┓┏┓┓┓┓ \n'
+        ' ┇┣┫┗┓┃┇┃ \n'
+        ' ┃┃┃┇┃ASM \n'
+        ' ┗┻┻┗┛╹╹╹ '
+    ),8, DEFAULT_EDITOR),
+    '/a86':TUIFIProfile((
+        ' ┏┏┓┏┓┏┓┓ \n'
+        ' ┇┣┫┣┫┣┓┃ \n'
+        ' ┃┃┃┃┇A86 \n'
+        ' ┗╹╹┗┛┗┛┛ '
     ),8, DEFAULT_EDITOR),
     '/adb':TUIFIProfile((
         ' ┏━━━┏━━┓ \n'
@@ -431,6 +455,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ╰━━━━━━┛ '
     ),3, DEFAULT_EDITOR),
 
+    '/img':TUIFIProfile((
+        ' ┏•┓┓┓┏┓┓ \n'
+        ' ┃▒┃┃┃┃┓┇ \n'
+        ' ┃IMG┻╋┫┫ \n'
+        ' ┗┻━┻┻┗┛┛ '
+    ),8, DEFAULT_OPENER),
 
     '/lock':TUIFIProfile((
         ' ┏┏━━━━┓┓ \n'
@@ -540,10 +570,42 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),4, DEFAULT_OPENER),
 
 
+    '/hex':TUIFIProfile((
+        ' ┌┏━┓───┐ \n'
+        ' │┃Ξ┃HEX│ \n'
+        ' │┃┇┇░▓█│ \n'
+        ' └┗━┛───┘ '
+    ),8, DEFAULT_EDITOR),
+
+
     '/crt':TUIFIProfile((
         ' ┌─┏━┓──┐ \n'
         ' │C┃E┃RT│ \n'
         ' │I┃┇┇1C│ \n'
+        ' └─┗━┛──┘ '
+    ),8, DEFAULT_EDITOR),
+    '/cert':TUIFIProfile((
+        ' ┌─┏━┓──┐ \n'
+        ' │C┃E┃RT│ \n'
+        ' │I┃┇┇1C│ \n'
+        ' └─┗━┛──┘ '
+    ),8, DEFAULT_EDITOR),
+    '/cer':TUIFIProfile((
+        ' ┌─┏━┓──┐ \n'
+        ' │C┃E┃RT│ \n'
+        ' │I┃┇┇1C│ \n'
+        ' └─┗━┛──┘ '
+    ),8, DEFAULT_EDITOR),
+    '/p12':TUIFIProfile((
+        ' ┌─┏━┓──┐ \n'
+        ' │C┃E┃RT│ \n'
+        ' │P┃┇┇12│ \n'
+        ' └─┗━┛──┘ '
+    ),8, DEFAULT_EDITOR),
+    '/pem':TUIFIProfile((
+        ' ┌─┏━┓──┐ \n'
+        ' │C┃E┃RT│ \n'
+        ' │P┃┇┇EM│ \n'
         ' └─┗━┛──┘ '
     ),8, DEFAULT_EDITOR),
 
