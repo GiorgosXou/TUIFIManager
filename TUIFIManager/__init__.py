@@ -437,7 +437,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
 
     __is_opening_previous_dir = False
-    def open(self, directory, suffixes=[], _with=None):
+    def open(self, directory, suffixes=[], _with=None): # 2025-12-25 07:50:52 AM | the momment I realised I should had named this path instead of directory but now I can't do this simply since it will messup with commands loaded from cmds.conf
         """
         `open()` is `load_files()` + `draw()`
         """
