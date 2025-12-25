@@ -125,10 +125,10 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),4, DEFAULT_EDITOR),
     '/ini':TUIFIProfile((
-        '  ━━━━━━┓ \n'
-        ' ┇┇INIT┃┃ \n'
-        ' ┃┃|::|┃┃ \n'
-        ' ┗━━━━━━  '
+        ' ┏┏━━━━┳┓ \n'
+        ' ┃┃INIT┃┃ \n'
+        ' ┃┃┇┃┃┇┃┃ \n'
+        ' ┗┻━━━━┛┛ '
     ),4, DEFAULT_EDITOR),
     '/ppt':TUIFIProfile((
         ' ╭━━━━┳╮╮ \n'
