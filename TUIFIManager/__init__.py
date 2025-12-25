@@ -14,7 +14,7 @@ from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
 from      .TUIProps import TUIProps, convert_bytes
-from   .TUItilities import WindowPad, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, TEMP_PATH, DEFAULT_BACKGROUND, clipboard # DEFAULT_BACKGROUND is imported from __main__
+from   .TUItilities import WindowPad, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, TEMP_PATH, DEFAULT_BACKGROUND, COLOR_PAIR_RED, COLOR_PAIR_WHITE, COLOR_PAIR_BW, COLOR_PAIR_GREEN, clipboard # DEFAULT_BACKGROUND is imported from __main__
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, TUIFI_THEME, load_theme
 import   subprocess
 import    unicurses
@@ -117,7 +117,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         if has_label:
             height -= 1
             self.labelpad            = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
-            self.info_label          = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, 9)
+            self.info_label          = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, COLOR_PAIR_BW)
             self.info_label.style    = unicurses.A_REVERSE | unicurses.A_BOLD
             self.info_label.on_click = self.info_label_clicked
             warnings.showwarning     = self.custom_warning_handler
@@ -314,7 +314,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
     def load_files(self, directory, suffixes=[]):  # DON'T load and then don't show :P
         directory = os.path.realpath(os.path.normpath(directory))
         if not access(directory, R_OK):
-            self.__set_label_text(f'NO READ PERMISSION: "{directory}"')
+            self.__set_label_text(f'NO READ PERMISSION: "{directory}"', COLOR_PAIR_RED)
             return []
         if not os.path.isdir(directory):
             raise FileNotFoundError(f'DirectoryNotFound: "{directory}"')
@@ -538,10 +538,10 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 f.close()
                 # block from create_new()
                 self.__sub_handle_creation_of(filename, self.get_profile(path))
-                self.__set_label_text(f'SAVED: "{filename}"')
+                self.__set_label_text(f'SAVED: "{filename}"', COLOR_PAIR_GREEN)
                 return True
             except Exception as e:
-                self.__set_label_text(f"FAILED TO SAVE: { str(e) }")
+                self.__set_label_text(f"FAILED TO SAVE: { str(e) }", COLOR_PAIR_RED)
                 return False
 
 
@@ -586,7 +586,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
                 return self.save(out_path, filename, r.content)
             except Exception as e:
-                self.__set_label_text(f"FAILD TO DOWNLOAD: { str(e) }")
+                self.__set_label_text(f"FAILD TO DOWNLOAD: { str(e) }", COLOR_PAIR_RED)
                 return False
 
 
@@ -816,8 +816,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         self.reload()
 
 
-    def __set_label_text(self, text):
+    def __set_label_text(self, text, color_pair=9):
         if self.info_label:
+            self.info_label.color_pair = color_pair
             self.info_label._text = text
 
 
@@ -870,7 +871,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     def has_write_access(self, path):
         if not access(path, W_OK):
-            self.__set_label_text('[ERROR] NO WRITE PERMISSION')
+            self.__set_label_text('[ERROR] NO WRITE PERMISSION', COLOR_PAIR_RED)
             return False
         return True
 
@@ -897,7 +898,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         length = len(TUIFIManager.__temp__copied_files)
         text   = f'{length} files [~{convert_bytes(size)}]' if length > 1 else f'{TUIFIManager.__temp__copied_files[0].name}'
         action = 'CUTED' if self.__is_cut else 'COPIED'
-        self.__set_label_text(f'[{action}]: {text}')
+        self.__set_label_text(f'[{action}]: {text}', COLOR_PAIR_GREEN)
 
 
     def __stack_files_for_action(self):
@@ -935,7 +936,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             while exists(f'{destination}{i}_{f.name}'):
                 i += 1
             method_copy(source, f'{destination}{i}_{f.name}')
-
+                
 
     def __copy_cut(self):
         for f in TUIFIManager.__temp__copied_files:
@@ -956,7 +957,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         if not self.has_write_access(self.directory): return
         if len(TUIFIManager.__temp__copied_files) == 0 or not os.path.exists(TUIFIManager.__temp_dir_of_copied_files): return # u never no if the user deleted anything from other file manager this is also something i haven't consider for the rest of the things and [...]
         if TUIFIManager.__temp_dir_of_copied_files != self.directory: self.__copy_cut ()
-        else                                                : self.__duplicate()
+        else : self.__duplicate()
         self.reload(keep_search_results=True)
 
 
@@ -989,7 +990,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 if tmp_count == 0:
                     break
             i+=1
-        self.__set_label_text(f'[DELETED] {tmp_deleted} OUT OF {tmp_selected} FILES')
+        self.__set_label_text(f'[DELETED] {tmp_deleted} OUT OF {tmp_selected} FILES', COLOR_PAIR_GREEN if tmp_deleted == tmp_selected else COLOR_PAIR_RED)
         return i if not failed_i else failed_i
 
 
@@ -1004,14 +1005,14 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 self.__count_selected -= 1 # select the previous one
                 del self.files[self.__index_of_clicked_file]
                 fi = self.__index_of_clicked_file - 1
-                self.__set_label_text(f'[DELETED] "{self.__clicked_file.name}"')
+                self.__set_label_text(f'[DELETED] "{self.__clicked_file.name}"', COLOR_PAIR_GREEN)
             else:
                 fi = self.__index_of_clicked_file
-                self.__set_label_text(f'[FAILED TO DELETE] "{self.__clicked_file.name}"')
+                self.__set_label_text(f'[FAILED TO DELETE] "{self.__clicked_file.name}"', COLOR_PAIR_RED)
         elif self.__count_selected > 1:  # Why do i even > 1 very sus | 2024-07-10 Update: I do so because people might delete without any selection!
             fi = self.__delete_multiple_selected_file()
         else:
-            self.__set_label_text(' NO FILE SELECTED TO DELETE')
+            self.__set_label_text(' NO FILE SELECTED TO DELETE', COLOR_PAIR_RED)
             return
         self.resort_reset_select(fi)
 
@@ -1096,7 +1097,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
         self.__pre_hov = None
         self.find_file(self.__temp_findname)
-        self.__set_label_text(f'SEARCH: {self.__temp_findname}')
+        self.__set_label_text(f'SEARCH: {self.__temp_findname}', COLOR_PAIR_BW)
         i = 0 if len(self.files) == 1 else 1
         self.__mark_file_as_currently_clicked(i)
 
@@ -1112,7 +1113,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
 
     def find(self):
-        self.__set_label_text('[INPUT]')
+        self.__set_label_text('[INPUT]', COLOR_PAIR_BW)
         self.is_in_find_mode = True
         self.escape_event_consumed = True
         self.__temp_findname = '' # just to make sure although it might not be need it
@@ -1150,7 +1151,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             TUIFIManager.__temp_dir_of_copied_files = self.directory
             self.__set_label_on_copy(size)
         else:
-            self.__set_label_text('FILES NOT FOUND')
+            self.__set_label_text('FILES NOT FOUND', COLOR_PAIR_RED)
 
 
     def __cmd_copy(self, pattern=None):
@@ -1227,7 +1228,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                         self.__set_label_on_file_selection(i,tfl)
                         self.__ignore_escape()
                         return False
-                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"')
+                self.__set_label_text(f' Nothing was found forwards, starting with "{character}"', COLOR_PAIR_RED)
                 self.__ignore_escape()
             return False
         if self.__temp_findname.startswith('F'):
@@ -1241,7 +1242,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                         self.__set_label_on_file_selection(i,self.__clicked_file)
                         self.__ignore_escape()
                         return False
-                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"')
+                self.__set_label_text(f' Nothing was found backwards, starting with "{character}"', COLOR_PAIR_RED)
                 self.__ignore_escape()
             return False
         if self.__temp_findname.startswith('m'):
@@ -1260,7 +1261,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                     self.deselect()
                     self.open(path) # scroll to file maby too?
                 else: 
-                    self.__set_label_text('[MARKER] NOT FOUND')
+                    self.__set_label_text('[MARKER] NOT FOUND', COLOR_PAIR_RED)
                     self.__ignore_escape()
             return True
         # elif Z_EXISTS and self.__temp_findname.startswith('z'): # TODO: I've wanted to call z command but it says something about permissions and stopped trying
@@ -1305,7 +1306,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     def rename(self):
         if self.__clicked_file and not self.__clicked_file == self.files[0]:
-            self.__set_label_text(f'[RENAMING] {self.__clicked_file.name}')
+            self.__set_label_text(f'[RENAMING] {self.__clicked_file.name}', COLOR_PAIR_WHITE)
             self.escape_event_consumed = True
             self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE)  # Yeah ok, whatever
             self.__temp_name        = self.__clicked_file.name
@@ -1334,7 +1335,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             self.__change_escape_event_consumed = True
             if  event != 27 and self.__temp_name.strip() != '' and not os.path.exists(new_path_name):
                 os.rename(self.directory + sep + self.__clicked_file.name, new_path_name)
-                self.__set_label_text(f'RENAMED: "{self.__clicked_file.name}" to "{self.__temp_name}"')
+                self.__set_label_text(f'RENAMED: "{self.__clicked_file.name}" to "{self.__temp_name}"', COLOR_PAIR_GREEN)
                 self.__clicked_file.name    = self.__temp_name
                 self.__clicked_file.profile = self.get_profile(new_path_name)
                 self.resort()
@@ -1413,6 +1414,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         info = f'[{convert_bytes(os.path.getsize(path))}]' if os.path.isfile(path) else ''
         offset = self.__int_len(max(len(self.files),999)) + 3 + self.__int_len(index) + 3 + len(info) + 2
         self.info_label.text = f'[{len(self.files) - 1:04}] [{index}] {path[max(len(path) - self.info_label.width + offset, 0):]} {info}'
+        if not self.info_label.color_pair == 9:
+            self.info_label.color_pair = 9 
+            self.info_label.refresh()
         # just because i know that len is stored as variable,  that's why i don;t count them in for loop
 
 

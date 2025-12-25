@@ -88,6 +88,10 @@ class Parent:
         self.lines, self.columns = uc.getmaxyx(self.win)
 
 
+COLOR_PAIR_GREEN = 7
+COLOR_PAIR_WHITE = 3
+COLOR_PAIR_RED   = 5
+COLOR_PAIR_BW    = 1
 
 # # mapping function values 0-255 to 0-1000
 # C = lambda x: int((x - 0) * (1000 - 0) / (255 - 0) + 0)
@@ -554,16 +558,18 @@ class Drawable(Component):
 class Label(Drawable): # TODO: make components a type of Drawables\components rather than a WindowPad
     def __init__(self,winpad:WindowPad, y=0, x=0, text='', height=1, width=None, anchor=(False, False, False, False), wrap_text=False, color=4, style=uc.A_NORMAL ) -> None:
         super().__init__(winpad, y, x, height, width if width else len(text), anchor)
-        self.style      = style
-        self.color_pair = color
-        self._text      = text
-        self.wrap_text  = wrap_text
-        self.maxheight  = 1 # WARN         : this is temporary maybe?
-        self.minwidth   = len(text) # WARN : this is temporary maybe?
+        self.style       = style
+        self._color_pair = color
+        self._text       = text
+        self.wrap_text   = wrap_text
+        self.maxheight   = 1 # WARN         : this is temporary maybe?
+        self.minwidth    = len(text) # WARN : this is temporary maybe?
 
     @property
     def text(self): return self._text
 
+    @property
+    def color_pair(self): return self._color_pair
 
     def draw(self):
         x = self.x
@@ -589,6 +595,11 @@ class Label(Drawable): # TODO: make components a type of Drawables\components ra
     @text.setter
     def text(self, text):
         self._text = text
+        self.refresh()
+
+    @color_pair.setter
+    def color_pair(self, color_pair):
+        self._color_pair = color_pair
         self.refresh()
 
 
