@@ -1,8 +1,8 @@
 #TODO: I NEED TO ADD GETTERS AND SETTERS FOR Y AND X BECAUSE THEY NEED unicurses.touchwin(self.parent.win)
 #TODO: I NEED TO CHECK FOR WRITE/READ/EXECUTE PERMISSIONS (PREVENT EXCEPTIONS\ERRORS)
 
+from     send2trash import send2trash, TrashPermissionError
 from     contextlib import contextmanager
-from     send2trash import send2trash
 from      functools import partial
 from        pathlib import Path
 from         typing import Optional, Final
@@ -821,18 +821,37 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             self.info_label._text = text
 
 
+    if IS_TERMUX:
+        def __attempt_deletion(self, file):
+            try:
+                if os.path.isfile(file):
+                    os.remove (file);
+                elif os.path.exists(file):
+                    if file.endswith(f'{sep}..'): return False
+                    shutil.rmtree(file)
+                return True
+            except:
+                return False
+    else:
+        def __attempt_deletion(self, file):
+            if not os.path.exists(file) or ((not os.path.isfile(file)) and (file.endswith(f'{sep}..'))):
+                return False
+            try:
+                send2trash(file)
+                return True;
+            except TrashPermissionError:
+                #TODO: Fallback: delete
+                return False
+            except OSError:
+                return False
+
+
     def __delete_file(self,file):
         if isinstance(file, TUIFile):
             file = self.directory + sep + file.name
         elif not isinstance(file, str):
             raise TypeError('TUIFileTypeError: file must be of type string or TUIFile.')
-        if os.path.isfile(file): # checking if exists too.
-            if IS_TERMUX: os.remove (file)
-            else        : send2trash(file)
-        elif os.path.exists(file) and not file.endswith(f'{sep}..'): # "and not .." whatever
-            if IS_TERMUX: shutil.rmtree(file)
-            else        : send2trash   (file)
-        self.__count_selected -= 1
+        return self.__attempt_deletion(file)
 
 
     def __scroll_to_file(self, tuifile, select=False, deselect=False):
@@ -950,28 +969,28 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         self.select(self.__clicked_file)
 
 
-    def __delete_selected_file(self):
-        # checking under __delete_file too but nvm cause i have no time right now
-        if self.__clicked_file.name == '..': return 0
-        self.__delete_file(self.__clicked_file)
-        del self.files[self.__index_of_clicked_file]
-        self.__set_label_text(f'[DELETED] "{self.__clicked_file.name}"')
-        return self.__index_of_clicked_file - 1
-
-
     def __delete_multiple_selected_file(self):
         i=0
-        tmp_count = self.__count_selected
+        failed_i     = 0
+        tmp_deleted  = 0
+        tmp_selected = self.__count_selected
+        tmp_count    = self.__count_selected
         while True:
             if self.files[i].is_selected: # first file is never selected because it is the .. one
-                self.__delete_file(self.files[i])
-                del self.files[i]
-                i-=1
-                if self.__count_selected == 0:
+                if self.__delete_file(self.files[i]):
+                    tmp_deleted += 1
+                    self.__count_selected -= 1 # successful or not we -1
+                    del self.files[i]
+                    i-=1
+                else:
+                    #TODO: skip or abort or undo msgbox-dialog
+                    failed_i = i
+                tmp_count -= 1
+                if tmp_count == 0:
                     break
             i+=1
-        self.__set_label_text(f'[DELETED] {tmp_count} FILES')
-        return i
+        self.__set_label_text(f'[DELETED] {tmp_deleted} OUT OF {tmp_selected} FILES')
+        return i if not failed_i else failed_i
 
 
     def delete(self):
@@ -979,8 +998,16 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         Deletes the selected file(s). | Not fully implemented yet
         """
         if not self.has_write_access(self.directory): return
+        fi = 0
         if self.__count_selected == 1 and self.__clicked_file :
-            fi = self.__delete_selected_file()
+            if self.__delete_file(self.__clicked_file): # delete selected, if successful:
+                self.__count_selected -= 1 # select the previous one
+                del self.files[self.__index_of_clicked_file]
+                fi = self.__index_of_clicked_file - 1
+                self.__set_label_text(f'[DELETED] "{self.__clicked_file.name}"')
+            else:
+                fi = self.__index_of_clicked_file
+                self.__set_label_text(f'[FAILED TO DELETE] "{self.__clicked_file.name}"')
         elif self.__count_selected > 1:  # Why do i even > 1 very sus | 2024-07-10 Update: I do so because people might delete without any selection!
             fi = self.__delete_multiple_selected_file()
         else:
