@@ -477,6 +477,7 @@ class WindowPad(Component):
             if redraw_parent: # when visibility changes it calls refresh with redraw_parent=True
                 uc.touchwin(self.parent.win) # Do i need this? YES
             uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
+            lock.release()
             return
         if self.border: self.border.update(self.pad)
         if clear: uc.werase(self.pad)
