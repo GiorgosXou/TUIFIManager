@@ -93,7 +93,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     def __init_variables(self):
         self.files              = []
-        self.directory          = sep
+        self.directory          = '.'
         self.__count_selected   = 0
         self.vim_mode           = False
         self.info_label         = None
@@ -109,7 +109,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         self.info_label._text = " COPIED DIRECTORY ON CLIPBOARD" if clipboard(self.directory) else " FAILED TO COPY DIRECTORY ON CLIPBOARD"
 
 
-    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), directory=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, show_hidden=False):
+    def __init__(self, y=0, x=0, height=30, width=45, anchor=(False,False,False,False), path=HOME_DIR, suffixes=[], sort_by=None, has_label=True, win=None, draw_files=True, termux_touch_only=True, auto_find_on_typing=True, auto_cmd_on_typing=False, vim_mode=False, is_focused=False, show_hidden=False):
         load_theme()
         TUIFIManager._instance_count += 1
         self.__init_variables()
@@ -144,13 +144,8 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 'New Folder │ CTRL+N',
                 'Properties │ CTRL+P'),
         )
-        self.load_order  ()
-        if directory:
-            self.directory = os.path.normpath(directory)
-            self.load_files(directory, suffixes)
-            if draw_files:
-                self.draw()
-
+        self.__load(path, draw_files, suffixes)
+        self.load_order         ()
         self.load_markers       ()
         self.load_commands      ()
         self.__set_normal_events()
@@ -167,6 +162,18 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             super().refresh(clear=False)
         self.menu.refresh()
         self.properties.refresh()
+
+
+    def __load(self, path, draw_files, suffixes):
+        if os.path.exists(path):
+            self.directory = os.path.normpath(path)
+            if os.path.isfile(path):
+                self.directory = self.directory[:-len(self.directory.split(sep)[-1])]
+        else:
+            self.__set_label_text(f' "{path}" NOT FOUND', COLOR_PAIR_RED)
+        self.load_files(self.directory, suffixes)
+        if draw_files:
+            self.draw()
 
 
     def custom_warning_handler(self, message, category, filename, lineno, file=None, line=None):

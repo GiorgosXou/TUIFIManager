@@ -15,7 +15,7 @@ ESCAPE_KEY = 27
 
 def parse_terminal_arguments(): # TODO: -s --suffixes to be passed to TUIFIManager
     parser = argparse.ArgumentParser()
-    parser.add_argument('directory', nargs='?', default='.')
+    parser.add_argument('path', nargs='?', default='.')
     parser.add_argument('-s', '--suffixes', default=[], nargs='+', required=False)
     parser.add_argument('-v', '--version', action='version', version=f'TUIFIManager v.{__version__} | Powered by UNI-CURSES')
     return vars(parser.parse_args())
