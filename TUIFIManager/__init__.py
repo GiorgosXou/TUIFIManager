@@ -117,7 +117,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         if has_label:
             height -= 1
             self.labelpad            = WindowPad(win,y+height,0,1,width, (False,anchor[1],anchor[2],anchor[3]))
-            self.info_label          = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, COLOR_PAIR_BW)
+            self.info_label          = Label(self.labelpad,0, 0, f'{f" {TUIFI_THEME} |" if TUIFI_THEME else ""} TUIFIManager {__version__} | Powered by uni-curses | + Donators: @Naheel-Azawy, @cargilcm, Johann-F Weber.', 1, width, (False,anchor[1],anchor[2],anchor[3]), False, COLOR_PAIR_BW)
             self.info_label.style    = unicurses.A_REVERSE | unicurses.A_BOLD
             self.info_label.on_click = self.info_label_clicked
             warnings.showwarning     = self.custom_warning_handler
