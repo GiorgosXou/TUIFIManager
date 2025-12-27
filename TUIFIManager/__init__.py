@@ -1088,6 +1088,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 self.clear_find_results()
                 return True
         elif event in self.__arrow_keys or unicurses.CTRL(event) == event or event in (10, unicurses.KEY_ENTER): # unicurses.CTRL(event) seems to capture KEY_ENTER but just in case i'll include KEY_ENTER too...
+            self.__set_label_text('[NORMAL]')
             i = 0 if len(self.files) == 1 else 1
             self.__change_escape_event_consumed = True
             self.is_in_find_mode                = False
@@ -1314,6 +1315,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
     def rename(self):
         if self.__clicked_file and not self.__clicked_file == self.files[0]:
             self.__set_label_text(f'[RENAMING] {self.__clicked_file.name}', COLOR_PAIR_WHITE)
+            self.__change_escape_event_consumed = False
             self.escape_event_consumed = True
             self.__clicked_file.draw_name(self.pad, self.__clicked_file.name, '', 0, unicurses.A_UNDERLINE)  # Yeah ok, whatever
             self.__temp_name        = self.__clicked_file.name
