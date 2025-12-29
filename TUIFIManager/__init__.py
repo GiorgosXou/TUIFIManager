@@ -1261,6 +1261,21 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                     self.__temp_findname = '' # ... and once here
                     self.__ignore_escape()
             return False
+        elif self.__temp_findname == 'G':
+            self.__scroll_to_file(self.files[-1], True, True)
+            self.__mark_file_as_currently_clicked(len(self.files)-1)
+            self.__set_label_on_file_selection(len(self.files)-1 ,self.__clicked_file)
+            self.__temp_findname = '' # ... and once here
+            self.__ignore_escape()
+            return False
+        elif self.__temp_findname.startswith('g'):
+            if len(self.__temp_findname) == 2 and character == 'g':
+                self.__scroll_to_file(self.files[0], True, True)
+                self.__mark_file_as_currently_clicked(0)
+                self.__set_label_on_file_selection(0 ,self.__clicked_file)
+                self.__temp_findname = '' # to prevent blocking command mode I include those 2 lines 2 times, once here ...
+                self.__ignore_escape()
+            return False
         elif self.__temp_findname.startswith('f'):
             if len(self.__temp_findname) == 2:
                 at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
