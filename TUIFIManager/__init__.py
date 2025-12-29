@@ -1261,7 +1261,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                     self.__temp_findname = '' # ... and once here
                     self.__ignore_escape()
             return False
-        if self.__temp_findname.startswith('f'):
+        elif self.__temp_findname.startswith('f'):
             if len(self.__temp_findname) == 2:
                 at = self.__index_of_clicked_file + 1 if self.__index_of_clicked_file else 0
                 for i, tfl in enumerate(self.files[at:], start=at):
@@ -1274,7 +1274,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 self.__set_label_text(f' Nothing was found forwards, starting with "{character}"', COLOR_PAIR_RED)
                 self.__ignore_escape()
             return False
-        if self.__temp_findname.startswith('F'):
+        elif self.__temp_findname.startswith('F'):
             if len(self.__temp_findname) == 2:
                 at = self.__index_of_clicked_file if self.__index_of_clicked_file else 0
                 for i, tfl in enumerate(reversed(self.files[:at])):
@@ -1288,7 +1288,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 self.__set_label_text(f' Nothing was found backwards, starting with "{character}"', COLOR_PAIR_RED)
                 self.__ignore_escape()
             return False
-        if self.__temp_findname.startswith('m'):
+        elif self.__temp_findname.startswith('m'):
             self.__set_label_text('[MARKER]')
             if len(self.__temp_findname) == 2:
                 self.__set_label_text(f'[MARKER] SET TO [{character}]')
