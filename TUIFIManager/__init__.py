@@ -499,6 +499,37 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             return None, None
 
 
+    def get_tuifile_in_block_and_deselect_others(self, y1, x1, y2, x2, relative_to_pad=False):
+        # Normalize coordinates so x1 <= x2 and y1 <= y2
+        if x1 > x2:
+            x1, x2 = x2, x1
+        if y1 > y2:
+            y1, y2 = y2, y1
+
+        # Convert to pad-relative coordinates if needed
+        if not relative_to_pad:
+            dy = self.position.iy - self.y
+            y1 += dy
+            y2 += dy
+            x1 -= self.x
+            x2 -= self.x
+
+
+        for f in self.files:
+            # Deselect everything first
+
+            fx1 = f.x
+            fy1 = f.y
+            fx2 = f.x + f.profile.width
+            fy2 = f.y + f.profile.height + f.name_height
+
+            # Check rectangle intersection
+            if ( fx1 < x2 and fx2 > x1 and fy1 < y2 and fy2 > y1):
+                self.select(f)
+            else:
+                self.deselect(f)
+
+
     def deselect(self,tuifile=None):
         if not tuifile:
             if self.__count_selected == 1:
@@ -731,6 +762,10 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     def __init_event_variables_and_mouse(self):
         self.is_on_select_mode          = False
+        self.__drag_scroll_pos           = 0
+        self.__drag_pos_y                = 0
+        self.__drag_pos_x                = 0
+        self.__mouse_drag_select_mode   = False
         self.__mouse_btn1_pressed_file  = None
         self.__pre_pressed_file         = None
         self.__pre_clicked_file         = None
@@ -1471,8 +1506,49 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         return True
 
 
+    def __handle_mouse_drag_select(self, y1, x1, y2, x2, relative_to_pad=False): #TODO: once I force fixed-size TUIFIProfile-"icons" this will be way way faster
+        if not self.__mouse_drag_select_mode: return False
+        self.__set_label_text(" Mouse-drag select mode")
+        # Normalize coordinates so x1 <= x2 and y1 <= y2
+        if x1 > x2: 
+            x1, x2 = x2, x1
+        if y1 > y2: 
+            y1, y2 = y2, y1
+
+        # Convert to pad-relative coordinates if needed
+        if not relative_to_pad:
+            dy = self.position.iy - self.y
+            y1 += dy
+            y2 += dy
+            x1 -= self.x
+            x2 -= self.x
+
+
+        for f in self.files:
+            # Deselect everything first
+
+            fx1 = f.x
+            fy1 = f.y
+            fx2 = f.x + f.profile.width
+            fy2 = f.y + f.profile.height # + f.name_height
+
+            # Check rectangle intersection
+            if ( fx1 < x2 and fx2 > x1 and fy1 < y2 and fy2 > y1):
+                self.select(f)
+            else:
+                self.deselect(f)
+
+        # for _y in range(min(y, self.__drag_pos_y), max(y, self.__drag_pos_y)):
+        #     for _x in range(min(x, self.__drag_pos_x), max(x, self.__drag_pos_x)):
+        # unicurses.mvwchgat(self.pad, _y, _x, 1, unicurses.A_REVERSE, 2)
+        # unicurses.mvwchgat(self.pad, y , x, abs(self.__drag_pos_x - x), unicurses.A_REVERSE, 2)
+        # unicurses.mvwaddstr(self.pad, 1,1,"aaaa", unicurses.COLOR_PAIR(4))
+        return True
+
+
     def __handle_hover_mode(self, y, x):
         if not self.hover_mode: return
+        if self.__handle_mouse_drag_select(self.__drag_pos_y - (self.position.iy - self.__drag_scroll_pos), self.__drag_pos_x, y , x): return
         tmp_id_of_hov_file, tmp_hov_file = self.get_tuifile_by_coordinates(y,x, return_enumerator=True)
         if tmp_hov_file and tmp_id_of_hov_file and not tmp_hov_file.is_selected: 
             self.__set_label_on_file_selection(tmp_id_of_hov_file,tmp_hov_file)
@@ -1511,9 +1587,14 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                     self.__set_label_text(f'[{self.__count_selected}] Files selected')
 
                 if self.__mouse_btn1_pressed_file == self.__clicked_file and not (bstate & unicurses.BUTTON_CTRL or bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT):
+
+                    if not self.__mouse_drag_select_mode and self.__count_selected > 1:
+                        self.deselect()
+
                     if not ((bstate & unicurses.BUTTON3_RELEASED) and self.__count_selected > 1 and self.__clicked_file and self.__clicked_file.is_selected):
                         self.menu.delete()
-                        self.deselect()
+                        if self.__drag_pos_y == y and self.__drag_pos_x == x:
+                            self.deselect()
                     if bstate & unicurses.BUTTON3_RELEASED:
                         self.menu.create(y,x)
                     if self.__mouse_btn1_pressed_file and not self.__mouse_btn1_pressed_file.name == '..' and not self.__mouse_btn1_pressed_file.is_selected :
@@ -1542,11 +1623,19 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                             i+=1
                         self.resort_reset_select(folder_index)
 
+                self.__mouse_drag_select_mode = False # in other words "no selected file when btn1 pressed"
                 self.__pre_clicked_file = self.__clicked_file
                 self.__start_time = time()
             elif (bstate & unicurses.BUTTON1_PRESSED) or (bstate & unicurses.BUTTON3_PRESSED):
                 self.__delay1 = time()
                 self.__index_of_pressed_file, self.__mouse_btn1_pressed_file = self.get_tuifile_by_coordinates(y, x, return_enumerator=True)
+                self.__mouse_drag_select_mode = False # yep this is needed here
+                if not self.__mouse_btn1_pressed_file and (bstate & unicurses.BUTTON1_PRESSED):
+                    # if IS_DRAG_N_DROP: self.drag_and_drop.suppress = True # BUG: it's buggy but whatever...
+                    self.__mouse_drag_select_mode = True # in other words "no selected file when btn1 pressed"
+                    self.__drag_scroll_pos = self.position.iy
+                    self.__drag_pos_y = y
+                    self.__drag_pos_x = x
 
                 # # Sub-click navigation
                 # if not bstate & unicurses.BUTTON_CTRL and ((bstate & unicurses.BUTTON1_PRESSED) and self.__mouse_btn1_pressed_file):
@@ -1745,7 +1834,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
 
 """
-- 2023-07-29 03:09:22 AM TODO: ctrl+i or o for navigation to last edited or exited place | Icons | Tabs | Undo redo | Sort | click-drag select multiple | windows unicurses recompile dlls | prevent errors by checking permissions | zz midle word
+- 2023-07-29 03:09:22 AM TODO: ctrl+i or o for navigation to last edited or exited place | Icons | Tabs | Undo redo | Sort | windows unicurses recompile dlls | prevent errors by checking permissions | zz midle word
 - 2022-12-19 01:15:32 AM REMINDER: THE REASON WHY I USED self.position.iy INSTEAD OF self.iy IS BECAUSE CHANGING IT THAT WAY DOESN'T REDRAW THE WINDOW
 - 2022-12-21 08:23:25 PM REMINDER: What if i rename .. folder?
 """
