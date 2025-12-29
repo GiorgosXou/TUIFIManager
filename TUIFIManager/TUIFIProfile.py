@@ -87,6 +87,19 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━ ▀  ━┛ '
     ),3, DEFAULT_EDITOR),
 
+    '.xauthority':TUIFIProfile((
+        ' ╭╴╴╸━━━╮ \n'
+        ' │🭣🭕🭑🭆🭠🭘│ \n'
+        ' │🭈🭄🭜🭧🭏🬽│ \n'
+        ' ╰━━━╸╸╴╯ '
+    ),4, DEFAULT_EDITOR),
+    '.xresources':TUIFIProfile((
+        ' ╭╴╴╸━━━╮ \n'
+        ' │🭣🭕🭑🭆🭠🭘│ \n'
+        ' │🭈🭄🭜🭧🭏🬽│ \n'
+        ' ╰━━━╸╸╴╯ '
+    ),4, DEFAULT_EDITOR),
+
     'makefile':TUIFIProfile((
         ' ┏━━━━━┳┓ \n'
         ' ┃█▀▅▀█┣┫ \n'
