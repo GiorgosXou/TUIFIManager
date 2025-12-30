@@ -154,6 +154,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         if os.getenv('tuifi_vim_mode', str(vim_mode)) == 'True'   : self.toggle_vim_mode()
         if IS_DRAG_N_DROP: self.drag_and_drop = SyntheticXDND(self.handle_gui_to_tui_dropped_file, self.__get_selected_files) #NOTE: https://stackoverflow.com/a/14829479/11465149
 
+        self.jumplist           = [self.directory]
+        self.jumplist_position  = 0
+
 
 
     def refresh(self):
@@ -797,6 +800,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             unicurses.KEY_F(5)      : self.reload                       ,
             unicurses.KEY_F(3)      : self.descend_order_switch         ,
             unicurses.KEY_F(1)      : self.ascend_order_switch          ,
+            unicurses.ALT('o')      : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
+            unicurses.CTRL('O')     : self.jump_list_back               ,
+            unicurses.CTRL('I')     : self.jump_list_forward            ,
             unicurses.CTRL('A')     : self.select_all_files             ,
             unicurses.CTRL('T')     : self.toggle_hidden_files          ,
             unicurses.CTRL('R')     : self.rename                       ,
@@ -807,7 +813,6 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
             unicurses.CTRL('W')     : partial(self.create_new, 'file'  ),
             unicurses.CTRL('N')     : partial(self.create_new, 'folder'),
             unicurses.CTRL('F')     : self.find                         ,
-            unicurses.CTRL('O')     : self.__open_DEFAULT_WITH          , # https://stackoverflow.com/a/33966657/11465149
             unicurses.CTRL('E')     : self.exit_to_self_directory       ,
             unicurses.CTRL('P')     : self.view_selected_file_properties,
             unicurses.KEY_HOME      : partial(self.navigate, HOME_DIR)  ,
@@ -856,6 +861,26 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
     def toggle_hidden_files(self):
         self.show_hidden = not self.show_hidden
         self.reload()
+
+
+    def insert_jumplist(self, directory):
+        if self.jumplist[self.jumplist_position] == directory: return False
+        self.jumplist_position += 1
+        self.jumplist = self.jumplist[:self.jumplist_position]
+        self.jumplist.append(directory)
+        return True
+
+
+    def __jump(self, i, boundary):
+        if self.jumplist_position == boundary: 
+            self.__set_label_text(" NOTHING'S MORE IN THE JUMPLIST", COLOR_PAIR_RED)
+            return
+        self.jumplist_position += i
+        self.open(self.jumplist[self.jumplist_position])
+
+
+    def jump_list_forward(self): self.__jump( 1, len(self.jumplist)-1)
+    def jump_list_back   (self): self.__jump(-1, 0)
 
 
     def __set_label_text(self, text, color_pair=9):
@@ -1172,7 +1197,9 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
     def __cmd_open(self, **args):
         if args['directory']: 
             args['directory'] = self.__refine_path(args['directory'] )
-            if os.path.isdir(args['directory']): self.__count_selected = 0
+            if os.path.isdir(args['directory']): 
+                self.__count_selected = 0
+                self.insert_jumplist(args['directory'])
         else:
             args['directory'] = self.__clicked_file
         self.open(**args)
@@ -1306,8 +1333,11 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         elif self.__temp_findname.startswith('m'):
             self.__set_label_text('[MARKER]')
             if len(self.__temp_findname) == 2:
-                self.__set_label_text(f'[MARKER] SET TO [{character}]')
                 TUIFIManager.markers[character] = self.directory
+                if self.__temp_findname[1] == 'm' and self.insert_jumplist(self.directory): 
+                    self.__set_label_text(f'[MARKER] SET TO JUMPLIST AND [{character}]', COLOR_PAIR_GREEN)
+                else:
+                    self.__set_label_text(f'[MARKER] SET TO [{character}]')
                 self.__temp_findname = ''
                 self.__ignore_escape()
             return True
@@ -1318,6 +1348,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
                 if path:
                     self.deselect()
                     self.open(path) # scroll to file maby too?
+                    self.insert_jumplist(self.directory)
                 else: 
                     self.__set_label_text('[MARKER] NOT FOUND', COLOR_PAIR_RED)
                     self.__ignore_escape()
