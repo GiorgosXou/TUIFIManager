@@ -564,7 +564,6 @@ class Label(Drawable): # TODO: make components a type of Drawables\components ra
         self._text       = text
         self.wrap_text   = wrap_text
         self.maxheight   = 1 # WARN         : this is temporary maybe?
-        self.minwidth    = len(text) # WARN : this is temporary maybe?
 
     @property
     def text(self): return self._text
