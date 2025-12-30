@@ -78,8 +78,10 @@ In `vim_mode` both normal and vim shortcuts work
 |`KEY_F1`       | `O`  |(ascending) order-type switch|
 |`CTRL + V`     | `p` |Pastes the Copied or Cuted files              |
 |`DEL`          | `CTRL+d`  |Deletes the selected files                    |
+|`ALT + O`     |   |Open whole directory in editor                |
+|`CTRL + O`     |   | Navigate backward in jumplist                |
+|`CTRL + I`     |   |Navigate forward in jumplist |
 |`CTRL + F`     | `i`  |Find Files *(if not auto_find_on_typing)*     |
-|`CTRL + O`     |   |Open whole directory in editor                |
 |`CTRL + A`     |  |Select all files in current folder|
 |`CTRL + C`     | `yy`  |Copies the selected files                     |
 |`CTRL + K`     |   |Copies the selected files                     |
@@ -94,7 +96,8 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + E`     | `e` |[Exit with `cd`](https://github.com/GiorgosXou/TUIFIManager/tree/master/etc)                                  |
 |`ESCAPE`       |   |Exit                                          |
 
-**(*TIP:** 🐁 use `ALT + CLICK` for multiple mouse selection if `SHIFT` not working. You can also use `s i m a c` to copy individual properties when you have them opened)*
+> [!TIP] 
+> 🐁 use `ALT + CLICK` for multiple mouse selection if `SHIFT` not working. When properties-window is opened you can also use `s i m a c` to copy individual properties into the clipboard. To insert into jumplist the current directory simply mark `mm`
 
 ***TERMUX only Shortcuts\Keybindings***
 | Shortcut    | Action                                                                         |
@@ -103,7 +106,7 @@ In `vim_mode` both normal and vim shortcuts work
 |`CTRL + LEFT`| Goes out of select-mode while also cuts the seleccted file(s)                  |
 |`CTRL + END` | Goes out of select-mode while also deleting the selected file(s)               |
 |`CTRL + UP`  | Same as `CTRL + V`, Pastes the Copied or Cuted files                           |
-|`END`        | Deletes selected files                                                         |
+|`END`        | Deletes selected files *(Permanently!)*                                        |
 
 
 # 👨‍💻 Commands
@@ -121,7 +124,7 @@ In `vim_mode` both normal and vim shortcuts work
 
 **important note:** `o` is also used for ordering in `vim_mode`. In this case you can first press space-bar before proceeding with `owv` or with any other already reserved starting key, or just change it. 
 
-**Additionally** there are also some hardcoded ones, like the `m`+character: which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character. `yp` and `yd` to copy either the file-path or directory-path to clipboard. `F` and `f` for finding\\jumping-to the first filename-ocurance of the next letter you type, backwards or forwards
+**Additionally** there are also some hardcoded ones, like the `m`+character: which marks the current directory into the character, so you can navigate back to it by using \` or `;`+that_character. `yp` and `yd` to copy either the file-path or directory-path to clipboard. `F` and `f` for finding\\jumping-to the first filename-ocurance of the next letter you type, backwards or forwards. `gg` and `G` to go to scroll to the first or last file.
 
 
 
