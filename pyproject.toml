@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TUIFIManager"
-version = "5.2.5"
+version = "5.2.6"
 
 authors = [{name="George Chousos", email="gxousos@gmail.com"}]
 
