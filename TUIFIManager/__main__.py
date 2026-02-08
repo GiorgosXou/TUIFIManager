@@ -7,7 +7,7 @@ from __future__ import annotations
 # sys.path.append('/home/xou/.local/lib/python3.11/site-packages/')   # TESTING WITH DAP | REMINDER: python3.XX
 import argparse
 import unicurses as uc
-from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__, DEFAULT_BACKGROUND
+from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__, DEFAULT_BACKGROUND, IS_TERMUX
 
 ESCAPE_KEY = 27
 
@@ -33,7 +33,8 @@ def main():
     uc.cbreak       ( )
     uc.noecho       ( )
     uc.curs_set     (0)
-    uc.mouseinterval(0) # Initializing Mouse and then Update/refresh() stdscr
+    if not IS_TERMUX:
+        uc.mouseinterval(0)
     uc.mousemask    (uc.ALL_MOUSE_EVENTS | uc.REPORT_MOUSE_POSITION) # print("\033[?1003h\n")
     uc.keypad       (stdscr, True )
     uc.nodelay      (stdscr, False)
