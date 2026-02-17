@@ -150,13 +150,13 @@ class SyntheticXDND:
 
 
     mouse_moved_outside = False
-    def handle_dnd_tui_to_gui(self, x, y): # TUI to whatever
+    def handle_dnd_tui_to_gui(self, x, y, _): # TUI to whatever
         # print(f"TUI -> GUI X:{x} y:{y}")
         if not self.is_mouse_cursor_inside(self.get_self_geometry(),x,y):
             self.mouse_moved_outside = True
 
 
-    def handle_dnd_gui_to_tui(self, x, y): # Gui to potential TUI
+    def handle_dnd_gui_to_tui(self, x, y, _): # Gui to potential TUI
         # print(f"GUI -> TUI X:{x} y:{y}")
         if self.is_mouse_cursor_inside(self.get_self_geometry(),x,y) and self_window.get_attributes().map_state == 2: # 2 meaning is visible | prevents issues when you are in another i3 tab
             self.vdnd_win.move(x-5,y-5)
@@ -166,7 +166,7 @@ class SyntheticXDND:
 
 
     suppress = False
-    def on_mouse_click(self, x, y, button, pressed):
+    def on_mouse_click(self, x, y, button, pressed, _):
         global listener
         if self.suppress: 
             self.suppress = False
