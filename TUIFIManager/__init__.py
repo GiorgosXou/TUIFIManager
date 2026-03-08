@@ -1634,7 +1634,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
                 if self.__mouse_btn1_pressed_file == self.__clicked_file and not (bstate & unicurses.BUTTON_CTRL or bstate & unicurses.BUTTON_ALT or bstate & unicurses.BUTTON_SHIFT):
 
-                    if not self.__mouse_drag_select_mode and self.__count_selected > 1:
+                    if not self.__mouse_drag_select_mode and self.__count_selected > 1 and not (bstate & unicurses.BUTTON3_RELEASED):
                         self.deselect()
 
                     if not ((bstate & unicurses.BUTTON3_RELEASED) and self.__count_selected > 1 and self.__clicked_file and self.__clicked_file.is_selected):
