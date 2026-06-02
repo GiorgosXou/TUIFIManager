@@ -1,4 +1,4 @@
-from unicurses    import COLOR_PAIR, COLOR_WHITE, OPERATING_SYSTEM, init_color, init_pair, pair_content
+from unicurses    import OPERATING_SYSTEM
 from .TUItilities import HOME_DIR, IS_MACOS, IS_WINDOWS, init_colorscheme
 from shutil       import which
 from os.path      import isfile
