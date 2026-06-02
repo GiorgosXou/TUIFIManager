@@ -124,6 +124,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┃┻▂█▂┻┃┃ \n'
         ' ┗━━━━━┻┛ '
     ),4, DEFAULT_EDITOR),
+    'readme':TUIFIProfile((
+        ' ╭┏━━━━━┓ \n'
+        ' ┏┫READ┣┫ \n'
+        ' ┣┫┋┇┇┋┣┛ \n'
+        ' ┗━━━━━┛╯ '
+    ),4, DEFAULT_EDITOR),
 
     '/cfg':TUIFIProfile((
         ' ┏┏━━━━┓┓ \n'
@@ -187,6 +193,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┗━━━━━━┛ '
     ),3, DEFAULT_OPENER),
     '/h':TUIFIProfile((
+        ' ┏━━━━━━┓ \n'
+        ' ┇ █▂▂█ ┃ \n'
+        ' ┃ █▔▔█ ┃ \n'
+        ' ┗━━━━━━┛ '
+    ),4, DEFAULT_EDITOR),
+    '/hpp':TUIFIProfile((
         ' ┏━━━━━━┓ \n'
         ' ┇ █▂▂█ ┃ \n'
         ' ┃ █▔▔█ ┃ \n'
@@ -493,6 +505,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ┇ BASH ┇ \n'
         ' ╰━━━━━━╯ '
     ),4, DEFAULT_EDITOR),
+    '/bash':TUIFIProfile((
+        ' ╭━━━━━━╮ \n'
+        ' ┃ $_   ┃ \n'
+        ' ┇ BASH ┇ \n'
+        ' ╰━━━━━━╯ '
+    ),4, DEFAULT_EDITOR),
     '/cmd':TUIFIProfile((
         ' ╭━━━━━━╮ \n'
         ' ┃ C:\\> ┃ \n'
@@ -630,6 +648,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' ╰━━━━━━╯ '
     ),7, DEFAULT_OPENER),
 
+    '/url':TUIFIProfile((
+        ' ╭╭┰┰┰╮┬╮ \n'
+        ' │├╋╋╋┤├┤ \n'
+        ' ┆URL┸╯┼┤ \n' # URL better than WEB cause L has a blank-space, giving the essence of 3rd dimension.
+        ' ╰━━━━┷┷╯ '
+    ),8, DEFAULT_OPENER),
 
     '/desktop':TUIFIProfile((
         ' ╭──────╮ \n'
@@ -644,6 +668,13 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
         ' │▀┇┇╋╋╋┥ \n'
         ' ╰━┻┻┻┻┻╯ '
     ),3, DEFAULT_OPENER),
+
+    '/deb':TUIFIProfile((
+        ' ┏━━┏┓━━┓ \n'
+        ' ┃┃┃┇┇┃┃┃ \n'
+        ' ┃DEB┃┃┃┃ \n'
+        ' ┗━━┻┛━━┛ '
+    ),4, DEFAULT_OPENER),
 
 
     '/mp4':TUIFIProfile((
@@ -756,6 +787,12 @@ TUIFIProfiles = { # TODO: ADD gitignore and etc. icons | TODO: open zip rar and 
     ),4, DEFAULT_OPENER),
     '/bmp':TUIFIProfile((
         ' ┏━━━BMP┓ \n'
+        ' ┇*.∴:∵◖┃ \n'
+        ' ┣┓░▃┏▓▆┇ \n'
+        ' ┗━━━━━━┛ '
+    ),4, DEFAULT_OPENER),
+    '/ppm':TUIFIProfile((
+        ' ┏━━━PPM┓ \n'
         ' ┇*.∴:∵◖┃ \n'
         ' ┣┓░▃┏▓▆┇ \n'
         ' ┗━━━━━━┛ '
