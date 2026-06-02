@@ -26,7 +26,15 @@ IS_WINDOWS          = uc.OPERATING_SYSTEM == 'Windows'
 HOME_DIR            = getenv('UserProfile') if IS_WINDOWS else getenv('HOME')
 SHELL               = getenv('SHELL') # https://stackoverflow.com/a/35662469/11465149 | https://superuser.com/questions/1515578/
 IS_TERMUX           = 'com.termux' in HOME_DIR
-DEFAULT_BACKGROUND  =  -1 if getenv('tuitilities_default_background') == 'True' else uc.COLOR_BLACK
+if 'True' in (getenv('tuitilities_default_background'), getenv('tuitilities_default_colors')):
+    DEFAULT_COLORS = True
+    DEFAULT_BACKGROUND = -1
+    DEFAULT_FOREGROUND = -1
+else:
+    DEFAULT_COLORS = False
+    DEFAULT_BACKGROUND =  uc.COLOR_BLACK
+    DEFAULT_FOREGROUND =  uc.COLOR_WHITE
+
 COPY_APP = (
     ["pbcopy"] if IS_MACOS else
     ["clip"] if IS_WINDOWS else
@@ -97,15 +105,15 @@ COLOR_PAIR_BW    = 1
 # C = lambda x: int((x - 0) * (1000 - 0) / (255 - 0) + 0)
 
 MY_COLOR_PAIRS = (
-    (uc.COLOR_BLACK  ,uc.COLOR_WHITE    ),
-    (uc.COLOR_BLUE   ,uc.COLOR_WHITE    ),
-    (uc.COLOR_WHITE  ,DEFAULT_BACKGROUND),
-    (uc.COLOR_YELLOW ,DEFAULT_BACKGROUND),
-    (uc.COLOR_RED    ,DEFAULT_BACKGROUND),
-    (uc.COLOR_BLUE   ,DEFAULT_BACKGROUND),
-    (uc.COLOR_GREEN  ,DEFAULT_BACKGROUND),
-    (uc.COLOR_CYAN   ,DEFAULT_BACKGROUND),
-    (uc.COLOR_YELLOW ,DEFAULT_BACKGROUND), # I'll keep it extra for ui
+    (uc.COLOR_BLACK    ,uc.COLOR_WHITE),
+    (uc.COLOR_BLUE     ,DEFAULT_BACKGROUND),
+    (DEFAULT_FOREGROUND,DEFAULT_BACKGROUND),
+    (uc.COLOR_YELLOW   ,DEFAULT_BACKGROUND),
+    (uc.COLOR_RED      ,DEFAULT_BACKGROUND),
+    (uc.COLOR_BLUE     ,DEFAULT_BACKGROUND),
+    (uc.COLOR_GREEN    ,DEFAULT_BACKGROUND),
+    (uc.COLOR_CYAN     ,DEFAULT_BACKGROUND),
+    (uc.COLOR_YELLOW   ,DEFAULT_BACKGROUND), # I'll keep it extra for ui
 )
 
 # Might need  TODO:  setters for dimming and bold effects because of this custom color theming thing....

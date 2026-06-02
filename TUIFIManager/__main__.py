@@ -7,7 +7,7 @@ from __future__ import annotations
 # sys.path.append('/home/xou/.local/lib/python3.11/site-packages/')   # TESTING WITH DAP | REMINDER: python3.XX
 import argparse
 import unicurses as uc
-from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__, DEFAULT_BACKGROUND, IS_TERMUX
+from TUIFIManager import TUIFIManager, BEGIN_MOUSE, END_MOUSE, __version__, DEFAULT_COLORS, IS_TERMUX
 
 ESCAPE_KEY = 27
 
@@ -27,7 +27,7 @@ def main():
     stdscr = uc.initscr() # Global UniCurses Variable
     event  = -1
 
-    if DEFAULT_BACKGROUND:
+    if DEFAULT_COLORS:
         uc.use_default_colors()
     uc.start_color  ( )
     uc.cbreak       ( )

@@ -14,7 +14,7 @@ from        os.path import basename
 from       .TUIMenu import TUIMenu
 from       .TUIFile import TUIFile
 from      .TUIProps import TUIProps, convert_bytes
-from   .TUItilities import WindowPad, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, TEMP_PATH, DEFAULT_BACKGROUND, COLOR_PAIR_RED, COLOR_PAIR_WHITE, COLOR_PAIR_BW, COLOR_PAIR_GREEN, clipboard # DEFAULT_BACKGROUND is imported from __main__
+from   .TUItilities import WindowPad, Label, END_MOUSE, BEGIN_MOUSE, BEGIN_MOUSE, END_MOUSE, IS_WINDOWS, HOME_DIR, IS_TERMUX, TEMP_PATH, DEFAULT_COLORS, COLOR_PAIR_RED, COLOR_PAIR_WHITE, COLOR_PAIR_BW, COLOR_PAIR_GREEN, clipboard # DEFAULT_COLORS is imported from __main__
 from  .TUIFIProfile import TUIFIProfiles, DEFAULT_PROFILE , DEFAULT_WITH, DEFAULT_OPENER, CONFIG_PATH, TUIFI_THEME, load_theme
 import   subprocess
 import    unicurses

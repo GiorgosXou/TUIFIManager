@@ -148,7 +148,7 @@ In `vim_mode` both normal and vim shortcuts work
 <details>
 <summary><i>How do I enable transparency?</i></summary>
 
-> Set `tuitilities_default_background` enviroment variable to `True`
+> Set `tuitilities_default_colors` enviroment variable to `True`
 
 </details>
 <details>
