@@ -46,12 +46,16 @@ def main():
     HEIGHT,WIDTH = uc.getmaxyx(stdscr)
     fileManager  = TUIFIManager(0,0, HEIGHT,WIDTH, (True,True,True,True), **args, is_focused=True)
     fileManager.refresh()
+    uc.refresh()
 
     while event != ESCAPE_KEY or fileManager.escape_event_consumed: # Main loop 
         event = uc.ALT_CONDITION(uc.get_wch())
-        if event == uc.KEY_RESIZE: uc.resize_term(0,0)
+        if event == uc.KEY_RESIZE:
+            uc.resize_term(0,0)
+            uc.erase()
         fileManager.handle_events(event)
         fileManager.refresh()
+        uc.refresh()
     print(END_MOUSE)
     uc.endwin()
 

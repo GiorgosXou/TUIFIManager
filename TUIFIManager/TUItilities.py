@@ -205,7 +205,7 @@ def initialize_colors():
 
 
 @dataclass
-class Border: # TODO: Make clear and draw availabe both for Drawables and WindowPads
+class Border: # TODO: Make erase and draw availabe both for Drawables and WindowPads
     left                : int = uc.ACS_VLINE
     right               : int = uc.ACS_VLINE
     top                 : int = uc.ACS_HLINE
@@ -225,11 +225,11 @@ class Border: # TODO: Make clear and draw availabe both for Drawables and Window
         self.bottom_left_corner  = uc.CCHAR(self.bottom_left_corner )
         self.bottom_right_corner = uc.CCHAR(self.bottom_right_corner)
 
-    def clear(self, win): uc.wborder(win, uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '))
+    def erase(self, win): uc.wborder(win, uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '), uc.CCHAR(' '))
     def draw (self, win): uc.wborder(win, self.left, self.right, self.top, self.bottom, self.top_left_corner, self.top_right_corner, self.bottom_left_corner, self.bottom_right_corner)
 
     def update(self, win):
-        self.clear(win)
+        self.erase(win)
         self.draw (win)
 
 
@@ -263,7 +263,7 @@ class Component(Events):
         self.warp              = warp
         self.border            = border # TODO: to check
         self.components        = []
-        self.__visibility      = visibility
+        self._visibility      = visibility
         self._x_fraction = 0
         self._y_fraction = 0
         # if border: self.border.draw(self.pad) #TODO: see Border 
@@ -281,46 +281,46 @@ class Component(Events):
 
 
     @property #TODO: ADD descrition like use `self.position.x` instead if you don't want to redraw the `parent.win` immediately after
-    def visibility(self): return self.__visibility
+    def visibility(self): return self._visibility
 
     @visibility.setter
-    def visibility(self, visibility): self.__visibility = visibility; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def visibility(self, visibility): self._visibility = visibility; self.refresh()
 
     @property #TODO: ADD descrition like use `self.position.x` instead if you don't want to redraw the `parent.win` immediately after
     def x(self): return self.position.x
 
     @x.setter
-    def x(self, X): self.position.x = X; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def x(self, X): self.position.x = X; self.refresh()
 
     @property
     def y(self): return self.position.y
 
     @y.setter
-    def y(self, Y): self.position.y = Y; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def y(self, Y): self.position.y = Y; self.refresh()
 
     @property
     def ix(self): return self.position.ix
 
     @ix.setter
-    def ix(self, iX): self.position.ix = iX; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def ix(self, iX): self.position.ix = iX; self.refresh()
 
     @property
     def iy(self): return self.position.iy
 
     @iy.setter
-    def iy(self, iY): self.position.iy = iY; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def iy(self, iY): self.position.iy = iY; self.refresh()
 
     @property
     def width(self): return self.size.width
 
     @width.setter
-    def width(self, width): self.size.width = width; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def width(self, width): self.size.width = width; self.refresh()
 
     @property
     def height(self): return self.size.height
 
     @height.setter
-    def height(self, height): self.size.height = height; self.refresh(redraw_parent=isinstance(self,WindowPad))
+    def height(self, height): self.size.height = height; self.refresh()
 
     @property
     def minwidth(self): return self.size.minwidth
@@ -377,22 +377,27 @@ class Component(Events):
     def centerX(self):
         _, new_columns = uc.getmaxyx(self.parent.win)
         self.position.x = (new_columns //2) - (self.width //2)
-        uc.touchwin(self.parent.win) # Do i need this? YES
+        # uc.touchwin(self.parent.win)
+        # uc.wrefresh(self.parent.win)
 
     def centerY(self):
         new_lines, _ = uc.getmaxyx(self.parent.win)
         self.position.y = (new_lines//2) - (self.height//2)
-        uc.touchwin(self.parent.win) # Do i need this? YES
+        # uc.touchwin(self.parent.win)
+        # uc.wrefresh(self.parent.win)
 
     def center(self):
         new_lines, new_columns = uc.getmaxyx(self.parent.win)
         self.position.x = (new_columns //2) - (self.width //2)
         self.position.y = (new_lines//2) - (self.height//2)
-        uc.touchwin(self.parent.win) # Do i need this? YES
+        # uc.touchwin(self.parent.win)
+        # uc.wrefresh(self.parent.win)
 
     def handle_resize(self, redraw_parent=True, redraw_border=True):
+        # if redraw_parent:
+        #     uc.touchwin(stdscr)
         if self.border and redraw_border:
-            self.border.clear(self.pad)  # TODO: implementation when I'll have borders for drawables too
+            self.border.erase(self.pad)  # TODO: implementation when I'll have borders for drawables too
 
         new_lines, new_columns = uc.getmaxyx(self.parent.win)
         deltaY = new_lines - self.parent.lines
@@ -460,18 +465,22 @@ class Component(Events):
         self.parent.lines = new_lines
         self.parent.columns = new_columns
 
-        if redraw_parent:
-            uc.touchwin(self.parent.win)
         if self.border and redraw_border:
             self.border.draw(self.pad)
 
+        if redraw_parent:
+            uc.refresh()
+
 
 class WindowPad(Component):
+    update = False
+
     def __init__(self, win=None, y=0, x=0, height=0, width=0, anchor=(False, False, False, False), is_focused=False, iheight=None, iwidth=None, warp=True, border:Border=None) -> None:
         super().__init__(win, y, x, height, width, anchor, iheight, iwidth, warp, border)
         self.pad               = uc.newpad(height, width)
         self.is_focused        = is_focused
         self.components        = []
+        self.erase             = False
         initialize_colors()
 
 
@@ -479,25 +488,39 @@ class WindowPad(Component):
         self.components.append(obj)
 
 
-    def refresh(self, redraw_parent=False, clear=True):
-        lock.acquire_lock()
+
+    @Component.visibility.setter
+    def visibility(self, visibility): 
+        self._visibility = visibility
+        if not visibility:
+            uc.touchwin(self.parent.win)
+            uc.wrefresh(self.parent.win)
+        self.refresh()
+
+
+    def refresh(self):
         if not self.visibility: 
-            if redraw_parent: # when visibility changes it calls refresh with redraw_parent=True
-                uc.touchwin(self.parent.win) # Do i need this? YES
-            uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
-            lock.release()
             return
+
+        lock.acquire()
+
         if self.border: self.border.update(self.pad)
-        if clear: uc.werase(self.pad)
+        if self.erase: 
+            uc.werase(self.pad)
+            self.erase = False
+
         for drawable in self.components:
             if drawable.visibility: drawable.draw()
-        if redraw_parent:
-            uc.touchwin(self.parent.win) # Do i need this? YES
-            # uc.wtouchline(self.parent.win, self.y,1) 
-            # uc.wtouchline(self.parent.win, self.y,self.height)
-        uc.wrefresh(self.parent.win) # Do i need this? YES | IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
-        uc.prefresh(self.pad, self.position.iy, self.position.ix, self.position.y, self.position.x, self.position.y + self.size.height -1, self.position.x + self.size.width -1)
-        super().refresh()
+
+        if WindowPad.update:
+            uc.wrefresh(self.parent.win) # IMPORTANT: wrefresh works only with windows, not pads also look at https://stackoverflow.com/a/35351060/11465149
+
+        uc.lib1.pnoutrefresh(self.pad, self.position.iy, self.position.ix, self.position.y, self.position.x, self.position.y + self.size.height -1, self.position.x + self.size.width -1)
+
+        if WindowPad.update:
+            uc.doupdate()
+
+        super().refresh() # mouse situation
         lock.release()
 
 
@@ -518,7 +541,9 @@ class WindowPad(Component):
 
 
     def _resize(self):
+        lock.acquire()
         uc.wresize(self.pad, self.iheight, self.iwidth)
+        lock.release()
 
 
     def handle_resize(self, redraw_parent=True, redraw_border=True): # TODO: max min sizes
@@ -546,17 +571,22 @@ class Drawable(Component):
 
     def centerX(self):
         self.position.y = (self.winpad.height//2) - (self.height//2)
+        self.winpad.erase = True
 
     def centerY(self):
         self.position.y = (self.winpad.height//2) - (self.height//2)
+        self.winpad.erase = True
 
     def center(self):
         self.position.x = (self.winpad.width //2) - (self.width //2)
         self.position.y = (self.winpad.height//2) - (self.height//2)
+        self.winpad.erase = True
 
 
     def refresh(self, redraw_parent=False):
-        self.winpad.refresh(redraw_parent)
+        self.winpad.erase = True
+        # uc.werase(self.winpad.pad) # NOTE: it doesn't animate like the line bellow but more efficient
+        # self.winpad.refresh(redraw_parent)
 
 
     def __add_component_to(self, winpad):
@@ -612,7 +642,8 @@ class Label(Drawable): # TODO: make components a type of Drawables\components ra
 
 
     def _resize(self):
-        self.draw() # means clear so it's fine to just draw
+        self.winpad.erase = True
+        self.draw() # means erase so it's fine to just draw
 
 
 
@@ -653,10 +684,10 @@ class PictureBoxMono(Drawable): # Monochrome
 # THIS IS ONLY FOR TESTING PURPOSES
 def main():
     def label_clicked(label, id, x, y, z, bstate):
-        label.text = f'C x:{x} y:{y}'
+        label._text = f'C x:{x} y:{y}'
 
     def label_hoverd(label, id, x, y, z, bstate):
-        label.text = f'HOVERED x:{x} y:{y} win: {winform.width} {winform.iwidth}'
+        label._text = f'HOVERED x:{x} y:{y} win: {winform.width} {winform.iwidth}'
         
     event  = -1
     global stdscr
@@ -692,6 +723,7 @@ def main():
     # winform2.minwidth = 40
     # winform2.maxwidth = 60
     uc.wbkgd(winform2.pad, uc.COLOR_PAIR(1))
+    uc.refresh      ()
 
     tl = Label(winform ,1,2 ,anchor=(True, False, True, False),text='top-left')
     tr = Label(winform ,1,winform.width-11 ,anchor=(True, False, False, True),text='top-right')
@@ -713,40 +745,66 @@ def main():
     t2.on_hover = label_hoverd
     winform2.refresh()
     winform.refresh()
+    uc.refresh      ()
 
     # Initializing TUIFIManager
-
+    i = 0
     while event != 27:
         event = uc.get_wch()
+        if event == uc.CCHAR('A'):
+                i += 1
+                ta._text = str(i) + "0"
         if event == uc.CCHAR('a'):
             for _ in range(0,5):
                 ta.x +=1
                 sleep(.1)
         elif event == uc.CCHAR('b'):
             for _ in range(0,5): # problematic, (maybe) needs a winpad handler for animations
-                winform2.x +=1
+                winform2.position.x +=1
                 sleep(.1)
+            # winform2.refresh()
         elif event == uc.CCHAR('d'): # problematic, (maybe) needs a winpad handler for animations
+            winform.update = True
             for _ in range(0,5):
-                winform.y +=1;
+                uc.erase()
+                uc.refresh()
+                #scene
+                winform.position.y +=1;
+                winform2.refresh()
+                winform.refresh()
+                # winform.refresh()
+                uc.refresh()
                 sleep(.1)
+            winform.update = False
+            # winform.refresh()
+        elif event == uc.CCHAR('0'): # problematic, (maybe) needs a winpad handler for animations
+                winform.position.x =0;
+                winform.position.y =0;
+
         elif event == uc.CCHAR('c'): td.center()
         elif event == uc.CCHAR('C'): winform.center()
         elif event == uc.CCHAR('h'): tc.hide()
         elif event == uc.CCHAR('s'): tc.show()
         elif event == uc.CCHAR('H'): winform2.hide()
         elif event == uc.CCHAR('S'): winform2.show()
+        elif event == uc.CCHAR('U'): winform.hide()
+        elif event == uc.CCHAR('I'): winform.show()
         elif event == uc.CCHAR('e'): uc.bkgd(uc.CCHAR("/"))
         elif event == uc.CCHAR('f'): uc.bkgd(uc.CCHAR("%"))
         elif event == uc.CCHAR('g'): uc.bkgd(uc.CCHAR(" "))
+        elif event == uc.CCHAR('t'):
+            td.size.width -= 1
+
+        if event == uc.KEY_RESIZE:
+            uc.resize_term(0,0)
+            uc.erase()
 
         winform2.handle_events(event)
         winform.handle_events(event)
         winform2.refresh()
         winform.refresh()
-        uc.refresh      ()
-        if event == uc.KEY_RESIZE:
-            uc.resize_term(0,0)
+
+        uc.refresh()
 
     print(END_MOUSE)
     uc.endwin()

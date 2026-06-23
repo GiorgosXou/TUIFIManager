@@ -27,7 +27,7 @@ def convert_bytes(num): #WARN: https://stackoverflow.com/a/63839503/11465149 | h
 class TUIProps(WindowPad):
     def __init__(self, border=Border(), on_choice=lambda *args : None ):
         super().__init__(border=border, height=12+VISIBLE_FILENAME_LINES, width=35, anchor=(True, True, True, True))
-        self.is_locked = False
+        # self.is_locked = False
         unicurses.wbkgd(self.pad,unicurses.COLOR_PAIR(9))
         self.maxheight = 12 + VISIBLE_FILENAME_LINES
         self.minheight = 12 + VISIBLE_FILENAME_LINES
@@ -65,7 +65,7 @@ class TUIProps(WindowPad):
                 except OSError as e:
                     print(f"Error getting size for {fp}: {e}")
             # if not self.is_locked:
-            self.label7.text = convert_bytes(total_size)
+            self.label7._text = convert_bytes(total_size)
 
 
     def __get_size(self, directory:str, size_offset, files_num_offset):
@@ -81,7 +81,8 @@ class TUIProps(WindowPad):
                 except OSError as e:
                     print(f"Error getting size for {fp}: {e}")
             # if not self.is_locked:
-            self.label7.text = convert_bytes(size_offset)
+            self.label7._text = convert_bytes(size_offset)
+            self.refresh()
         return size_offset, files_num_offset
 
 
@@ -150,7 +151,8 @@ class TUIProps(WindowPad):
             fnum+=1
             self.label9._text = str(fnum)
             self.label ._text = f' BYTES: {self.bytes}'
-            self.label7. text = convert_bytes(self.bytes)
+            self.label7._text = convert_bytes(self.bytes)
+            # self.refresh(update=True)
         return info
 
 
@@ -170,7 +172,8 @@ class TUIProps(WindowPad):
         else:
             self.bytes, fnum = self.__get_size(self.path, self.bytes, fnum) # fnum+=1
         self.label._text = f' OWNER: {self.get_owner(info.st_uid)}'
-        self.label7. text = convert_bytes(self.bytes)
+        self.label7._text = convert_bytes(self.bytes)
+        # self.refresh(update=True)
 
 
     def __draw_profile_of(self, tuifile:TUIFile):
@@ -180,6 +183,7 @@ class TUIProps(WindowPad):
 
 
     def __set_properties_of(self, tuifiles, directory:str):
+        WindowPad.update = True
         tmp_tuifile = copy(tuifiles[0]) if len(tuifiles) == 1 else TUIFile('SELECTIONS', profile=TUIFIProfiles[":all"])
         self.__draw_profile_of(tmp_tuifile)
         self.__adjust_ui_positions_based_on(tmp_tuifile)
@@ -187,6 +191,7 @@ class TUIProps(WindowPad):
         if len(tuifiles) > 1: self.__set_multiple_properties_of(tuifiles, directory)
         else                : self.__set_single___properties_of(tmp_tuifile, directory)
 
+        WindowPad.update = False
         self.is_focused = False # seems to be necessary for resolving an issue the first time ctrl+p is pressed when tuifi first runs
         self.refresh()
 
@@ -216,9 +221,9 @@ class TUIProps(WindowPad):
         return True
 
 
-    def refresh(self, redraw_parent=False):
+    def refresh(self):
         if self.exists:# and not self.is_locked: 
-            super().refresh(redraw_parent=redraw_parent, clear=False)
+            super().refresh()
             self.is_focused = True
 
 

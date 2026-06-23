@@ -161,8 +161,8 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
 
     def refresh(self):
         if self.info_label: self.labelpad.refresh()
-        if not (self.menu.is_focused or self.properties.is_focused):
-            super().refresh(clear=False)
+        # if not (self.menu.is_focused or self.properties.is_focused):
+        super().refresh()
         self.menu.refresh()
         self.properties.refresh()
 
@@ -1752,7 +1752,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
     def __handle_resize_event(self):
         self.handle_resize(False)
         self.resort()
-        unicurses.touchwin(self.parent.win)
+        # unicurses.touchwin(self.parent.win)
 
 
     def consume_escape_once(self):
