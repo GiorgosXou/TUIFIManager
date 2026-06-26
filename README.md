@@ -45,7 +45,7 @@ for more details look into the `__main__.py`
 
 # 📦 Features 
 ### • 📌 *Current:*
-- [Supports X11 Drag&Drop from terminals](#-customization 'set `tuifi_synth_dnd` enviroment variable to `True`. `pip install requests pynput PySide6 python-xlib`...')
+- [Supports X11 Drag&Drop from terminals](#-customization 'set `tuifi_synth_dnd` environment variable to `True`. `pip install requests pynput PySide6 python-xlib`...')
 - Supports most common mouse events 
 - Can be used as a component
 - Uses about [35MB](## '80mb with synthetic xdnd, python... :P') of RAM
@@ -142,43 +142,43 @@ In `vim_mode` both normal and vim shortcuts work
 <details>
 <summary><i>How do I enable vim_mode?</i></summary>
 
-> Set `tuifi_vim_mode` enviroment variable to `True`
+> Set `tuifi_vim_mode` environment variable to `True`
 
 </details>
 <details>
 <summary><i>How do I enable transparency?</i></summary>
 
-> Set `tuitilities_default_colors` enviroment variable to `True`
+> Set `tuitilities_default_colors` environment variable to `True`
 
 </details>
 <details>
 <summary><i>How do I enable synthetic XDND?</i></summary>
 
-> set `tuifi_synth_dnd` enviroment variable to `True`. `pip install requests pynput PySide6 python-xlib`. Know it's expirimental! You'll need to adapt to it slightly, **use it as: Drag&drop + click afterwords where you want the file to be dropped.** [See also](https://github.com/GiorgosXou/TUIFIManager/discussions/92) and [this issue](https://github.com/GiorgosXou/TUIFIManager/issues/21)
+> set `tuifi_synth_dnd` environment variable to `True`. `pip install requests pynput PySide6 python-xlib`. Know it's expirimental! You'll need to adapt to it slightly, **use it as: Drag&drop + click afterwords where you want the file to be dropped.** [See also](https://github.com/GiorgosXou/TUIFIManager/discussions/92) and [this issue](https://github.com/GiorgosXou/TUIFIManager/issues/21)
 
 </details>
 <details>
 <summary><i>How do I set the default editor?</i></summary>
 
-> Set `tuifi_default_editor` enviroment variable to `vim` or whatever you prefer
+> Set `tuifi_default_editor` environment variable to `vim` or whatever you prefer
 
 </details>
 <details>
 <summary><i>How do I disable the auto-find-mode?</i></summary>
 
-> You can just set `tuifi_auto_find_on_typing` enviroment variable to `False`
+> You can just set `tuifi_auto_find_on_typing` environment variable to `False`
 
 </details>
 <details>
 <summary><i>How do I change the scroll sensitivity?</i></summary>
 
-> You can set either or both `tuifi_scroll_sensitivity`, `tuifi_ctrl_scroll_sensitivity` enviromental variables, to the disered number of characters per scroll action *(they default to 1 and 7)*
+> You can set either or both `tuifi_scroll_sensitivity`, `tuifi_ctrl_scroll_sensitivity` environmental variables, to the disered number of characters per scroll action *(they default to 1 and 7)*
 
 </details>
 <details>
 <summary><i>How do I enable single-click navigation mode?</i></summary>
 
-> You just set `tuifi_has_single_click` enviroment variable to `True`
+> You just set `tuifi_has_single_click` environment variable to `True`
 
 </details>
 <details>
@@ -196,13 +196,13 @@ In `vim_mode` both normal and vim shortcuts work
 <details>
 <summary><i>How do I change the default configuration path?</i></summary>
 
-> Set `tuifi_config_path` enviroment variable to whatever you prefer most
+> Set `tuifi_config_path` environment variable to whatever you prefer most
 
 </details>
 <details>
 <summary><i>How do I toggle hidden files/folders?</i></summary>
 
-> You can either `CTRL + T` or set `tuifi_show_hidden` enviroment variable to `True`
+> You can either `CTRL + T` or set `tuifi_show_hidden` environment variable to `True`
 
 </details>
 
