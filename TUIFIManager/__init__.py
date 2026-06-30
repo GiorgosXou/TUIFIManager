@@ -1860,7 +1860,7 @@ class TUIFIManager(WindowPad):  # TODO: I need to create a TUIWindowManager clas
         if self.menu      .handle_events(event):
             if event == 27: self.consume_escape_once() # the escape condition is necessary for preventing issues with renaming after creation of "new file/folder"
             return
-        if self.labelpad: 
+        if self.info_label:
             self.labelpad.handle_events(event)
 
         if self.events.get(event, self.__return)() != True : return # Is this too bad of a practice? let me know
